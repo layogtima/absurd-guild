@@ -22,8 +22,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     return redirect("/auth/login?error=expired-token");
   }
 
-  // Get the redirect destination
-  const redirectTo = url.searchParams.get("redirectTo") || "/";
+  // Get the redirect destination - default to profile for new users to set up their profile
+  const redirectTo = url.searchParams.get("redirectTo") || "/profile";
 
   // Set session cookie and redirect
   return redirect(redirectTo, {

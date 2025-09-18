@@ -22,7 +22,7 @@ apply_migration() {
 }
 
 # Check if migrations directory exists
-if [ ! -d "migrations" ]; then
+if [ ! -d "db/migrations" ]; then
     echo "❌ Migrations directory not found. Run this script from the project root."
     exit 1
 fi
@@ -30,9 +30,10 @@ fi
 # Apply migrations in order
 echo "🚀 Starting migration process..."
 
-apply_migration "migrations/0001_initial_schema.sql"
-apply_migration "migrations/0002_maker_profiles.sql"
-apply_migration "migrations/0003_enhanced_campaigns.sql"
+apply_migration "db/migrations/0001_initial_schema.sql"
+apply_migration "db/migrations/0002_maker_profiles.sql"
+apply_migration "db/migrations/0003_enhanced_campaigns.sql"
+apply_migration "db/migrations/0004_add_cascade_constraints.sql"
 
 echo ""
 echo "🎉 All migrations applied successfully!"
@@ -41,6 +42,7 @@ echo "📋 Database status:"
 echo "  - Base tables: ✅ Created"
 echo "  - Maker profiles: ✅ Added"
 echo "  - Enhanced campaigns: ✅ Added"
+echo "  - CASCADE constraints: ✅ Added"
 echo ""
 echo "💡 Next steps:"
 echo "  1. Run 'npm run dev' to start development"
