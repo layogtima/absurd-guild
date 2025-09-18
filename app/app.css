@@ -1,0 +1,48 @@
+@import "tailwindcss" source(".");
+
+@theme {
+  --font-main: "Jura", ui-sans-serif, system-ui, sans-serif;
+
+  /* Light Theme Colors */
+  --bg-primary: #ece0cf;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e0d4c3;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5c5c5c;
+  --border-color: #d1c4b3;
+
+  --accent-orange: #ff4500;
+  --accent-yellow: #ffd700;
+  --text-on-accent: #ffffff;
+}
+
+html {
+  font-family: var(--font-main);
+}
+
+html.dark {
+  /* Dark Theme Overrides */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #111111;
+  --text-primary: #ece0cf;
+  --text-secondary: #9ca3af;
+  --border-color: #3a3a3a;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Helper classes */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.border-theme { border-color: var(--border-color); }
+.accent-orange { background-color: var(--accent-orange); }
+.accent-orange-text { color: var(--accent-orange); }
+.text-on-accent { color: var(--text-on-accent); }
