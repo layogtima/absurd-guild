@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amit - The LED Whisperer | Absurd Industries</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -21,9 +22,10 @@
                         'jura': ['Jura', 'sans-serif'],
                     },
                     animation: {
-                        'spin-slow': 'spin 3s linear infinite',
+                        'spin-slow': 'spin 33s linear infinite',
                         'fade-in': 'fade-in 0.4s ease-out',
                         'slide-up': 'slide-up 0.3s ease-out',
+                        'pulse-edit': 'pulse-edit 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         'fade-in': {
@@ -33,6 +35,10 @@
                         'slide-up': {
                             '0%': { transform: 'translateY(20px)', opacity: '0' },
                             '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        'pulse-edit': {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(255, 69, 0, 0.7)' },
+                            '50%': { boxShadow: '0 0 0 10px rgba(255, 69, 0, 0)' }
                         }
                     }
                 }
@@ -60,28 +66,55 @@
             --text-secondary: #9ca3af;
             --border-color: #3a3a3a;
         }
-        
+
         body {
             font-family: 'Jura', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: all 0.3s ease;
         }
-        
-        .bg-primary { background-color: var(--bg-primary); }
-        .bg-secondary { background-color: var(--bg-secondary); }
-        .bg-tertiary { background-color: var(--bg-tertiary); }
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .border-theme { border-color: var(--border-color); }
-        .accent-orange { background-color: var(--accent-orange); }
-        .accent-orange-text { color: var(--accent-orange); }
-        .text-on-accent { color: var(--text-on-accent); }
+
+        .bg-primary {
+            background-color: var(--bg-primary);
+        }
+
+        .bg-secondary {
+            background-color: var(--bg-secondary);
+        }
+
+        .bg-tertiary {
+            background-color: var(--bg-tertiary);
+        }
+
+        .text-primary {
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .border-theme {
+            border-color: var(--border-color);
+        }
+
+        .accent-orange {
+            background-color: var(--accent-orange);
+        }
+
+        .accent-orange-text {
+            color: var(--accent-orange);
+        }
+
+        .text-on-accent {
+            color: var(--text-on-accent);
+        }
 
         .hover-lift {
             transition: all 0.2s ease;
             cursor: pointer;
         }
+
         .hover-lift:hover {
             transform: translateY(-2px);
         }
@@ -102,45 +135,113 @@
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
             border-bottom: 2px solid var(--border-color);
         }
+
+        .edit-mode .editable {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode .editable:hover {
+            outline: 2px dashed var(--accent-orange);
+            outline-offset: 4px;
+        }
+
+        .edit-mode .editable::before {
+            content: '✎';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--accent-orange);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .edit-mode .editable:hover::before {
+            opacity: 1;
+        }
+
+        .edit-highlight {
+            animation: pulse-edit 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            border-radius: 8px;
+        }
+
+        .editor-toolbar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+            z-index: 100;
+            padding: 1rem;
+            display: none;
+        }
+
+        .edit-mode .editor-toolbar {
+            display: block;
+        }
     </style>
 </head>
 
-<body class="min-h-screen font-jura" id="app">
-    
+<body class="min-h-screen font-jura" id="app" :class="{ 'edit-mode': editMode }">
+
+    <!-- Editor Toolbar (only visible in edit mode) -->
+    <div class="editor-toolbar">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h3 class="font-bold text-lg text-primary">🎨 Live Edit Mode</h3>
+                <div class="text-sm text-secondary">Click on any element to edit it!</div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button @click="saveChanges" class="accent-orange text-on-accent px-4 py-2 rounded-lg hover-lift">
+                    <i class="fas fa-save mr-2"></i>Save Changes
+                </button>
+                <button @click="resetChanges" class="bg-red-500 text-white px-4 py-2 rounded-lg hover-lift">
+                    <i class="fas fa-undo mr-2"></i>Reset
+                </button>
+                <button @click="toggleEditMode" class="bg-secondary text-primary px-4 py-2 rounded-lg hover-lift border border-theme">
+                    <i class="fas fa-eye mr-2"></i>Preview
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Integrated Navigation -->
-    <header class="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0 z-40">
+    <header class="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0" style="z-index: 40;">
         <div class="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
             <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center hover-lift">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full animate-spin-slow">
-                        <defs>
-                            <radialGradient id="nucleusGradient" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#FFB347" />
-                                <stop offset="100%" stop-color="#FF6B35" />
-                            </radialGradient>
-                        </defs>
-                        <g transform="translate(100,100)">
-                            <ellipse cx="0" cy="0" rx="50" ry="15" fill="none" stroke="#40E0D0" stroke-width="2" opacity="0.8"/>
-                            <ellipse cx="0" cy="0" rx="50" ry="15" fill="none" stroke="#40E0D0" stroke-width="2" opacity="0.8" transform="rotate(60)"/>
-                            <ellipse cx="0" cy="0" rx="50" ry="15" fill="none" stroke="#40E0D0" stroke-width="2" opacity="0.8" transform="rotate(120)"/>
-                        </g>
-                        <circle cx="100" cy="100" r="15" fill="url(#nucleusGradient)"/>
-                    </svg>
+                <div class="w-20 h-20 rounded-full flex items-center justify-center hover-lift">
+                    <img src="absurd-industries-logo.svg" class="w-full h-full animate-spin-slow" />
                 </div>
                 <nav class="hidden sm:flex items-center space-x-2 text-sm lg:text-base">
-                    <a href="/" class="text-primary font-bold hover:accent-orange-text transition-colors">Absurd</a>
+                    <a href="/" class="text-primary font-bold hover:accent-orange-text transition-colors editable" @click="editMode && editText($event, 'navHome')">{{ content.navHome }}</a>
                     <span class="text-secondary">/</span>
-                    <a href="/makers" class="text-secondary hover:text-primary transition-colors">Makers</a>
+                    <a href="/makers" class="text-secondary hover:text-primary transition-colors editable" @click="editMode && editText($event, 'navMakers')">{{ content.navMakers }}</a>
                     <span class="text-secondary">/</span>
-                    <span class="font-bold accent-orange-text">The LED Whisperer</span>
+                    <span class="font-bold accent-orange-text editable" @click="editMode && editText($event, 'navCurrent')">{{ content.navCurrent }}</span>
                 </nav>
                 <div class="sm:hidden">
-                    <div class="text-lg font-bold text-primary">Amit</div>
-                    <div class="text-xs text-secondary">LED Whisperer</div>
+                    <div class="text-lg font-bold text-primary editable" @click="editMode && editText($event, 'name')">{{ content.name }}</div>
+                    <div class="text-xs text-secondary editable" @click="editMode && editText($event, 'tagline')">{{ content.tagline }}</div>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <button @click="toggleTheme" class="hover-lift w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
+                <button @click="toggleEditMode"
+                    class="hover-lift w-10 h-10 rounded-full bg-tertiary flex items-center justify-center"
+                    :class="editMode ? 'accent-orange text-on-accent animate-pulse-edit' : ''"
+                    title="Toggle Edit Mode">
+                    <i :class="editMode ? 'fas fa-edit' : 'fas fa-pencil-alt'" class="text-base"></i>
+                </button>
+                <button @click="toggleTheme"
+                    class="hover-lift w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
                     <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'" class="text-base text-primary"></i>
                 </button>
             </div>
@@ -152,36 +253,61 @@
         <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
             <!-- Avatar -->
             <div class="flex flex-col items-center mb-12 animate-fade-in">
-                <div class="w-32 h-32 lg:w-40 lg:h-40 accent-orange rounded-3xl flex items-center justify-center text-4xl lg:text-5xl font-bold text-on-accent mb-6 hover-lift">
-                    A
+                <div class="w-32 h-32 lg:w-40 lg:h-40 accent-orange rounded-3xl flex items-center justify-center text-4xl lg:text-5xl font-bold overflow-hidden text-on-accent mb-6 hover-lift editable" 
+                     @click="editMode && editImage($event, 'avatar')">
+                    <img :src="content.avatar" alt="Amit" class="w-full h-full object-cover" />
                 </div>
-                
+
                 <!-- Name and tagline -->
-                <h1 class="font-jura text-6xl lg:text-8xl font-bold text-primary mb-4">
-                    Amit
+                <h1 class="font-jura text-6xl lg:text-8xl font-bold text-primary mb-4 editable" @click="editMode && editText($event, 'name')">
+                    {{ content.name }}
                 </h1>
-                <p class="text-xl lg:text-2xl text-secondary mb-6">
-                    LED Whisperer & Hardware Necromancer
+                <p class="text-xl lg:text-2xl text-secondary mb-6 editable" @click="editMode && editText($event, 'tagline')">
+                    {{ content.tagline }}
                 </p>
-                
+
                 <!-- Single Bio -->
                 <div class="max-w-4xl mx-auto mb-12">
-                    <p class="text-xl lg:text-2xl text-secondary leading-relaxed">
-                        Building open-source, repairable, moddable tech because the world needs more things that 
-                        glow unnecessarily. Taking apart electronics since 1997 — putting them back together is entirely optional.
+                    <p class="text-xl lg:text-2xl text-secondary leading-relaxed editable" @click="editMode && editText($event, 'bio')">
+                        {{ content.bio }}
                     </p>
                 </div>
-                
+
                 <!-- Action buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button @click="showWorkbenchModal = true" class="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all">
-                        <i class="fas fa-hammer mr-2"></i>
-                        Peek Into The Workbench
+                    <button @click="showWorkbenchModal = true"
+                        class="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all editable"
+                        @contextmenu="editMode && editText($event, 'ctaLiveStream')">
+                        <i class="fas fa-video mr-2"></i>
+                        {{ content.ctaLiveStream }}
                     </button>
-                    <button @click="showContactModal = true" class="bg-secondary text-primary px-8 py-4 rounded-2xl text-lg font-semibold hover-lift border-2 border-theme hover:border-orange-300 transition-all">
+                    <button @click="showContactModal = true"
+                        class="bg-secondary text-primary px-8 py-4 rounded-2xl text-lg font-semibold hover-lift border-2 border-theme hover:border-orange-300 transition-all editable"
+                        @contextmenu="editMode && editText($event, 'ctaContact')">
                         <i class="fas fa-satellite-dish mr-2"></i>
-                        Send Signal
+                        {{ content.ctaContact }}
                     </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 mt-12">
+                    <a v-for="(link, index) in content.socialLinks" :key="index" :href="link.url" target="_blank" rel="noopener"
+                        class="bg-secondary border-2 border-theme rounded-xl p-4 hover-lift transition-all flex items-center gap-3 group editable"
+                        :class="link.featured ? 'md:col-span-2 collaboration-glow' : ''"
+                        @click="editMode && editSocialLink($event, index)">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="link.featured ? 'accent-orange text-on-accent' : 'bg-tertiary'">
+                            <i :class="link.icon" class="text-xl"
+                                :class="link.featured ? 'text-on-accent' : 'accent-orange-text'"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="font-bold text-primary text-base flex items-center gap-2">
+                                {{ link.name }}
+                                <i v-if="link.featured" class="fas fa-star text-yellow-500 text-sm"></i>
+                            </div>
+                            <div v-if="link.stats" class="text-xs text-secondary mt-1 opacity-75">{{ link.stats }}</div>
+                        </div>
+                        <i class="fas fa-external-link-alt text-secondary group-hover:accent-orange-text transition-colors"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -189,45 +315,53 @@
 
     <!-- Main Content Sections -->
     <main class="max-w-7xl mx-auto p-6">
-        
-        <!-- Workbench Section -->
-        <section id="workbench" class="mb-20">
+
+        <!-- Campaigns Section -->
+        <section id="campaigns" class="mb-20">
             <div class="text-center mb-12">
-                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
-                    Current Experiments
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4 editable" @click="editMode && editText($event, 'campaignsTitle')">
+                    {{ content.campaignsTitle }}
                 </h2>
-                <p class="text-xl text-secondary max-w-3xl mx-auto">
-                    Projects currently consuming sanity and/or making the world unnecessarily illuminated
+                <p class="text-xl text-secondary max-w-3xl mx-auto editable" @click="editMode && editText($event, 'campaignsSubtitle')">
+                    {{ content.campaignsSubtitle }}
                 </p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div v-for="project in workbenchProjects" :key="project.id" 
-                     @click="openProjectModal(project)"
-                     class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift cursor-pointer transition-all">
-                    
-                    <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div v-for="(campaign, index) in content.campaigns" :key="index"
+                    class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all editable"
+                    @click="editMode && editCampaign($event, index)">
+
+                    <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="text-6xl mb-4">{{ project.emoji }}</div>
-                                <div class="text-sm text-secondary opacity-75">Click to explore</div>
-                            </div>
+                            <video loop autoplay muted playsinline>
+                                <source :src="campaign.video">
+                            </video>
                         </div>
-                        
+
                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
-                            <span class="text-white text-sm font-medium">{{ project.status }}</span>
+                            <span class="text-white text-sm font-bold">{{ campaign.progress }}% Funded</span>
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
-                        <h3 class="font-jura text-2xl font-bold text-primary mb-2">{{ project.name }}</h3>
-                        <p class="text-secondary leading-relaxed mb-4">{{ project.description }}</p>
-                        
-                        <div class="flex flex-wrap gap-2">
-                            <span v-for="tag in project.tags" :key="tag"
-                                  class="bg-tertiary px-3 py-1 rounded-full text-sm text-secondary">
-                                {{ tag }}
-                            </span>
+                        <h3 class="font-jura text-2xl font-bold text-primary mb-2">{{ campaign.name }}</h3>
+                        <p class="text-secondary leading-relaxed mb-4">{{ campaign.description }}</p>
+
+                        <div class="w-full bg-tertiary rounded-full h-2 mb-4">
+                            <div class="accent-orange h-2 rounded-full" :style="`width: ${campaign.progress}%`"></div>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary">₹{{ campaign.raised.toLocaleString() }}</div>
+                                <div class="text-sm text-secondary">raised</div>
+                            </div>
+                            <a :href="campaign.campaignUrl"
+                                class="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all">
+                                <i class="fas fa-rocket mr-2"></i>
+                                Back It
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -237,35 +371,36 @@
         <!-- Products Section -->
         <section id="products" class="mb-20">
             <div class="text-center mb-12">
-                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
-                    Things You Can Actually Buy
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4 editable" @click="editMode && editText($event, 'productsTitle')">
+                    {{ content.productsTitle }}
                 </h2>
-                <p class="text-xl text-secondary max-w-3xl mx-auto">
-                    Hardware that escaped the lab and made it to production
+                <p class="text-xl text-secondary max-w-3xl mx-auto editable" @click="editMode && editText($event, 'productsSubtitle')">
+                    {{ content.productsSubtitle }}
                 </p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="product in products" :key="product.id"
-                     class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all">
-                    
-                    <div class="aspect-video relative overflow-hidden">
+                <div v-for="(product, index) in content.products" :key="index"
+                    class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all editable"
+                    @click="editMode && editProduct($event, index)">
+
+                    <div class="aspect-square relative overflow-hidden">
                         <img :src="product.image" :alt="product.name" class="w-full h-full object-cover">
-                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        <div class="absolute top-4 right-4 bg-transparent text-white px-3 py-1 rounded-full text-sm font-bold">
                             In Stock
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
                         <h3 class="font-jura text-2xl font-bold text-primary mb-2">{{ product.name }}</h3>
                         <p class="text-secondary leading-relaxed mb-4">{{ product.description }}</p>
-                        
+
                         <div class="flex justify-between items-center">
                             <div class="text-2xl font-bold accent-orange-text">₹{{ product.price.toLocaleString() }}</div>
-                            <a :href="product.shopUrl" target="_blank" 
-                               class="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all">
+                            <a :href="product.shopUrl" target="_blank"
+                                class="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover-lift transition-all">
                                 <i class="fas fa-shopping-cart mr-2"></i>
-                                Buy Now
+                                GET ONE
                             </a>
                         </div>
                     </div>
@@ -273,118 +408,124 @@
             </div>
         </section>
 
-        <!-- Campaigns Section -->
-        <section id="campaigns" class="mb-20">
+        <!-- Workbench Section -->
+        <section id="workbench" class="mb-20">
             <div class="text-center mb-12">
-                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
-                    Future Hardware
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4 editable" @click="editMode && editText($event, 'workbenchTitle')">
+                    {{ content.workbenchTitle }}
                 </h2>
-                <p class="text-xl text-secondary max-w-3xl mx-auto">
-                    Hardware that needs your help to exist
+                <p class="text-xl text-secondary max-w-3xl mx-auto editable" @click="editMode && editText($event, 'workbenchSubtitle')">
+                    {{ content.workbenchSubtitle }}
                 </p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="campaign in campaigns" :key="campaign.id"
-                     class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all">
-                    
-                    <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div v-for="(project, index) in content.workbenchProjects" :key="index" 
+                     @click="!editMode ? openProjectModal(project) : editProject($event, index)"
+                    class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift cursor-pointer transition-all editable">
+
+                    <div class="aspect-video relative overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <div class="text-center">
-                                <div class="text-6xl mb-4">{{ campaign.emoji }}</div>
-                                <div class="text-sm text-secondary opacity-75">Campaign Active</div>
+                                <img :src="project.image" class="w-full h-full object-cover" />
                             </div>
                         </div>
-                        
+
                         <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
-                            <span class="text-white text-sm font-bold">{{ campaign.progress }}% Funded</span>
+                            <span class="text-white text-sm font-medium">{{ project.status }}</span>
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
-                        <h3 class="font-jura text-2xl font-bold text-primary mb-2">{{ campaign.name }}</h3>
-                        <p class="text-secondary leading-relaxed mb-4">{{ campaign.description }}</p>
-                        
-                        <div class="w-full bg-tertiary rounded-full h-2 mb-4">
-                            <div class="accent-orange h-2 rounded-full" :style="`width: ${campaign.progress}%`"></div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <div class="text-lg font-bold text-primary">₹{{ campaign.raised.toLocaleString() }}</div>
-                                <div class="text-sm text-secondary">raised</div>
-                            </div>
-                            <a href="/campaign.html" 
-                               class="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all">
-                                <i class="fas fa-rocket mr-2"></i>
-                                Back Project
-                            </a>
+                        <h3 class="font-jura text-2xl font-bold text-primary mb-2">{{ project.name }}</h3>
+                        <p class="text-secondary leading-relaxed mb-4">{{ project.description }}</p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="tag in project.tags" :key="tag"
+                                class="bg-tertiary px-3 py-1 rounded-full text-sm text-secondary">
+                                {{ tag }}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Skills & Contact -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
-            <!-- Skills -->
-            <div class="lg:col-span-2">
-                <section class="bg-secondary border-2 border-theme rounded-3xl p-8">
-                    <h2 class="font-jura text-3xl font-bold text-primary mb-6">
-                        <i class="fas fa-brain accent-orange-text mr-3"></i>
-                        Things I Don't Completely Suck At
-                    </h2>
-                    
-                    <div class="space-y-6">
-                        <div v-for="skill in skills" :key="skill.name">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="font-semibold text-primary text-lg">{{ skill.name }}</span>
-                                <span class="text-sm text-secondary italic">{{ skill.description }}</span>
-                            </div>
-                            <div class="w-full bg-tertiary rounded-full h-2">
-                                <div class="accent-orange h-2 rounded-full transition-all duration-1000" 
-                                     :style="`width: ${skill.level}%`"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Contact & Links -->
-            <div class="space-y-8">
-                <section class="bg-secondary border-2 border-theme rounded-3xl p-6">
-                    <h2 class="font-jura text-2xl font-bold text-primary mb-6">
-                        <i class="fas fa-satellite-dish accent-orange-text mr-2"></i>
-                        Send Signals
-                    </h2>
-                    
-                    <div class="space-y-3">
-                        <button @click="showContactModal = true" 
-                                class="w-full accent-orange text-on-accent py-4 rounded-2xl font-bold hover-lift transition-all">
-                            <i class="fas fa-rocket mr-2"></i>
-                            Launch Collaboration
-                        </button>
-                        
-                        <div class="grid grid-cols-1 gap-3">
-                            <a v-for="link in socialLinks" :key="link.name"
-                               :href="link.url" target="_blank" rel="noopener"
-                               class="bg-tertiary rounded-xl p-4 hover-lift border-2 border-theme hover:border-orange-300 transition-all flex items-center gap-3">
-                                <i :class="link.icon" class="text-xl accent-orange-text"></i>
-                                <div>
-                                    <div class="font-bold text-primary text-sm">{{ link.name }}</div>
-                                    <div class="text-xs text-secondary">{{ link.description }}</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
     </main>
 
+    <!-- Edit Modal -->
+    <div v-if="editModal.show" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4"
+        @click="closeEditModal">
+        <div class="modal-content rounded-3xl max-w-2xl w-full p-8 animate-slide-up" @click.stop>
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="font-jura text-3xl font-bold text-primary flex items-center gap-3">
+                    <i class="fas fa-edit accent-orange-text"></i>
+                    Edit {{ editModal.title }}
+                </h3>
+                <button @click="closeEditModal" class="hover-lift text-secondary hover:text-primary">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Text editing -->
+                <div v-if="editModal.type === 'text'">
+                    <label class="block text-sm font-bold text-primary mb-3">Content</label>
+                    <textarea v-model="editModal.value" 
+                              class="w-full bg-tertiary border-2 border-theme rounded-xl p-4 text-primary h-32 resize-none focus:border-orange-300 outline-none transition-all"
+                              :placeholder="editModal.placeholder"></textarea>
+                </div>
+
+                <!-- Image editing -->
+                <div v-if="editModal.type === 'image'">
+                    <label class="block text-sm font-bold text-primary mb-3">Image URL</label>
+                    <input v-model="editModal.value" type="url"
+                           class="w-full bg-tertiary border-2 border-theme rounded-xl p-4 text-primary focus:border-orange-300 outline-none transition-all"
+                           placeholder="https://example.com/image.jpg">
+                    <div v-if="editModal.value" class="mt-4">
+                        <img :src="editModal.value" class="max-w-full h-40 object-cover rounded-lg mx-auto" alt="Preview">
+                    </div>
+                </div>
+
+                <!-- Complex object editing -->
+                <div v-if="editModal.type === 'object'">
+                    <div class="space-y-4">
+                        <div v-for="(field, key) in editModal.fields" :key="key">
+                            <label class="block text-sm font-bold text-primary mb-2">{{ field.label }}</label>
+                            <input v-if="field.type === 'text'" v-model="editModal.value[key]"
+                                   class="w-full bg-tertiary border-2 border-theme rounded-xl p-3 text-primary focus:border-orange-300 outline-none transition-all"
+                                   :placeholder="field.placeholder">
+                            <textarea v-else-if="field.type === 'textarea'" v-model="editModal.value[key]"
+                                      class="w-full bg-tertiary border-2 border-theme rounded-xl p-3 text-primary h-20 resize-none focus:border-orange-300 outline-none transition-all"
+                                      :placeholder="field.placeholder"></textarea>
+                            <input v-else-if="field.type === 'number'" v-model.number="editModal.value[key]" type="number"
+                                   class="w-full bg-tertiary border-2 border-theme rounded-xl p-3 text-primary focus:border-orange-300 outline-none transition-all"
+                                   :placeholder="field.placeholder">
+                            <input v-else-if="field.type === 'url'" v-model="editModal.value[key]" type="url"
+                                   class="w-full bg-tertiary border-2 border-theme rounded-xl p-3 text-primary focus:border-orange-300 outline-none transition-all"
+                                   :placeholder="field.placeholder">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button @click="saveEdit" 
+                            class="flex-1 accent-orange text-on-accent py-4 rounded-xl text-lg font-bold hover-lift transition-all">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Changes
+                    </button>
+                    <button @click="closeEditModal" 
+                            class="flex-1 bg-secondary text-primary py-4 rounded-xl text-lg font-bold hover-lift border border-theme transition-all">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Workbench Modal -->
-    <div v-if="showWorkbenchModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4" @click="showWorkbenchModal = false">
+    <div v-if="showWorkbenchModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4"
+        @click="showWorkbenchModal = false">
         <div class="modal-content rounded-3xl max-w-4xl w-full p-8 animate-slide-up" @click.stop>
             <div class="flex items-center justify-between mb-8">
                 <h3 class="font-jura text-3xl font-bold text-primary flex items-center gap-3">
@@ -395,7 +536,7 @@
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
-            
+
             <div class="space-y-6">
                 <div class="aspect-video bg-black rounded-2xl flex items-center justify-center relative overflow-hidden">
                     <div class="text-center z-10">
@@ -404,7 +545,7 @@
                         <p class="text-gray-400">Next session: When the coffee kicks in</p>
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-tertiary rounded-2xl p-6">
                         <h4 class="font-bold text-xl text-primary mb-4">What to Expect</h4>
@@ -416,7 +557,7 @@
                             <li>• Occasional successes</li>
                         </ul>
                     </div>
-                    
+
                     <div class="bg-tertiary rounded-2xl p-6">
                         <h4 class="font-bold text-xl text-primary mb-4">Stream Schedule</h4>
                         <div class="space-y-2 text-secondary">
@@ -431,7 +572,8 @@
     </div>
 
     <!-- Project Modal -->
-    <div v-if="selectedProject" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4" @click="closeProjectModal">
+    <div v-if="selectedProject" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4"
+        @click="closeProjectModal">
         <div class="modal-content rounded-3xl max-w-4xl w-full p-8 animate-slide-up" @click.stop>
             <div class="flex items-center justify-between mb-8">
                 <h3 class="font-jura text-3xl font-bold text-primary">{{ selectedProject.name }}</h3>
@@ -439,7 +581,7 @@
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
-            
+
             <div class="space-y-8">
                 <div class="aspect-video bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 rounded-2xl flex items-center justify-center">
                     <div class="text-center">
@@ -447,11 +589,11 @@
                         <div class="text-lg text-secondary">Project showcase coming soon!</div>
                     </div>
                 </div>
-                
+
                 <div class="prose max-w-none">
                     <p class="text-lg text-secondary leading-relaxed">{{ selectedProject.fullDescription }}</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-tertiary rounded-2xl p-6">
                         <h4 class="font-bold text-xl text-primary mb-4 flex items-center gap-2">
@@ -463,7 +605,7 @@
                             View Instructions
                         </button>
                     </div>
-                    
+
                     <div class="bg-tertiary rounded-2xl p-6">
                         <h4 class="font-bold text-xl text-primary mb-4 flex items-center gap-2">
                             <i class="fab fa-github accent-orange-text"></i>
@@ -480,7 +622,8 @@
     </div>
 
     <!-- Contact Modal -->
-    <div v-if="showContactModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4" @click="showContactModal = false">
+    <div v-if="showContactModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4"
+        @click="showContactModal = false">
         <div class="modal-content rounded-3xl max-w-lg w-full p-8 animate-slide-up" @click.stop>
             <div class="flex items-center justify-between mb-8">
                 <h3 class="font-jura text-3xl font-bold text-primary">Let's Collaborate!</h3>
@@ -488,7 +631,7 @@
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            
+
             <div class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-primary mb-3">What kind of chaos are we creating?</label>
@@ -500,13 +643,13 @@
                         <option>Just want to chat about maker stuff</option>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-bold text-primary mb-3">Tell me about your idea</label>
-                    <textarea placeholder="Describe your project, challenge, or just say hi!" 
-                              class="w-full bg-tertiary border-2 border-theme rounded-xl p-4 text-primary h-32 resize-none focus:border-orange-300 outline-none transition-all"></textarea>
+                    <textarea placeholder="Describe your project, challenge, or just say hi!"
+                        class="w-full bg-tertiary border-2 border-theme rounded-xl p-4 text-primary h-32 resize-none focus:border-orange-300 outline-none transition-all"></textarea>
                 </div>
-                
+
                 <button class="w-full accent-orange text-on-accent py-4 rounded-xl text-lg font-bold hover-lift transition-all">
                     <i class="fas fa-paper-plane mr-2"></i>
                     Launch This Collaboration
@@ -517,104 +660,120 @@
 
     <!-- Vue.js Application -->
     <script>
-        const { createApp, ref, onMounted } = Vue;
+        const { createApp, ref, onMounted, reactive } = Vue;
         createApp({
             setup() {
                 const isDark = ref(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches));
+                const editMode = ref(false);
                 const showContactModal = ref(false);
                 const showWorkbenchModal = ref(false);
                 const selectedProject = ref(null);
-                
-                const workbenchProjects = [
-                    {
-                        id: 1,
-                        name: 'Supersabers',
-                        description: 'DIY lightsaber kits for when regular sword fights lack proper illumination',
-                        fullDescription: 'Fully functional lightsabers with realistic sound effects, motion detection, and the ability to settle disagreements with style. Warning: Does not actually cut through metal.',
-                        status: 'Testing',
-                        emoji: '⚔️',
-                        tags: ['Props', 'Sound', 'Motion Sensing']
-                    },
-                    {
-                        id: 2,
-                        name: 'Quadwalkers',
-                        description: 'Robotic desk companions that judge your coding skills and reorganize your cables',
-                        fullDescription: 'Four-legged robots with personality disorders. They patrol your desk, reorganize your cables, and provide sarcastic commentary on your code quality.',
-                        status: 'Design Phase',
-                        emoji: '🕷️',
-                        tags: ['Robotics', 'AI', 'Servo Motors']
-                    },
-                    {
-                        id: 3,
-                        name: 'Display Cases',
-                        description: 'Modular showcase system for your growing collection of questionable electronic art',
-                        fullDescription: 'Smart display cases with individually controlled lighting, climate monitoring, and theft detection. Perfect for showing off your growing collection of things that blink.',
-                        status: 'Planning',
-                        emoji: '📱',
-                        tags: ['Display', 'Modular', 'IoT']
-                    }
-                ];
 
-                const products = [
-                    {
-                        id: 1,
-                        name: 'Lampy',
-                        description: 'Open-source mood lighting that responds to your emotions, music, and probably your coffee consumption',
-                        price: 4444,
-                        image: 'https://shop.absurd.industries/cdn/shop/files/lampy-shopabsurdindustries-shopabsurdindustries-968591.jpg?v=1731505856&width=1206',
-                        shopUrl: 'https://shop.absurd.industries/products/lampy'
-                    },
-                    {
-                        id: 2,
-                        name: 'Workspace Lights',
-                        description: 'Smart desk illumination that adapts to your focus levels and gently judges your productivity',
-                        price: 7999,
-                        image: 'https://via.placeholder.com/400x300/ff4500/ffffff?text=Workspace+Lights',
-                        shopUrl: 'https://shop.absurd.industries/products/workspace-lights'
-                    }
-                ];
+                // Content data - this is what gets edited!
+                const content = reactive({
+                    navHome: 'Absurd',
+                    navMakers: 'Makers',
+                    navCurrent: 'The LED Whisperer',
+                    name: 'Amit',
+                    tagline: 'LED Whisperer',
+                    bio: "Building moddable lamps, lightsabers and everything that glows. If you're building anything open-source S.T.E.A.M. (science, technology, engineering, art and math); I want to talk to talk to you!",
+                    ctaLiveStream: 'Live Stream',
+                    ctaContact: 'Ping Amit',
+                    avatar: 'https://codeuncode.com/cdn-cgi/image/format=webp,width=200/https://cdn.codeuncode.com/media/amit.753a67f2.png',
+                    
+                    campaignsTitle: 'Future Hardware',
+                    campaignsSubtitle: 'Hardware that needs your help to exist!',
+                    
+                    productsTitle: 'Shop',
+                    productsSubtitle: 'These are ready to ship within two weeks of ordering!',
+                    
+                    workbenchTitle: 'Workbench',
+                    workbenchSubtitle: 'Projects currently being cooked.',
 
-                const campaigns = [
-                    {
-                        id: 1,
-                        name: 'T1E Smartwatch',
-                        description: 'ePaper smartwatch that lasts for days, not hours. Minimal. Hackable. Open-source.',
-                        progress: 73,
-                        raised: 405000,
-                        emoji: '⌚',
-                        campaignUrl: '/campaign.html'
-                    }
-                ];
+                    socialLinks: [
+                        {
+                            name: 'Absurd Industries',
+                            url: 'https://absurd.industries',
+                            icon: 'fas fa-atom',
+                            featured: false
+                        },
+                        {
+                            name: 'GitHub',
+                            url: 'https://github.com/amit',
+                            icon: 'fab fa-github',
+                            featured: false
+                        },
+                        {
+                            name: 'Code Uncode',
+                            url: 'https://codeuncode.com',
+                            icon: 'fas fa-code',
+                            featured: false
+                        }
+                    ],
 
-                const skills = [
-                    { name: 'Hardware Design', level: 90, description: 'Making circuits that actually work' },
-                    { name: 'Firmware Development', level: 85, description: 'Teaching silicon to think' },
-                    { name: 'PCB Design', level: 88, description: 'Turning schematics into reality' },
-                    { name: 'LED Programming', level: 95, description: 'I speak fluent rainbow' },
-                    { name: 'Product Design', level: 75, description: 'Making things people want' },
-                    { name: 'Technical Writing', level: 70, description: 'Explaining complex stuff simply' }
-                ];
+                    campaigns: [
+                        {
+                            name: 'Deutron',
+                            description: 'Fourlegged sentient desk buddy with a penchant for curiosity.',
+                            progress: 20,
+                            raised: 11110,
+                            video: 'videos/deutron.mp4',
+                            campaignUrl: '/campaign.html'
+                        }
+                    ],
 
-                const socialLinks = [
-                    { 
-                        name: 'Absurd Industries', 
-                        url: 'https://absurd.industries',
-                        icon: 'fas fa-atom',
-                        description: 'Open-source hardware guild HQ'
-                    },
-                    { 
-                        name: 'GitHub', 
-                        url: 'https://github.com/amit',
-                        icon: 'fab fa-github',
-                        description: 'Where the code lives'
-                    },
-                    { 
-                        name: 'Code Uncode', 
-                        url: 'https://codeuncode.com',
-                        icon: 'fas fa-code',
-                        description: 'Digital experience experiments'
-                    }
-                ];
+                    products: [
+                        {
+                            name: 'Lampy',
+                            description: 'Lampy comes with mesmerising ambient modes, seamlessly transitioning from one to another.',
+                            price: 4444,
+                            image: 'https://shop.absurd.industries/cdn/shop/files/lampy-shopabsurdindustries-shopabsurdindustries-968591.jpg?v=1731505856&width=1206',
+                            shopUrl: 'https://shop.absurd.industries/products/lampy'
+                        },
+                        {
+                            name: 'Bloom',
+                            description: 'Bloom is inspired by origami and the anticipation of a flower about to bloom!',
+                            price: 3333,
+                            image: 'https://shop.absurd.industries/cdn/shop/files/bloom-shopabsurdindustries-shopabsurdindustries-956772.jpg?v=1735060584&width=1206',
+                            shopUrl: 'https://shop.absurd.industries/products/bloom'
+                        }
+                    ],
+
+                    workbenchProjects: [
+                        {
+                            name: 'Supersaber',
+                            description: "An open-source lightsaber that's all about being one with the force.",
+                            fullDescription: 'The ultimate open-source lightsaber experience with authentic sound, motion sensing, and modular design.',
+                            status: 'Pre-production',
+                            image: 'https://absurd.industries/assets/images/supersaber/supersaber-socials.jpg',
+                            emoji: '⚔️',
+                            tags: ['Props', 'Sound', 'Motion Sensing']
+                        },
+                        {
+                            name: 'Quadwalkers',
+                            description: 'Robotic desk companions that judge your coding skills and reorganize your cables',
+                            fullDescription: 'Four-legged robots with personality disorders. They patrol your desk, reorganize your cables, and provide sarcastic commentary on your code quality.',
+                            status: 'Design Phase',
+                            image: 'https://via.placeholder.com/400x300/ff4500/ffffff?text=🕷️',
+                            emoji: '🕷️',
+                            tags: ['Robotics', 'AI', 'Servo Motors']
+                        }
+                    ]
+                });
+
+                // Edit modal state
+                const editModal = reactive({
+                    show: false,
+                    type: '',
+                    title: '',
+                    key: '',
+                    value: '',
+                    placeholder: '',
+                    fields: {}
+                });
+
+                // Store original content for reset
+                let originalContent = JSON.parse(JSON.stringify(content));
 
                 const applyTheme = () => {
                     if (isDark.value) {
@@ -625,10 +784,158 @@
                         localStorage.theme = 'light';
                     }
                 };
-                
+
                 const toggleTheme = () => {
                     isDark.value = !isDark.value;
                     applyTheme();
+                };
+
+                const toggleEditMode = () => {
+                    editMode.value = !editMode.value;
+                    if (editMode.value) {
+                        // Show a little tutorial tooltip or something fun
+                        console.log('🎨 Edit Mode Activated! Click on any element to edit it.');
+                    }
+                };
+
+                const editText = (event, key) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'text';
+                    editModal.title = key.charAt(0).toUpperCase() + key.slice(1);
+                    editModal.key = key;
+                    editModal.value = content[key];
+                    editModal.placeholder = `Enter ${key}...`;
+                };
+
+                const editImage = (event, key) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'image';
+                    editModal.title = 'Image';
+                    editModal.key = key;
+                    editModal.value = content[key];
+                    editModal.placeholder = 'https://example.com/image.jpg';
+                };
+
+                const editSocialLink = (event, index) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'object';
+                    editModal.title = 'Social Link';
+                    editModal.key = `socialLinks[${index}]`;
+                    editModal.value = { ...content.socialLinks[index] };
+                    editModal.fields = {
+                        name: { label: 'Name', type: 'text', placeholder: 'Platform name' },
+                        url: { label: 'URL', type: 'url', placeholder: 'https://example.com' },
+                        icon: { label: 'Icon Class', type: 'text', placeholder: 'fab fa-github' }
+                    };
+                };
+
+                const editProduct = (event, index) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'object';
+                    editModal.title = 'Product';
+                    editModal.key = `products[${index}]`;
+                    editModal.value = { ...content.products[index] };
+                    editModal.fields = {
+                        name: { label: 'Product Name', type: 'text', placeholder: 'Amazing LED Thing' },
+                        description: { label: 'Description', type: 'textarea', placeholder: 'What makes this product amazing...' },
+                        price: { label: 'Price (₹)', type: 'number', placeholder: '1999' },
+                        image: { label: 'Image URL', type: 'url', placeholder: 'https://example.com/product.jpg' },
+                        shopUrl: { label: 'Shop URL', type: 'url', placeholder: 'https://shop.example.com/product' }
+                    };
+                };
+
+                const editProject = (event, index) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'object';
+                    editModal.title = 'Project';
+                    editModal.key = `workbenchProjects[${index}]`;
+                    editModal.value = { ...content.workbenchProjects[index] };
+                    editModal.fields = {
+                        name: { label: 'Project Name', type: 'text', placeholder: 'Cool Project' },
+                        description: { label: 'Description', type: 'textarea', placeholder: 'Brief project description...' },
+                        fullDescription: { label: 'Full Description', type: 'textarea', placeholder: 'Detailed project description...' },
+                        status: { label: 'Status', type: 'text', placeholder: 'In Progress' },
+                        image: { label: 'Image URL', type: 'url', placeholder: 'https://example.com/project.jpg' },
+                        emoji: { label: 'Emoji', type: 'text', placeholder: '🚀' }
+                    };
+                };
+
+                const editCampaign = (event, index) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    editModal.show = true;
+                    editModal.type = 'object';
+                    editModal.title = 'Campaign';
+                    editModal.key = `campaigns[${index}]`;
+                    editModal.value = { ...content.campaigns[index] };
+                    editModal.fields = {
+                        name: { label: 'Campaign Name', type: 'text', placeholder: 'Awesome Hardware' },
+                        description: { label: 'Description', type: 'textarea', placeholder: 'What is this campaign about...' },
+                        progress: { label: 'Progress (%)', type: 'number', placeholder: '50' },
+                        raised: { label: 'Amount Raised (₹)', type: 'number', placeholder: '50000' },
+                        video: { label: 'Video URL', type: 'url', placeholder: 'videos/campaign.mp4' },
+                        campaignUrl: { label: 'Campaign URL', type: 'url', placeholder: '/campaign.html' }
+                    };
+                };
+
+                const saveEdit = () => {
+                    if (editModal.type === 'text' || editModal.type === 'image') {
+                        content[editModal.key] = editModal.value;
+                    } else if (editModal.type === 'object') {
+                        // Handle nested object updates
+                        const keys = editModal.key.match(/(\w+)(?:\[(\d+)\])?/);
+                        if (keys[2] !== undefined) {
+                            // Array item update
+                            const arrayKey = keys[1];
+                            const index = parseInt(keys[2]);
+                            content[arrayKey][index] = { ...editModal.value };
+                        }
+                    }
+                    
+                    closeEditModal();
+                    
+                    // Show a cute success message
+                    console.log('✨ Changes saved! Looking good!');
+                };
+
+                const closeEditModal = () => {
+                    editModal.show = false;
+                    editModal.type = '';
+                    editModal.title = '';
+                    editModal.key = '';
+                    editModal.value = '';
+                    editModal.placeholder = '';
+                    editModal.fields = {};
+                };
+
+                const saveChanges = () => {
+                    // In a real app, this would send data to a server
+                    localStorage.setItem('amitPageContent', JSON.stringify(content));
+                    originalContent = JSON.parse(JSON.stringify(content));
+                    alert('🎉 All changes saved to local storage! (In a real app, this would sync to your server)');
+                };
+
+                const resetChanges = () => {
+                    if (confirm('Are you sure you want to reset all changes? This will restore the original content.')) {
+                        Object.assign(content, JSON.parse(JSON.stringify(originalContent)));
+                        console.log('🔄 Content reset to original state');
+                    }
                 };
 
                 const openProjectModal = (project) => {
@@ -639,19 +946,42 @@
                     selectedProject.value = null;
                 };
 
-                onMounted(applyTheme);
-                
-                return { 
-                    isDark, 
-                    toggleTheme,
+                // Load saved content on mount
+                onMounted(() => {
+                    applyTheme();
+                    
+                    const savedContent = localStorage.getItem('amitPageContent');
+                    if (savedContent) {
+                        try {
+                            const parsed = JSON.parse(savedContent);
+                            Object.assign(content, parsed);
+                            console.log('📝 Loaded saved content from local storage');
+                        } catch (e) {
+                            console.log('❌ Failed to load saved content, using defaults');
+                        }
+                    }
+                });
+
+                return {
+                    isDark,
+                    editMode,
+                    content,
+                    editModal,
                     showContactModal,
                     showWorkbenchModal,
                     selectedProject,
-                    workbenchProjects,
-                    products,
-                    campaigns,
-                    skills,
-                    socialLinks,
+                    toggleTheme,
+                    toggleEditMode,
+                    editText,
+                    editImage,
+                    editSocialLink,
+                    editProduct,
+                    editProject,
+                    editCampaign,
+                    saveEdit,
+                    closeEditModal,
+                    saveChanges,
+                    resetChanges,
                     openProjectModal,
                     closeProjectModal
                 };
@@ -659,4 +989,5 @@
         }).mount('#app');
     </script>
 </body>
+
 </html>

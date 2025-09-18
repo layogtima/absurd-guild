@@ -8,6 +8,10 @@ export default [
   route("auth/verify", "routes/auth.verify.tsx"),
   route("auth/logout", "routes/auth.logout.tsx"),
 
+  // Profile routes
+  route("profile", "routes/profile.tsx"),
+  route("profile/setup", "routes/profile.setup.tsx"),
+
   // Future routes (placeholder comments)
   // route("campaigns", "routes/campaigns/_index.tsx"),
   // route("campaigns/:slug", "routes/campaigns/$slug.tsx"),
@@ -16,5 +20,4 @@ export default [
   // route("guild", "routes/guild/_index.tsx"),
   // route("makers/:username", "routes/makers/$username.tsx"),
   // route("dashboard", "routes/dashboard/_index.tsx"),
-  // route("profile", "routes/profile/_index.tsx"),
 ] satisfies RouteConfig;
