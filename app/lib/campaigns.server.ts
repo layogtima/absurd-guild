@@ -15,7 +15,7 @@ export interface Campaign {
   funding_goal: number;
   current_funding: number;
   commitment_percentage: number;
-  status: 'draft' | 'active' | 'funded' | 'shipped' | 'cancelled';
+  status: "draft" | "active" | "funded" | "shipped" | "cancelled";
   category?: string;
   estimated_shipping_date?: string;
   ends_at?: string;
@@ -61,7 +61,9 @@ export async function createCampaign(
     }
   }
 
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     INSERT INTO campaigns (
       creator_id, title, slug, description, short_description,
       hero_video_url, hero_video_embed, hero_video_thumbnail,
@@ -70,22 +72,25 @@ export async function createCampaign(
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     RETURNING *
-  `).bind(
-    creatorId,
-    data.title,
-    data.slug,
-    data.description || null,
-    data.short_description || null,
-    data.hero_video_url || null,
-    heroVideoEmbed,
-    heroVideoThumbnail,
-    data.story_content || null,
-    data.funding_goal,
-    data.commitment_percentage || 40,
-    data.category || null,
-    data.estimated_shipping_date || null,
-    data.ends_at || null
-  ).first<Campaign>();
+  `
+    )
+    .bind(
+      creatorId,
+      data.title,
+      data.slug,
+      data.description || null,
+      data.short_description || null,
+      data.hero_video_url || null,
+      heroVideoEmbed,
+      heroVideoThumbnail,
+      data.story_content || null,
+      data.funding_goal,
+      data.commitment_percentage || 40,
+      data.category || null,
+      data.estimated_shipping_date || null,
+      data.ends_at || null
+    )
+    .first<Campaign>();
 
   if (!result) {
     throw new Error("Failed to create campaign");
@@ -128,18 +133,22 @@ export async function updateCampaign(
     }
 
     // Add or update video embed fields
-    const embedIndex = updateFields.findIndex(field => field.startsWith('hero_video_embed'));
-    const thumbnailIndex = updateFields.findIndex(field => field.startsWith('hero_video_thumbnail'));
+    const embedIndex = updateFields.findIndex((field) =>
+      field.startsWith("hero_video_embed")
+    );
+    const thumbnailIndex = updateFields.findIndex((field) =>
+      field.startsWith("hero_video_thumbnail")
+    );
 
     if (embedIndex === -1) {
-      updateFields.push('hero_video_embed = ?');
+      updateFields.push("hero_video_embed = ?");
       updateValues.push(heroVideoEmbed);
     } else {
       updateValues[embedIndex] = heroVideoEmbed;
     }
 
     if (thumbnailIndex === -1) {
-      updateFields.push('hero_video_thumbnail = ?');
+      updateFields.push("hero_video_thumbnail = ?");
       updateValues.push(heroVideoThumbnail);
     } else {
       updateValues[thumbnailIndex] = heroVideoThumbnail;
@@ -147,16 +156,17 @@ export async function updateCampaign(
   }
 
   // Always update the updated_at timestamp
-  updateFields.push('updated_at = CURRENT_TIMESTAMP');
+  updateFields.push("updated_at = CURRENT_TIMESTAMP");
 
   const query = `
     UPDATE campaigns
-    SET ${updateFields.join(', ')}
+    SET ${updateFields.join(", ")}
     WHERE id = ?
     RETURNING *
   `;
 
-  const result = await db.prepare(query)
+  const result = await db
+    .prepare(query)
     .bind(...updateValues, id)
     .first<Campaign>();
 
@@ -170,8 +180,12 @@ export async function updateCampaign(
 /**
  * Get campaign by ID
  */
-export async function getCampaignById(db: D1Database, id: number): Promise<Campaign | null> {
-  const result = await db.prepare("SELECT * FROM campaigns WHERE id = ?")
+export async function getCampaignById(
+  db: D1Database,
+  id: number
+): Promise<Campaign | null> {
+  const result = await db
+    .prepare("SELECT * FROM campaigns WHERE id = ?")
     .bind(id)
     .first<Campaign>();
 
@@ -181,8 +195,12 @@ export async function getCampaignById(db: D1Database, id: number): Promise<Campa
 /**
  * Get campaign by slug
  */
-export async function getCampaignBySlug(db: D1Database, slug: string): Promise<Campaign | null> {
-  const result = await db.prepare("SELECT * FROM campaigns WHERE slug = ?")
+export async function getCampaignBySlug(
+  db: D1Database,
+  slug: string
+): Promise<Campaign | null> {
+  const result = await db
+    .prepare("SELECT * FROM campaigns WHERE slug = ?")
     .bind(slug)
     .first<Campaign>();
 
@@ -198,12 +216,17 @@ export async function getCampaignsByCreator(
   limit: number = 10,
   offset: number = 0
 ): Promise<Campaign[]> {
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT * FROM campaigns
     WHERE creator_id = ?
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
-  `).bind(creatorId, limit, offset).all<Campaign>();
+  `
+    )
+    .bind(creatorId, limit, offset)
+    .all<Campaign>();
 
   return results.results;
 }
@@ -216,12 +239,17 @@ export async function getActiveCampaigns(
   limit: number = 10,
   offset: number = 0
 ): Promise<Campaign[]> {
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT * FROM campaigns
     WHERE status = 'active'
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
-  `).bind(limit, offset).all<Campaign>();
+  `
+    )
+    .bind(limit, offset)
+    .all<Campaign>();
 
   return results.results;
 }
@@ -232,21 +260,26 @@ export async function getActiveCampaigns(
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 /**
  * Check if slug is available
  */
-export async function isSlugAvailable(db: D1Database, slug: string, excludeId?: number): Promise<boolean> {
+export async function isSlugAvailable(
+  db: D1Database,
+  slug: string,
+  excludeId?: number
+): Promise<boolean> {
   const query = excludeId
     ? "SELECT id FROM campaigns WHERE slug = ? AND id != ?"
     : "SELECT id FROM campaigns WHERE slug = ?";
 
   const params = excludeId ? [slug, excludeId] : [slug];
 
-  const result = await db.prepare(query)
+  const result = await db
+    .prepare(query)
     .bind(...params)
     .first();
 
@@ -256,10 +289,18 @@ export async function isSlugAvailable(db: D1Database, slug: string, excludeId?: 
 /**
  * Increment campaign views
  */
-export async function incrementCampaignViews(db: D1Database, campaignId: number): Promise<void> {
-  await db.prepare(`
+export async function incrementCampaignViews(
+  db: D1Database,
+  campaignId: number
+): Promise<void> {
+  await db
+    .prepare(
+      `
     UPDATE campaigns
     SET views_count = views_count + 1
     WHERE id = ?
-  `).bind(campaignId).run();
+  `
+    )
+    .bind(campaignId)
+    .run();
 }

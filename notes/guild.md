@@ -38,6 +38,7 @@ Before you implement anything, make an implementation plan and save it to this d
 Based on the HTML mockups, we need the following core entities:
 
 #### 1. Users Table
+
 ```sql
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,6 +55,7 @@ CREATE TABLE users (
 ```
 
 #### 2. Campaigns Table
+
 ```sql
 CREATE TABLE campaigns (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,6 +80,7 @@ CREATE TABLE campaigns (
 ```
 
 #### 3. Campaign Assets Table (Open Source Files)
+
 ```sql
 CREATE TABLE campaign_assets (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -95,6 +98,7 @@ CREATE TABLE campaign_assets (
 ```
 
 #### 4. Rewards Table
+
 ```sql
 CREATE TABLE rewards (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -113,6 +117,7 @@ CREATE TABLE rewards (
 ```
 
 #### 5. Backers Table
+
 ```sql
 CREATE TABLE backers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -135,6 +140,7 @@ CREATE TABLE backers (
 ```
 
 #### 6. Products Table (for existing shop items)
+
 ```sql
 CREATE TABLE products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -155,6 +161,7 @@ CREATE TABLE products (
 ```
 
 #### 7. Campaign Updates Table
+
 ```sql
 CREATE TABLE campaign_updates (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -168,6 +175,7 @@ CREATE TABLE campaign_updates (
 ```
 
 #### 8. Shipping Addresses Table
+
 ```sql
 CREATE TABLE shipping_addresses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -187,6 +195,7 @@ CREATE TABLE shipping_addresses (
 ```
 
 #### 9. User Sessions Table
+
 ```sql
 CREATE TABLE user_sessions (
   id TEXT PRIMARY KEY,
@@ -198,6 +207,7 @@ CREATE TABLE user_sessions (
 ```
 
 #### 10. Site Settings Table
+
 ```sql
 CREATE TABLE site_settings (
   key TEXT PRIMARY KEY,
@@ -216,6 +226,7 @@ INSERT INTO site_settings (key, value, description) VALUES
 ### Application Architecture
 
 #### 1. File Structure
+
 ```
 app/
 ├── root.tsx                 # Root layout with theme, navigation
@@ -249,29 +260,34 @@ app/
 #### 2. Technology Stack Implementation
 
 **Frontend:**
+
 - React Router v7 (already configured)
 - TailwindCSS with the existing design system from HTML mockups
 - TypeScript for type safety
 - Existing design tokens and CSS variables
 
 **Backend:**
+
 - Cloudflare D1 for database
 - Cloudflare R2 for file storage (campaign assets, user uploads)
 - Cloudflare Workers for serverless functions
 - Session-based authentication with persistent cookies
 
 **Authentication:**
+
 - Google OAuth 2.0
 - Email + OTP for users without Google accounts
 - Long-lived sessions (30 days default)
 
 **Payments:**
+
 - Razorpay for Indian market
 - Two-phase payment: commitment (40%) + delivery payment (60%)
 
 ### Implementation Phases
 
 #### Phase 1: Core Foundation (Week 1-2)
+
 1. **Database Setup**
    - Create D1 database and run migrations
    - Set up connection utilities and ORM-like helpers
@@ -289,6 +305,7 @@ app/
    - Set up navigation and layout
 
 #### Phase 2: Campaign Management (Week 3-4)
+
 1. **Campaign Creation Flow**
    - Multi-step campaign creation form
    - File upload to R2 for open-source assets
@@ -304,6 +321,7 @@ app/
    - Campaign management dashboard
 
 #### Phase 3: Backing System (Week 5-6)
+
 1. **Payment Integration**
    - Razorpay integration for commitment payments
    - Payment tracking and status management
@@ -316,6 +334,7 @@ app/
    - Payment processing
 
 #### Phase 4: Advanced Features (Week 7-8)
+
 1. **Campaign Updates**
    - Update creation and display
    - Notification system for backers
@@ -331,12 +350,14 @@ app/
 ### Key Features Implementation
 
 #### 1. India-First Commitment System
+
 - 40% upfront payment to secure the product
 - 60% payment on delivery/shipping
 - Full refund if project doesn't deliver
 - Configurable percentage by super admin
 
 #### 2. Open Source Requirements
+
 - Mandatory file uploads for campaigns:
   - 3D files for enclosure and parts
   - Circuit design files (KiCad, etc.)
@@ -346,6 +367,7 @@ app/
   - Prototype photos and videos
 
 #### 3. Campaign States
+
 - **Draft**: Creator working on campaign
 - **Active**: Live and accepting backers
 - **Funded**: Goal reached, preparation for production
@@ -354,6 +376,7 @@ app/
 - **Cancelled**: Campaign cancelled, refunds processed
 
 #### 4. User Roles
+
 - **Visitors**: Can browse, must sign up to back
 - **Users**: Can back campaigns, create profiles
 - **Makers**: Can create campaigns and products

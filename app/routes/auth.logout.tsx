@@ -1,6 +1,10 @@
 import { type ActionFunctionArgs, redirect } from "react-router";
 import { getDB, getKV } from "~/lib/db.server";
-import { createAuthService, getSessionFromCookie, clearSessionCookie } from "~/lib/auth.server";
+import {
+  createAuthService,
+  getSessionFromCookie,
+  clearSessionCookie,
+} from "~/lib/auth.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = getDB(context);
@@ -17,8 +21,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
   // Redirect to login with cleared cookie
   return redirect("/auth/login", {
     headers: {
-      "Set-Cookie": clearSessionCookie()
-    }
+      "Set-Cookie": clearSessionCookie(),
+    },
   });
 }
 

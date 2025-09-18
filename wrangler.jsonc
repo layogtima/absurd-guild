@@ -8,25 +8,25 @@
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
+    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
   },
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "absurd-guild-db",
-      "database_id": "7ce91918-0503-498e-90ae-e80028ec4fa0"
-    }
+      "database_id": "7ce91918-0503-498e-90ae-e80028ec4fa0",
+    },
   ],
   "kv_namespaces": [
     {
       "binding": "absurd_guild_sessions",
       "id": "e1ad7ba0b2a84a7ea148214a2c73355b",
-      "preview_id": "a802114f8e444dfaa610d0233348d5ab"
-    }
-  ]
+      "preview_id": "a802114f8e444dfaa610d0233348d5ab",
+    },
+  ],
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

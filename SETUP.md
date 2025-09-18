@@ -106,16 +106,16 @@ Replace the placeholder values in `wrangler.jsonc` with your actual IDs:
     {
       "binding": "DB",
       "database_name": "absurd-guild-db",
-      "database_id": "your-actual-database-id"
-    }
+      "database_id": "your-actual-database-id",
+    },
   ],
   "kv_namespaces": [
     {
       "binding": "SESSIONS",
       "id": "your-actual-kv-id",
-      "preview_id": "your-actual-preview-kv-id"
-    }
-  ]
+      "preview_id": "your-actual-preview-kv-id",
+    },
+  ],
 }
 ```
 

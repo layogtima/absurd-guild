@@ -4,23 +4,28 @@
 ## Progressive Enhancement Patterns
 
 ### UI State Management
+
 - Use URL params instead of React state: `searchParams.get("edit") === "true"`
 - Benefits: bookmarkable, works without JS, browser navigation
 
 ### Form Patterns
+
 - **Links** for UI state (show/hide): `<Link to="?edit=true">Edit</Link>`
 - **POST forms** for data mutations only
 - Actions handle data changes, not UI state
 
 ### Messages
+
 - Success/error via URL: `redirect("/page?success=Updated")`
 - Add dismiss links: `<Link to="/page">✕</Link>`
 
 ### HTTP Methods
+
 - **GET**: data retrieval, UI state, navigation
 - **POST**: create/update/delete data
 
 ### Quick Example
+
 ```tsx
 // Component
 const editing = searchParams.get("edit") === "true";
@@ -28,7 +33,11 @@ const success = searchParams.get("success");
 
 return (
   <div>
-    {success && <div>{success} <Link to="/page">✕</Link></div>}
+    {success && (
+      <div>
+        {success} <Link to="/page">✕</Link>
+      </div>
+    )}
 
     {editing ? (
       <Link to="/page">Cancel</Link>

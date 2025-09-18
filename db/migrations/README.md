@@ -52,6 +52,7 @@ wrangler d1 execute absurd-guild-db --command="ALTER TABLE users DROP COLUMN is_
 ## Migration Order
 
 Always apply migrations in order:
+
 1. 001_initial_schema.sql (base tables)
 2. 002_maker_profiles.sql (maker features)
 3. 003_enhanced_campaigns.sql (campaign enhancements)
@@ -59,11 +60,13 @@ Always apply migrations in order:
 ## Development vs Production
 
 ### Development
+
 ```bash
 wrangler d1 execute absurd-guild-db --file=./migrations/XXX_migration.sql
 ```
 
 ### Production
+
 ```bash
 wrangler d1 execute absurd-guild-db --file=./migrations/XXX_migration.sql --env=production
 ```

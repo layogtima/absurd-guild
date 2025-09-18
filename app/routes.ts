@@ -10,7 +10,6 @@ export default [
 
   // Profile routes
   route("profile", "routes/profile.tsx"),
-  route("profile/setup", "routes/profile.setup.tsx"),
 
   // Future routes (placeholder comments)
   // route("campaigns", "routes/campaigns/_index.tsx"),

@@ -58,16 +58,36 @@ html.light {
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Helper classes */
-.bg-primary { background-color: var(--bg-primary); }
-.bg-secondary { background-color: var(--bg-secondary); }
-.bg-tertiary { background-color: var(--bg-tertiary); }
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.border-theme { border-color: var(--border-color); }
-.accent-orange { background-color: var(--accent-orange); }
-.accent-orange-text { color: var(--accent-orange); }
-.text-on-accent { color: var(--text-on-accent); }
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+.bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.border-theme {
+  border-color: var(--border-color);
+}
+.accent-orange {
+  background-color: var(--accent-orange);
+}
+.accent-orange-text {
+  color: var(--accent-orange);
+}
+.text-on-accent {
+  color: var(--text-on-accent);
+}

@@ -20,6 +20,7 @@ for details on these look at HTML mockups in html/
 #### 1.1 Database Schema Updates
 
 **Maker Profiles Extension** (extend existing users table):
+
 ```sql
 -- Add maker-specific fields to users table
 ALTER TABLE users ADD COLUMN is_maker BOOLEAN DEFAULT FALSE;
@@ -42,6 +43,7 @@ ALTER TABLE users ADD COLUMN total_raised INTEGER DEFAULT 0; -- in paise
 ```
 
 **Social Links Table** (for flexible social media links):
+
 ```sql
 CREATE TABLE maker_social_links (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,6 +60,7 @@ CREATE TABLE maker_social_links (
 #### 1.2 Profile Routes & Components
 
 **Routes to Create:**
+
 - `/profile/setup` - Initial maker profile setup (after first login)
 - `/profile/edit` - Edit existing profile
 - `/makers/:username` - Public maker profile view
@@ -65,6 +68,7 @@ CREATE TABLE maker_social_links (
 - `/profile/preview` - Preview how profile looks to others
 
 **Components to Create:**
+
 - `MakerProfileForm` - Profile creation/editing form
 - `MakerProfileDisplay` - Public profile display (based on profile.html)
 - `ImageUploader` - Photo upload component with R2 integration
@@ -74,11 +78,13 @@ CREATE TABLE maker_social_links (
 #### 1.3 Profile Features
 
 **Minimum Required Fields:**
+
 - Email (already have)
 - Maker name (public name)
 - Avatar photo
 
 **Optional Fields:**
+
 - Tagline (e.g., "LED Whisperer")
 - Bio (long description)
 - Location
@@ -88,6 +94,7 @@ CREATE TABLE maker_social_links (
 - Website
 
 **Profile Features:**
+
 - Live edit mode (like profile.html demonstrates)
 - Photo upload to Cloudflare R2
 - Social media integration
@@ -100,6 +107,7 @@ CREATE TABLE maker_social_links (
 #### 2.1 Database Schema (already exists, minor updates)
 
 **Update Campaigns Table:**
+
 ```sql
 -- Add fields for campaign media and content
 ALTER TABLE campaigns ADD COLUMN hero_video_embed TEXT; -- YouTube/Vimeo embed code
@@ -116,6 +124,7 @@ ALTER TABLE campaigns ADD COLUMN views_count INTEGER DEFAULT 0;
 #### 2.2 Campaign Routes
 
 **Campaign Management Routes:**
+
 - `/campaigns/create` - Create new campaign (multi-step)
 - `/campaigns/:slug/edit` - Edit existing campaign
 - `/campaigns/:slug` - Public campaign view (based on campaign.html)
@@ -125,6 +134,7 @@ ALTER TABLE campaigns ADD COLUMN views_count INTEGER DEFAULT 0;
 #### 2.3 Campaign Features
 
 **Campaign Creation Flow:**
+
 1. Basic info (title, description, funding goal)
 2. Story & media (hero video, images, detailed description)
 3. Rewards setup (tiers, pricing, shipping)
@@ -132,6 +142,7 @@ ALTER TABLE campaigns ADD COLUMN views_count INTEGER DEFAULT 0;
 5. Review & launch
 
 **Campaign Page Features:**
+
 - Floating backing panel (from campaign.html)
 - Progress tracking with India-first commitment system
 - Updates feed
@@ -145,6 +156,7 @@ ALTER TABLE campaigns ADD COLUMN views_count INTEGER DEFAULT 0;
 #### 3.1 Products Integration
 
 **Enhanced Products Table:**
+
 ```sql
 -- Update existing products table
 ALTER TABLE products ADD COLUMN status TEXT DEFAULT 'active'; -- active, out_of_stock, discontinued
@@ -161,6 +173,7 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 #### 3.2 Product Routes
 
 **Product Management Routes:**
+
 - `/products/create` - Create new product listing
 - `/products/:slug/edit` - Edit product
 - `/shop` - Public shop (all products)
@@ -170,6 +183,7 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 #### 3.3 Product Features
 
 **Product Management:**
+
 - Product photo gallery
 - Shopify integration (redirect to purchase)
 - Open source documentation links
@@ -181,12 +195,14 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 #### 4.1 File Upload System
 
 **Cloudflare R2 Integration:**
+
 - Profile photos and cover images
 - Campaign media (images, videos)
 - Open source files (3D models, schematics, code)
 - Product photos
 
 **File Management:**
+
 - Automatic image optimization
 - Multiple image sizes/thumbnails
 - File type validation
@@ -195,6 +211,7 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 #### 4.2 Live Edit System
 
 **Based on profile.html:**
+
 - Toggle edit mode
 - Click-to-edit interface
 - Real-time preview
@@ -204,6 +221,7 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 #### 4.3 Dashboard System
 
 **Maker Dashboard Features:**
+
 - Profile completion status
 - Campaign performance metrics
 - Product sales analytics
@@ -214,17 +232,20 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 ## Implementation Priority
 
 ### MVP (Minimum Viable Product):
+
 1. **Basic Profile Creation** - Name, photo, bio
 2. **Profile Display** - Public maker profiles
 3. **Simple Campaign Creation** - Basic campaign with funding goal
 4. **Campaign Display** - Public campaign pages with backing
 
 ### Phase 2 Enhancements:
+
 1. **Advanced Profile Features** - Social links, skills, verification
 2. **Enhanced Campaign Management** - Media uploads, updates, analytics
 3. **Product Management** - Full product CRUD
 
 ### Phase 3 Polish:
+
 1. **Live Edit System** - Real-time editing interface
 2. **File Upload System** - R2 integration for all media
 3. **Dashboard Analytics** - Comprehensive maker dashboard
@@ -232,6 +253,7 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 ## Technical Considerations
 
 ### Authentication Flow:
+
 1. User signs up with magic link (existing)
 2. After first login → redirect to `/profile/setup`
 3. Complete maker profile setup
@@ -239,11 +261,13 @@ ALTER TABLE products ADD COLUMN documentation_url TEXT;
 5. Redirect to `/dashboard`
 
 ### URL Structure:
+
 - `/makers/amit` - Public profile
 - `/campaigns/t1e-smartwatch` - Campaign page
 - `/shop/lampy` - Product page
 
 ### Data Validation:
+
 - Required fields enforcement
 - Image size/format validation
 - URL validation for social links

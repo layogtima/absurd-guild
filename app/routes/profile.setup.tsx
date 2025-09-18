@@ -1,4 +1,8 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  redirect,
+} from "react-router";
 import { requireAuth, createAuthService } from "~/lib/auth.server";
 import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { getMakerProfile, createMakerProfile } from "~/lib/makers.server";
@@ -52,7 +56,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
     return redirect("/profile?success=Profile created successfully");
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Failed to create profile";
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to create profile";
     return redirect(`/profile/setup?error=${encodeURIComponent(errorMessage)}`);
   }
 }

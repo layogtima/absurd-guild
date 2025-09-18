@@ -35,10 +35,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Absurd Guild - Open Source Hardware Platform</title>
-        <meta name="description" content="Open-source hardware platform for makers. Run campaigns, raise funds, and share your hardware projects with the world." />
+        <meta
+          name="description"
+          content="Open-source hardware platform for makers. Run campaigns, raise funds, and share your hardware projects with the world."
+        />
         <Meta />
         <Links />
-        <script src="https://kit.fontawesome.com/e0c6d65845.js" crossOrigin="anonymous"></script>
+        <script
+          src="https://kit.fontawesome.com/e0c6d65845.js"
+          crossOrigin="anonymous"
+        ></script>
       </head>
       <body>
         {children}
