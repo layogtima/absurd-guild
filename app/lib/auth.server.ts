@@ -8,14 +8,16 @@ import {
   createUserSession,
   getUserFromSession,
   deleteSession,
-  type User
+  type User,
 } from "./db.server";
 
 // Generate a secure random token
 function generateToken(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    ""
+  );
 }
 
 // Generate session ID
@@ -29,30 +31,85 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-// Send magic link email (placeholder - implement with your email service)
-async function sendMagicLinkEmail(email: string, magicLink: string): Promise<void> {
-  // TODO: Implement with your email service (SendGrid, Resend, etc.)
-  console.log(`Magic link for ${email}: ${magicLink}`);
+// Send magic link email using Resend
+async function sendMagicLinkEmail(
+  email: string,
+  magicLink: string,
+  resendApiKey?: string,
+  isLocal: boolean = false
+): Promise<void> {
+  // Always log in local development
+  if (isLocal) {
+    console.log(`Magic link for ${email}: ${magicLink}`);
+  }
 
-  // For development, you might want to log this or use a service like Mailtrap
-  // In production, replace with actual email sending logic
+  // If no API key, only log (for local development)
+  if (!resendApiKey) {
+    if (!isLocal) {
+      throw new Error("RESEND_API_KEY is required for sending emails");
+    }
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Absurd Guild <noreply@mailer.absurd.industries>",
+        to: [email],
+        subject: "Sign in to Absurd Guild",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Sign in to Absurd Guild</h2>
+            <p>Click the link below to sign in to your account:</p>
+            <a href="${magicLink}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+              Sign In
+            </a>
+            <p>This link will expire in 15 minutes.</p>
+            <p>If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to send email: ${error}`);
+    }
+  } catch (error) {
+    console.error("Error sending email via Resend:", error);
+    throw error;
+  }
 }
 
 export interface AuthService {
-  sendMagicLink: (email: string, baseUrl: string) => Promise<{ success: boolean; message: string }>;
-  verifyMagicLink: (token: string) => Promise<{ user: User | null; sessionId: string | null }>;
+  sendMagicLink: (
+    email: string,
+    baseUrl: string
+  ) => Promise<{ success: boolean; message: string }>;
+  verifyMagicLink: (
+    token: string
+  ) => Promise<{ user: User | null; sessionId: string | null }>;
   getCurrentUser: (sessionId: string | null) => Promise<User | null>;
   logout: (sessionId: string) => Promise<void>;
 }
 
 export function createAuthService(
   db: D1Database,
-  kv: KVNamespace
+  kv: KVNamespace,
+  env?: { RESEND_API_KEY?: string; NODE_ENV?: string }
 ): AuthService {
   return {
     async sendMagicLink(email: string, baseUrl: string) {
       if (!isValidEmail(email)) {
-        return { success: false, message: "Please enter a valid email address" };
+        return {
+          success: false,
+          message: "Please enter a valid email address",
+        };
       }
 
       try {
@@ -66,17 +123,24 @@ export function createAuthService(
         const magicLinkUrl = `${baseUrl}/auth/verify?token=${token}`;
 
         // Send email
-        await sendMagicLinkEmail(email, magicLinkUrl);
+        const isLocal = env?.NODE_ENV === "development" || !env?.NODE_ENV;
+        await sendMagicLinkEmail(
+          email,
+          magicLinkUrl,
+          env?.RESEND_API_KEY,
+          isLocal
+        );
 
         return {
           success: true,
-          message: "Magic link sent! Check your email and click the link to sign in."
+          message:
+            "Magic link sent! Check your email and click the link to sign in.",
         };
       } catch (error) {
         console.error("Error sending magic link:", error);
         return {
           success: false,
-          message: "Failed to send magic link. Please try again."
+          message: "Failed to send magic link. Please try again.",
         };
       }
     },
@@ -125,7 +189,7 @@ export function createAuthService(
       } catch (error) {
         console.error("Error during logout:", error);
       }
-    }
+    },
   };
 }
 
@@ -133,18 +197,24 @@ export function createAuthService(
 const SESSION_COOKIE_NAME = "absurd_session";
 
 export function createSessionCookie(sessionId: string): string {
-  return `${SESSION_COOKIE_NAME}=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${30 * 24 * 60 * 60}`; // 30 days
+  return `${SESSION_COOKIE_NAME}=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${
+    30 * 24 * 60 * 60
+  }`; // 30 days
 }
 
-export function getSessionFromCookie(cookieHeader: string | null): string | null {
+export function getSessionFromCookie(
+  cookieHeader: string | null
+): string | null {
   if (!cookieHeader) return null;
 
-  const cookies = cookieHeader.split(';').map(c => c.trim());
-  const sessionCookie = cookies.find(c => c.startsWith(`${SESSION_COOKIE_NAME}=`));
+  const cookies = cookieHeader.split(";").map((c) => c.trim());
+  const sessionCookie = cookies.find((c) =>
+    c.startsWith(`${SESSION_COOKIE_NAME}=`)
+  );
 
   if (!sessionCookie) return null;
 
-  return sessionCookie.split('=')[1];
+  return sessionCookie.split("=")[1];
 }
 
 export function clearSessionCookie(): string {

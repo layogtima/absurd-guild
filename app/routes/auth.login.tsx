@@ -1,12 +1,13 @@
 import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
 import { Form, useActionData, useNavigation, useSearchParams } from "react-router";
-import { getDB, getKV } from "~/lib/db.server";
+import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { createAuthService, getOptionalAuth } from "~/lib/auth.server";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const db = getDB(context);
   const kv = getKV(context);
-  const authService = createAuthService(db, kv);
+  const env = getEnv(context);
+  const authService = createAuthService(db, kv, env);
 
   // If already logged in, redirect to home or intended destination
   const user = await getOptionalAuth(request, authService);
@@ -22,7 +23,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = getDB(context);
   const kv = getKV(context);
-  const authService = createAuthService(db, kv);
+  const env = getEnv(context);
+  const authService = createAuthService(db, kv, env);
 
   const formData = await request.formData();
   const email = formData.get("email") as string;
@@ -84,7 +86,7 @@ export default function Login() {
               <div>
                 <h3 className="text-xl font-bold text-primary mb-2">Check Your Email</h3>
                 <p className="text-secondary">
-                  {actionData.message}
+                  {'message' in actionData ? actionData.message : ''}
                 </p>
               </div>
               <div className="text-sm text-secondary bg-tertiary rounded-xl p-4">
@@ -111,7 +113,7 @@ export default function Login() {
                   className="w-full bg-tertiary border-2 border-theme rounded-xl p-4 text-primary focus:border-orange-300 outline-none transition-all"
                   placeholder="your@email.com"
                 />
-                {actionData?.error && (
+                {actionData && 'error' in actionData && (
                   <p className="mt-2 text-sm text-red-600">{actionData.error}</p>
                 )}
               </div>

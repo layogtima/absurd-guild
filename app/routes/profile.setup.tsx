@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "react-router";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
 import { requireAuth, createAuthService } from "~/lib/auth.server";
 import { getDB, getKV } from "~/lib/db.server";
 import { getMakerProfile, createMakerProfile } from "~/lib/makers.server";

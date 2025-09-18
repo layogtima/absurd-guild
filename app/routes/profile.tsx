@@ -1,6 +1,6 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "react-router";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
 import { requireAuth, createAuthService } from "~/lib/auth.server";
-import { getDB, getKV } from "~/lib/db.server";
+import { getDB, getKV, getEnv } from "~/lib/db.server";
 import {
   getFullMakerProfile,
   updateMakerProfile,
@@ -13,7 +13,8 @@ import { useLoaderData, useActionData } from "react-router";
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const db = getDB(context);
   const kv = getKV(context);
-  const authService = createAuthService(db, kv);
+  const env = getEnv(context);
+  const authService = createAuthService(db, kv, env);
 
   const user = await requireAuth(request, authService);
 
@@ -30,7 +31,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = getDB(context);
   const kv = getKV(context);
-  const authService = createAuthService(db, kv);
+  const env = getEnv(context);
+  const authService = createAuthService(db, kv, env);
 
   const user = await requireAuth(request, authService);
   const formData = await request.formData();

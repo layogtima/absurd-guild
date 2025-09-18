@@ -1,13 +1,14 @@
 import { type LoaderFunctionArgs } from "react-router";
 import { Link } from "react-router";
-import { getDB, getKV } from "~/lib/db.server";
+import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { createAuthService, getOptionalAuth } from "~/lib/auth.server";
 import { Navigation } from "~/components/Navigation";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const db = getDB(context);
   const kv = getKV(context);
-  const authService = createAuthService(db, kv);
+  const env = getEnv(context);
+  const authService = createAuthService(db, kv, env);
 
   const user = await getOptionalAuth(request, authService);
 
