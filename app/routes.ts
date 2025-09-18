@@ -11,6 +11,9 @@ export default [
   // Profile routes
   route("profile", "routes/profile.tsx"),
 
+  // Maker public profiles
+  route("m/:id", "routes/m.$id.tsx"),
+
   // Future routes (placeholder comments)
   // route("campaigns", "routes/campaigns/_index.tsx"),
   // route("campaigns/:slug", "routes/campaigns/$slug.tsx"),

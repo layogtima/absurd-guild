@@ -15,9 +15,17 @@ import {
   deleteProfileLink,
   createMakerProfile,
 } from "~/lib/makers.server";
+import {
+  getUserProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  parsePrice,
+} from "~/lib/products.server";
 import { useLoaderData, useActionData } from "react-router";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
+import { ProductManagement } from "~/components/profile/ProductManagement";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const db = getDB(context);
@@ -30,7 +38,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   // Get user profile with links
   const profile = await getFullMakerProfile(db, user.id);
 
-  return { profile, user };
+  // Get user products
+  const products = await getUserProducts(db, user.id);
+
+  return { profile, user, products };
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -145,6 +156,100 @@ export async function action({ request, context }: ActionFunctionArgs) {
       }
     }
 
+    if (action === "createProduct") {
+      const title = formData.get("title") as string;
+      const description = formData.get("description") as string;
+      const priceStr = formData.get("price") as string;
+      const category = formData.get("category") as string;
+      const imageUrl = formData.get("imageUrl") as string;
+      const shopifyUrl = formData.get("shopifyUrl") as string;
+
+      if (!title?.trim()) {
+        return { error: "Product title is required" };
+      }
+
+      if (!priceStr?.trim()) {
+        return { error: "Product price is required" };
+      }
+
+      try {
+        const price = parsePrice(priceStr);
+
+        await createProduct(db, user.id, {
+          title,
+          description: description || undefined,
+          price,
+          category: category || undefined,
+          image_url: imageUrl || undefined,
+          shopify_url: shopifyUrl || undefined,
+        });
+
+        return redirect("/profile?success=Product+created+successfully");
+      } catch (error) {
+        console.error("Error creating product:", error);
+        return {
+          error:
+            error instanceof Error ? error.message : "Failed to create product",
+        };
+      }
+    }
+
+    if (action === "updateProduct") {
+      const productId = parseInt(formData.get("productId") as string);
+      const title = formData.get("title") as string;
+      const description = formData.get("description") as string;
+      const priceStr = formData.get("price") as string;
+      const category = formData.get("category") as string;
+      const imageUrl = formData.get("imageUrl") as string;
+      const shopifyUrl = formData.get("shopifyUrl") as string;
+
+      if (!productId || isNaN(productId)) {
+        return { error: "Invalid product ID" };
+      }
+
+      try {
+        const updateData: any = {};
+
+        if (title?.trim()) updateData.title = title;
+        if (description !== null)
+          updateData.description = description || undefined;
+        if (priceStr?.trim()) updateData.price = parsePrice(priceStr);
+        if (category !== null) updateData.category = category || undefined;
+        if (imageUrl !== null) updateData.image_url = imageUrl || undefined;
+        if (shopifyUrl !== null)
+          updateData.shopify_url = shopifyUrl || undefined;
+
+        await updateProduct(db, user.id, productId, updateData);
+
+        return redirect("/profile?success=Product+updated+successfully");
+      } catch (error) {
+        console.error("Error updating product:", error);
+        return {
+          error:
+            error instanceof Error ? error.message : "Failed to update product",
+        };
+      }
+    }
+
+    if (action === "deleteProduct") {
+      const productId = parseInt(formData.get("productId") as string);
+
+      if (!productId || isNaN(productId)) {
+        return { error: "Invalid product ID" };
+      }
+
+      try {
+        await deleteProduct(db, user.id, productId);
+        return { success: "Product deleted successfully" };
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        return {
+          error:
+            error instanceof Error ? error.message : "Failed to delete product",
+        };
+      }
+    }
+
     // console.log("No action matched, returning invalid action error");
     return { error: "Invalid action" };
   } catch (error) {
@@ -161,7 +266,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-  const { profile, user } = useLoaderData<typeof loader>();
+  const { profile, user, products } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const [searchParams] = useSearchParams();
@@ -398,7 +503,7 @@ export default function Profile() {
                       </button>
                       <Link
                         to="/profile"
-                        className="border accent-orange px-4 py-2 rounded-md hover:bg-orange-600"
+                        className="border px-4 py-2 rounded-md hover:bg-orange-600"
                       >
                         Cancel
                       </Link>
@@ -407,8 +512,11 @@ export default function Profile() {
                 </div>
               )}
 
+              {/* Products Section */}
+              <ProductManagement products={products} />
+
               {/* Profile Links */}
-              <div className="bg-secondary rounded-lg shadow-md p-6">
+              <div className="bg-secondary rounded-lg shadow-md p-6 mt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-primary">
                     Profile Links

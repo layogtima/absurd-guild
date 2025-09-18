@@ -1,5 +1,17 @@
 // Maker profile management utilities
 
+export interface User {
+  id: number;
+  email: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  tagline: string | null;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
 export interface MakerProfile {
   id: number;
   email: string;
@@ -240,9 +252,42 @@ export async function deleteProfileLink(
     .bind(linkId, userId)
     .run();
 
-  if (result.changes === 0) {
+  if (result.meta.rows_written === 0) {
     throw new Error("Link not found or you don't have permission to delete it");
   }
+}
+
+/**
+ * Get maker by ID or maker name for public viewing
+ */
+export async function getMakerByIdOrName(
+  db: D1Database,
+  idOrName: string | number
+): Promise<User | null> {
+  let query: string;
+  let bindValue: string | number;
+
+  if (typeof idOrName === "number") {
+    // Search by ID
+    query = `
+      SELECT id, email, display_name, avatar_url, bio, tagline, created_at, updated_at, is_active
+      FROM users
+      WHERE id = ? AND is_active = TRUE AND is_maker = TRUE
+    `;
+    bindValue = idOrName;
+  } else {
+    // Search by maker_name
+    query = `
+      SELECT id, email, display_name, avatar_url, bio, tagline, created_at, updated_at, is_active
+      FROM users
+      WHERE maker_name = ? AND is_active = TRUE AND is_maker = TRUE
+    `;
+    bindValue = idOrName;
+  }
+
+  const result = await db.prepare(query).bind(bindValue).first();
+
+  return (result as unknown as User) || null;
 }
 
 /**
