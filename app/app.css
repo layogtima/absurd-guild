@@ -20,6 +20,20 @@ html {
   font-family: var(--font-main);
 }
 
+/* System theme preference (works without JavaScript) */
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    /* Dark Theme Overrides */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #111111;
+    --text-primary: #ece0cf;
+    --text-secondary: #9ca3af;
+    --border-color: #3a3a3a;
+  }
+}
+
+/* Explicit dark theme (when JavaScript sets .dark class) */
 html.dark {
   /* Dark Theme Overrides */
   --bg-primary: #1a1a1a;
@@ -28,6 +42,17 @@ html.dark {
   --text-primary: #ece0cf;
   --text-secondary: #9ca3af;
   --border-color: #3a3a3a;
+}
+
+/* Explicit light theme (when JavaScript sets .light class) */
+html.light {
+  /* Force light theme even if system prefers dark */
+  --bg-primary: #ece0cf;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e0d4c3;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5c5c5c;
+  --border-color: #d1c4b3;
 }
 
 body {

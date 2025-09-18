@@ -61,17 +61,6 @@ export function Navigation({ user }: NavigationProps) {
 
         {/* User Actions */}
         <div className="flex items-center space-x-4">
-          {/* Theme Toggle */}
-          <button
-            className="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center hover:accent-orange transition-colors"
-            onClick={() => {
-              document.documentElement.classList.toggle('dark');
-              const isDark = document.documentElement.classList.contains('dark');
-              localStorage.theme = isDark ? 'dark' : 'light';
-            }}
-          >
-            <i className="fas fa-moon text-primary"></i>
-          </button>
 
           {user ? (
             <div className="flex items-center space-x-3">
