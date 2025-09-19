@@ -1,12 +1,21 @@
 import { useSearchParams } from "react-router";
-import { type Product } from "~/types/product";
+import { type Product, isProject } from "~/types/product";
 import { ProductCard } from "./ProductCard";
+import { ProjectCard } from "./ProjectCard";
 
 interface ProductListProps {
   products: Product[];
+  showAdminActions?: boolean;
+  mode?: 'profile' | 'showcase';
+  gridCols?: 'md:grid-cols-2' | 'md:grid-cols-2 lg:grid-cols-3';
 }
 
-export function ProductList({ products }: ProductListProps) {
+export function ProductList({
+  products,
+  showAdminActions = true,
+  mode = 'profile',
+  gridCols = 'md:grid-cols-2'
+}: ProductListProps) {
   const [searchParams] = useSearchParams();
   const editingProductId = searchParams.get("edit-product");
 
@@ -23,14 +32,32 @@ export function ProductList({ products }: ProductListProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          isEditing={editingProductId === product.id.toString()}
-        />
-      ))}
+    <div className={`grid grid-cols-1 ${gridCols} gap-8`}>
+      {products.map((product) => {
+        const isEditingThis = editingProductId === product.id.toString();
+
+        if (isProject(product.status)) {
+          return (
+            <ProjectCard
+              key={product.id}
+              project={product}
+              isEditing={isEditingThis}
+              showAdminActions={showAdminActions}
+              mode={mode}
+            />
+          );
+        } else {
+          return (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isEditing={isEditingThis}
+              showAdminActions={showAdminActions}
+              mode={mode}
+            />
+          );
+        }
+      })}
     </div>
   );
 }
