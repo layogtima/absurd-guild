@@ -2,8 +2,11 @@
 type CloudflareEnv = {
   DB: D1Database;
   absurd_guild_sessions: KVNamespace;
+  UPLOADS: R2Bucket;
   RESEND_API_KEY?: string;
   NODE_ENV?: string;
+  R2_ACCOUNT_ID?: string;
+  R2_S3_API_URL?: string;
 };
 
 export function getDB(context: { cloudflare: { env: CloudflareEnv } }) {
@@ -16,6 +19,10 @@ export function getKV(context: { cloudflare: { env: CloudflareEnv } }) {
 
 export function getEnv(context: { cloudflare: { env: CloudflareEnv } }) {
   return context.cloudflare.env;
+}
+
+export function getR2(context: { cloudflare: { env: CloudflareEnv } }) {
+  return context.cloudflare.env.UPLOADS;
 }
 
 // User types

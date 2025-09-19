@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { requireAuth, createAuthService } from "~/lib/auth.server";
 import { getDB, getKV, getEnv } from "~/lib/db.server";
+import { uploadImage } from "~/lib/upload.server";
 import {
   getFullMakerProfile,
   updateMakerProfile,
@@ -44,6 +45,58 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   return { profile, user, products };
 }
 
+// Helper function to handle avatar/image uploads
+async function handleImageUpload(
+  context: any,
+  formData: FormData,
+  userId: number,
+  type: "profile" | "product",
+  fallbackUrlField: string
+): Promise<string | undefined> {
+  console.log("=== HANDLE IMAGE UPLOAD ===");
+  console.log(
+    "Type:",
+    type,
+    "UserId:",
+    userId,
+    "FallbackField:",
+    fallbackUrlField
+  );
+
+  const file = formData.get(`${type}Image`) as File | null;
+  const urlInput = formData.get(fallbackUrlField) as string;
+
+  console.log(
+    "File from form:",
+    file ? `${file.name} (${file.size} bytes)` : "null"
+  );
+  console.log("URL from form:", urlInput || "null");
+
+  // If user uploaded a file, use that
+  if (file && file.size > 0) {
+    console.log("Processing file upload...");
+    const uploadResult = await uploadImage(context, file, userId, type);
+    console.log("Upload result:", uploadResult);
+
+    if (uploadResult.success) {
+      console.log("File upload successful, returning URL:", uploadResult.url);
+      return uploadResult.url;
+    }
+    // If upload fails, fall back to URL input
+    console.warn(
+      "File upload failed, falling back to URL input:",
+      uploadResult.error
+    );
+  } else {
+    console.log("No file uploaded or file is empty");
+  }
+
+  // Fall back to URL input if provided
+  const finalUrl = urlInput?.trim() || undefined;
+  console.log("Final URL:", finalUrl);
+  return finalUrl;
+}
+
 export async function action({ request, context }: ActionFunctionArgs) {
   try {
     // console.log("=== ACTION START ===");
@@ -66,13 +119,21 @@ export async function action({ request, context }: ActionFunctionArgs) {
       const makerName = formData.get("makerName") as string;
       const displayName = formData.get("displayName") as string;
       const bio = formData.get("bio") as string;
-      const avatarUrl = formData.get("avatarUrl") as string;
 
       if (!makerName?.trim()) {
         return redirect("/profile?error=Maker name is required");
       }
 
       try {
+        // Handle avatar upload/URL
+        const avatarUrl = await handleImageUpload(
+          context,
+          formData,
+          user.id,
+          "profile",
+          "avatarUrl"
+        );
+
         await createMakerProfile(db, user.id, {
           makerName,
           displayName,
@@ -92,9 +153,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
       // console.log("Handling updateProfile action");
       const displayName = formData.get("displayName") as string;
       const bio = formData.get("bio") as string;
-      const avatarUrl = formData.get("avatarUrl") as string;
 
       try {
+        // Handle avatar upload/URL
+        const avatarUrl = await handleImageUpload(
+          context,
+          formData,
+          user.id,
+          "profile",
+          "avatarUrl"
+        );
+
         await updateMakerProfile(db, user.id, {
           displayName,
           bio,
@@ -161,7 +230,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
       const description = formData.get("description") as string;
       const priceStr = formData.get("price") as string;
       const category = formData.get("category") as string;
-      const imageUrl = formData.get("imageUrl") as string;
       const shopifyUrl = formData.get("shopifyUrl") as string;
       const status = (formData.get("status") as string) || "active";
       const stockQuantity = formData.get("stockQuantity") as string;
@@ -176,17 +244,36 @@ export async function action({ request, context }: ActionFunctionArgs) {
       }
 
       // Price is only required for ready-for-sale products
-      const isProjectStatus = ["concept", "development", "prototype", "testing"].includes(status);
+      const isProjectStatus = [
+        "concept",
+        "development",
+        "prototype",
+        "testing",
+      ].includes(status);
       if (!isProjectStatus && !priceStr?.trim()) {
-        return { error: "Product price is required for products ready for sale" };
+        return {
+          error: "Product price is required for products ready for sale",
+        };
       }
 
       try {
         const price = priceStr?.trim() ? parsePrice(priceStr) : 0;
 
+        // Handle product image upload/URL
+        const imageUrl = await handleImageUpload(
+          context,
+          formData,
+          user.id,
+          "product",
+          "imageUrl"
+        );
+
         // Parse features from newline-separated text
         const featuresArray = features?.trim()
-          ? features.split('\n').map(f => f.trim()).filter(f => f.length > 0)
+          ? features
+              .split("\n")
+              .map((f) => f.trim())
+              .filter((f) => f.length > 0)
           : undefined;
 
         await createProduct(db, user.id, {
@@ -198,7 +285,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
           shopify_url: shopifyUrl || "",
           status: status as any,
           stock_quantity: stockQuantity ? parseInt(stockQuantity) : undefined,
-          shipping_weight: shippingWeight ? parseInt(shippingWeight) : undefined,
+          shipping_weight: shippingWeight
+            ? parseInt(shippingWeight)
+            : undefined,
           features: featuresArray,
           is_open_source: isOpenSource,
           github_repo: githubRepo || undefined,
@@ -221,7 +310,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
       const description = formData.get("description") as string;
       const priceStr = formData.get("price") as string;
       const category = formData.get("category") as string;
-      const imageUrl = formData.get("imageUrl") as string;
       const shopifyUrl = formData.get("shopifyUrl") as string;
       const status = formData.get("status") as string;
       const stockQuantity = formData.get("stockQuantity") as string;
@@ -252,27 +340,47 @@ export async function action({ request, context }: ActionFunctionArgs) {
         }
 
         if (category !== null) updateData.category = category || undefined;
-        if (imageUrl !== null) updateData.image_url = imageUrl || undefined;
-        if (shopifyUrl !== null)
-          updateData.shopify_url = shopifyUrl || "";
+
+        // Handle product image upload/URL
+        const imageUrl = await handleImageUpload(
+          context,
+          formData,
+          user.id,
+          "product",
+          "imageUrl"
+        );
+        if (imageUrl !== undefined)
+          updateData.image_url = imageUrl || undefined;
+
+        if (shopifyUrl !== null) updateData.shopify_url = shopifyUrl || "";
         if (status) updateData.status = status;
 
         // Handle new fields
         if (stockQuantity !== null) {
-          updateData.stock_quantity = stockQuantity ? parseInt(stockQuantity) : undefined;
+          updateData.stock_quantity = stockQuantity
+            ? parseInt(stockQuantity)
+            : undefined;
         }
         if (shippingWeight !== null) {
-          updateData.shipping_weight = shippingWeight ? parseInt(shippingWeight) : undefined;
+          updateData.shipping_weight = shippingWeight
+            ? parseInt(shippingWeight)
+            : undefined;
         }
         if (features !== null) {
           const featuresArray = features?.trim()
-            ? features.split('\n').map(f => f.trim()).filter(f => f.length > 0)
+            ? features
+                .split("\n")
+                .map((f) => f.trim())
+                .filter((f) => f.length > 0)
             : undefined;
           updateData.features = featuresArray;
         }
-        if (isOpenSource !== undefined) updateData.is_open_source = isOpenSource;
-        if (githubRepo !== null) updateData.github_repo = githubRepo || undefined;
-        if (documentationUrl !== null) updateData.documentation_url = documentationUrl || undefined;
+        if (isOpenSource !== undefined)
+          updateData.is_open_source = isOpenSource;
+        if (githubRepo !== null)
+          updateData.github_repo = githubRepo || undefined;
+        if (documentationUrl !== null)
+          updateData.documentation_url = documentationUrl || undefined;
 
         await updateProduct(db, user.id, productId, updateData);
 
@@ -367,7 +475,11 @@ export default function Profile() {
                 Setup Your Maker Profile
               </h1>
 
-              <Form method="post" className="space-y-6">
+              <Form
+                method="post"
+                encType="multipart/form-data"
+                className="space-y-6"
+              >
                 <input type="hidden" name="_action" value="createProfile" />
 
                 <div>
@@ -426,23 +538,50 @@ export default function Profile() {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="avatarUrl"
-                    className="block text-sm font-medium text-primary mb-2"
-                  >
-                    Profile Photo URL
+                  <label className="block text-sm font-medium text-primary mb-2">
+                    Profile Photo
                   </label>
-                  <input
-                    type="url"
-                    id="avatarUrl"
-                    name="avatarUrl"
-                    defaultValue={searchParams.get("avatarUrl") || ""}
-                    className="w-full px-3 py-2 border border-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                    placeholder="https://example.com/your-photo.jpg"
-                  />
-                  <p className="text-xs text-secondary mt-1">
-                    Optional: Add a link to your profile photo
-                  </p>
+
+                  {/* File Upload */}
+                  <div className="mb-3">
+                    <label
+                      htmlFor="profileImage"
+                      className="block text-xs font-medium text-secondary mb-1"
+                    >
+                      Upload Image
+                    </label>
+                    <input
+                      type="file"
+                      id="profileImage"
+                      name="profileImage"
+                      accept="image/*"
+                      className="w-full px-3 py-2 border border-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    />
+                    <p className="text-xs text-secondary mt-1">
+                      Recommended: Upload JPEG, PNG, WebP, or GIF (max 5MB)
+                    </p>
+                  </div>
+
+                  {/* URL Alternative */}
+                  <div>
+                    <label
+                      htmlFor="avatarUrl"
+                      className="block text-xs font-medium text-secondary mb-1"
+                    >
+                      Or enter image URL
+                    </label>
+                    <input
+                      type="url"
+                      id="avatarUrl"
+                      name="avatarUrl"
+                      defaultValue={searchParams.get("avatarUrl") || ""}
+                      className="w-full px-3 py-2 border border-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                      placeholder="https://example.com/your-photo.jpg"
+                    />
+                    <p className="text-xs text-secondary mt-1">
+                      Alternative: Link to an existing image
+                    </p>
+                  </div>
                 </div>
 
                 <button
@@ -507,7 +646,11 @@ export default function Profile() {
                   <h2 className="text-lg font-semibold mb-4 text-primary">
                     Edit Profile
                   </h2>
-                  <Form method="post" className="space-y-4">
+                  <Form
+                    method="post"
+                    encType="multipart/form-data"
+                    className="space-y-4"
+                  >
                     <input type="hidden" name="_action" value="updateProfile" />
 
                     <div>
@@ -537,16 +680,50 @@ export default function Profile() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-primary mb-1">
-                        Profile Photo URL
+                      <label className="block text-sm font-medium text-primary mb-2">
+                        Profile Photo
                       </label>
-                      <input
-                        type="url"
-                        name="avatarUrl"
-                        defaultValue={profile.avatar_url || ""}
-                        className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                        placeholder="https://example.com/photo.jpg"
-                      />
+
+                      {/* File Upload */}
+                      <div className="mb-3">
+                        <label
+                          htmlFor="profileImageEdit"
+                          className="block text-xs font-medium text-secondary mb-1"
+                        >
+                          Upload New Image
+                        </label>
+                        <input
+                          type="file"
+                          id="profileImageEdit"
+                          name="profileImage"
+                          accept="image/*"
+                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                        />
+                        <p className="text-xs text-secondary mt-1">
+                          Upload JPEG, PNG, WebP, or GIF (max 5MB)
+                        </p>
+                      </div>
+
+                      {/* URL Alternative */}
+                      <div>
+                        <label
+                          htmlFor="avatarUrlEdit"
+                          className="block text-xs font-medium text-secondary mb-1"
+                        >
+                          Or enter image URL
+                        </label>
+                        <input
+                          type="url"
+                          id="avatarUrlEdit"
+                          name="avatarUrl"
+                          defaultValue={profile.avatar_url || ""}
+                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                          placeholder="https://example.com/photo.jpg"
+                        />
+                        <p className="text-xs text-secondary mt-1">
+                          Current image will be replaced if you upload a new one
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex space-x-3">
