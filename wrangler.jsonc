@@ -9,6 +9,7 @@
   "main": "./workers/app.ts",
   "vars": {
     "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
+    "R2_ACCOUNT_ID": "2b193209af2d4a6412693d956514074e"
   },
   "observability": {
     "enabled": true,
@@ -25,6 +26,12 @@
       "binding": "absurd_guild_sessions",
       "id": "e1ad7ba0b2a84a7ea148214a2c73355b",
       "preview_id": "a802114f8e444dfaa610d0233348d5ab",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "absurd-guild-uploads",
     },
   ],
   /**
