@@ -1,10 +1,13 @@
 import { type LoaderFunctionArgs, useLoaderData } from "react-router";
 import { getDB } from "~/lib/db.server";
 import { getMakerByIdOrName, getFullMakerProfile } from "~/lib/makers.server";
-import { getUserProducts } from "~/lib/products.server";
+import {
+  getReadyProducts,
+  getDevelopmentProjects,
+} from "~/lib/products.server";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
-import { type Product } from "~/types/product";
+import { type Product, getStatusDisplayName } from "~/types/product";
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
   const db = getDB(context);
@@ -33,14 +36,16 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   // Get full maker profile with links
   const profile = await getFullMakerProfile(db, maker.id);
 
-  // Get maker's products
-  const products = await getUserProducts(db, maker.id);
+  // Get maker's products split by type
+  const readyProducts = await getReadyProducts(db, maker.id);
+  const developmentProjects = await getDevelopmentProjects(db, maker.id);
 
-  return { maker, profile, products };
+  return { maker, profile, readyProducts, developmentProjects };
 }
 
 export default function MakerProfile() {
-  const { maker, profile, products } = useLoaderData<typeof loader>();
+  const { maker, profile, readyProducts, developmentProjects } =
+    useLoaderData<typeof loader>();
 
   if (!profile) {
     return (
@@ -131,7 +136,7 @@ export default function MakerProfile() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-6">
         {/* Products Section */}
-        {products.length > 0 && (
+        {readyProducts.length > 0 && (
           <section id="products" className="mb-20">
             <div className="text-center mb-12">
               <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
@@ -143,7 +148,7 @@ export default function MakerProfile() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {products.map((product) => (
+              {readyProducts.map((product) => (
                 <div
                   key={product.id}
                   className="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all"
@@ -161,8 +166,15 @@ export default function MakerProfile() {
                         📦
                       </div>
                     )}
-                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                      In Stock
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <div className="absolute top-4 right-4 bg-gray-900/30 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        In Stock
+                      </div>
+                      {product.is_open_source && (
+                        <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                          Open Source
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -178,6 +190,39 @@ export default function MakerProfile() {
                       </p>
                     )}
 
+                    {/* Features */}
+                    {product.features &&
+                      (() => {
+                        try {
+                          const features = JSON.parse(product.features);
+                          return (
+                            features.length > 0 && (
+                              <div className="mb-4">
+                                <div className="flex flex-wrap gap-1">
+                                  {features
+                                    .slice(0, 3)
+                                    .map((feature: string, index: number) => (
+                                      <span
+                                        key={index}
+                                        className="inline-block px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full"
+                                      >
+                                        {feature}
+                                      </span>
+                                    ))}
+                                  {features.length > 3 && (
+                                    <span className="text-xs text-secondary">
+                                      +{features.length - 3} more
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          );
+                        } catch (e) {
+                          return null;
+                        }
+                      })()}
+
                     {product.category && (
                       <div className="mb-4">
                         <span className="inline-block px-3 py-1 text-sm bg-tertiary text-secondary rounded-full">
@@ -187,20 +232,152 @@ export default function MakerProfile() {
                     )}
 
                     <div className="flex justify-between items-center">
-                      <div className="text-2xl font-bold accent-orange-text">
-                        ₹{(product.price / 100).toLocaleString()}
-                      </div>
-                      {product.shopify_url && (
-                        <a
-                          href={product.shopify_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover-lift transition-all"
-                        >
-                          <i className="fas fa-shopping-cart mr-2"></i>
-                          GET ONE
-                        </a>
+                      {product.price > 0 && (
+                        <div className="text-2xl font-bold accent-orange-text">
+                          ₹{(product.price / 100).toLocaleString()}
+                        </div>
                       )}
+                      {product.price === 0 && (
+                        <div className="text-sm text-secondary">
+                          Ready for sale
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        {/* Secondary action buttons */}
+                        {(product.github_repo || product.documentation_url) && (
+                          <div className="flex gap-1">
+                            {product.github_repo && (
+                              <a
+                                href={product.github_repo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-secondary text-primary px-3 py-2 rounded-lg hover-lift transition-all border border-theme"
+                                title="View Source"
+                              >
+                                <i className="fab fa-github text-sm"></i>
+                              </a>
+                            )}
+                            {product.documentation_url && (
+                              <a
+                                href={product.documentation_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-secondary text-primary px-3 py-2 rounded-lg hover-lift transition-all border border-theme"
+                                title="View Docs"
+                              >
+                                <i className="fas fa-book text-sm"></i>
+                              </a>
+                            )}
+                          </div>
+                        )}
+                        {/* Primary action button */}
+                        {product.shopify_url && product.shopify_url.trim() && (
+                          <a
+                            href={product.shopify_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover-lift transition-all"
+                          >
+                            <i className="fas fa-shopping-cart mr-2"></i>
+                            GET ONE
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Workbench Section */}
+        {developmentProjects.length > 0 && (
+          <section id="workbench" className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                Workbench
+              </h2>
+              <p className="text-xl text-secondary max-w-3xl mx-auto">
+                Projects currently being cooked.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {developmentProjects.map((project) => (
+                <div
+                  key={project.id}
+                  className="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift transition-all"
+                >
+                  {/* Project Image */}
+                  <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800">
+                    {project.image_url ? (
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-6xl">
+                        🔧
+                      </div>
+                    )}
+                    <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
+                      <span className="text-white text-sm font-medium">
+                        {getStatusDisplayName(project.status)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Project Details */}
+                  <div className="p-6">
+                    <h3 className="font-jura text-2xl font-bold text-primary mb-2">
+                      {project.title}
+                    </h3>
+
+                    {project.description && (
+                      <p className="text-secondary leading-relaxed mb-4">
+                        {project.description}
+                      </p>
+                    )}
+
+                    {project.category && (
+                      <div className="mb-4">
+                        <span className="inline-block px-3 py-1 text-sm bg-tertiary text-secondary rounded-full">
+                          {project.category}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-secondary">
+                        Project in{" "}
+                        {getStatusDisplayName(project.status).toLowerCase()}
+                      </div>
+                      <div className="flex gap-2">
+                        {project.github_repo && (
+                          <a
+                            href={project.github_repo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-secondary text-primary px-4 py-2 rounded-lg hover-lift transition-all border border-theme"
+                            title="View Source"
+                          >
+                            <i className="fab fa-github"></i>
+                          </a>
+                        )}
+                        {project.documentation_url && (
+                          <a
+                            href={project.documentation_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-secondary text-primary px-4 py-2 rounded-lg hover-lift transition-all border border-theme"
+                            title="View Docs"
+                          >
+                            <i className="fas fa-book"></i>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -210,7 +387,7 @@ export default function MakerProfile() {
         )}
 
         {/* No content state */}
-        {products.length === 0 && (
+        {readyProducts.length === 0 && developmentProjects.length === 0 && (
           <section className="text-center py-20">
             <div className="text-6xl mb-4">🚀</div>
             <h2 className="font-jura text-3xl font-bold text-primary mb-4">

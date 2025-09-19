@@ -163,17 +163,31 @@ export async function action({ request, context }: ActionFunctionArgs) {
       const category = formData.get("category") as string;
       const imageUrl = formData.get("imageUrl") as string;
       const shopifyUrl = formData.get("shopifyUrl") as string;
+      const status = (formData.get("status") as string) || "active";
+      const stockQuantity = formData.get("stockQuantity") as string;
+      const shippingWeight = formData.get("shippingWeight") as string;
+      const features = formData.get("features") as string;
+      const isOpenSource = formData.get("isOpenSource") === "on";
+      const githubRepo = formData.get("githubRepo") as string;
+      const documentationUrl = formData.get("documentationUrl") as string;
 
       if (!title?.trim()) {
         return { error: "Product title is required" };
       }
 
-      if (!priceStr?.trim()) {
-        return { error: "Product price is required" };
+      // Price is only required for ready-for-sale products
+      const isProjectStatus = ["concept", "development", "prototype", "testing"].includes(status);
+      if (!isProjectStatus && !priceStr?.trim()) {
+        return { error: "Product price is required for products ready for sale" };
       }
 
       try {
-        const price = parsePrice(priceStr);
+        const price = priceStr?.trim() ? parsePrice(priceStr) : 0;
+
+        // Parse features from newline-separated text
+        const featuresArray = features?.trim()
+          ? features.split('\n').map(f => f.trim()).filter(f => f.length > 0)
+          : undefined;
 
         await createProduct(db, user.id, {
           title,
@@ -181,7 +195,14 @@ export async function action({ request, context }: ActionFunctionArgs) {
           price,
           category: category || undefined,
           image_url: imageUrl || undefined,
-          shopify_url: shopifyUrl || undefined,
+          shopify_url: shopifyUrl || "",
+          status: status as any,
+          stock_quantity: stockQuantity ? parseInt(stockQuantity) : undefined,
+          shipping_weight: shippingWeight ? parseInt(shippingWeight) : undefined,
+          features: featuresArray,
+          is_open_source: isOpenSource,
+          github_repo: githubRepo || undefined,
+          documentation_url: documentationUrl || undefined,
         });
 
         return redirect("/profile?success=Product+created+successfully");
@@ -202,6 +223,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
       const category = formData.get("category") as string;
       const imageUrl = formData.get("imageUrl") as string;
       const shopifyUrl = formData.get("shopifyUrl") as string;
+      const status = formData.get("status") as string;
+      const stockQuantity = formData.get("stockQuantity") as string;
+      const shippingWeight = formData.get("shippingWeight") as string;
+      const features = formData.get("features") as string;
+      const isOpenSource = formData.get("isOpenSource") === "on";
+      const githubRepo = formData.get("githubRepo") as string;
+      const documentationUrl = formData.get("documentationUrl") as string;
 
       if (!productId || isNaN(productId)) {
         return { error: "Invalid product ID" };
@@ -213,11 +241,38 @@ export async function action({ request, context }: ActionFunctionArgs) {
         if (title?.trim()) updateData.title = title;
         if (description !== null)
           updateData.description = description || undefined;
-        if (priceStr?.trim()) updateData.price = parsePrice(priceStr);
+
+        // Handle price based on status
+        if (priceStr !== null) {
+          if (priceStr?.trim()) {
+            updateData.price = parsePrice(priceStr);
+          } else {
+            updateData.price = 0; // Allow 0 price for projects
+          }
+        }
+
         if (category !== null) updateData.category = category || undefined;
         if (imageUrl !== null) updateData.image_url = imageUrl || undefined;
         if (shopifyUrl !== null)
-          updateData.shopify_url = shopifyUrl || undefined;
+          updateData.shopify_url = shopifyUrl || "";
+        if (status) updateData.status = status;
+
+        // Handle new fields
+        if (stockQuantity !== null) {
+          updateData.stock_quantity = stockQuantity ? parseInt(stockQuantity) : undefined;
+        }
+        if (shippingWeight !== null) {
+          updateData.shipping_weight = shippingWeight ? parseInt(shippingWeight) : undefined;
+        }
+        if (features !== null) {
+          const featuresArray = features?.trim()
+            ? features.split('\n').map(f => f.trim()).filter(f => f.length > 0)
+            : undefined;
+          updateData.features = featuresArray;
+        }
+        if (isOpenSource !== undefined) updateData.is_open_source = isOpenSource;
+        if (githubRepo !== null) updateData.github_repo = githubRepo || undefined;
+        if (documentationUrl !== null) updateData.documentation_url = documentationUrl || undefined;
 
         await updateProduct(db, user.id, productId, updateData);
 

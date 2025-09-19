@@ -4,7 +4,10 @@ import type {
   Product,
   CreateProductData,
   UpdateProductData,
+  ProductStatus,
+  ParsedProduct,
 } from "~/types/product";
+import { PROJECT_STATUSES, isProject, isReadyForSale } from "~/types/product";
 
 export async function getUserProducts(
   db: D1Database,
@@ -17,6 +20,39 @@ export async function getUserProducts(
        ORDER BY created_at DESC`
     )
     .bind(userId)
+    .all();
+
+  return result.results as unknown as Product[];
+}
+
+export async function getReadyProducts(
+  db: D1Database,
+  userId: number
+): Promise<Product[]> {
+  const result = await db
+    .prepare(
+      `SELECT * FROM products
+       WHERE creator_id = ? AND is_active = TRUE AND status = 'active'
+       ORDER BY created_at DESC`
+    )
+    .bind(userId)
+    .all();
+
+  return result.results as unknown as Product[];
+}
+
+export async function getDevelopmentProjects(
+  db: D1Database,
+  userId: number
+): Promise<Product[]> {
+  const placeholders = PROJECT_STATUSES.map(() => '?').join(',');
+  const result = await db
+    .prepare(
+      `SELECT * FROM products
+       WHERE creator_id = ? AND is_active = TRUE AND status IN (${placeholders})
+       ORDER BY created_at DESC`
+    )
+    .bind(userId, ...PROJECT_STATUSES)
     .all();
 
   return result.results as unknown as Product[];
@@ -56,12 +92,20 @@ export async function createProduct(
     throw new Error("A product with this title already exists");
   }
 
+  // Prepare JSON fields
+  const imagesJson = productData.images ? JSON.stringify(productData.images) : null;
+  const featuresJson = productData.features ? JSON.stringify(productData.features) : null;
+  const specificationsJson = productData.specifications ? JSON.stringify(productData.specifications) : null;
+
   const result = await db
     .prepare(
       `INSERT INTO products (
         creator_id, title, slug, description, price,
-        shopify_url, image_url, category, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        shopify_url, image_url, category, status,
+        images, features, specifications, shipping_weight, stock_quantity,
+        is_open_source, github_repo, documentation_url,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       RETURNING *`
     )
     .bind(
@@ -69,10 +113,19 @@ export async function createProduct(
       productData.title,
       slug,
       productData.description || null,
-      productData.price,
-      productData.shopify_url || null,
+      productData.price || 0,
+      productData.shopify_url || "",
       productData.image_url || null,
-      productData.category || null
+      productData.category || null,
+      productData.status || 'active',
+      imagesJson,
+      featuresJson,
+      specificationsJson,
+      productData.shipping_weight || null,
+      productData.stock_quantity || null,
+      productData.is_open_source || false,
+      productData.github_repo || null,
+      productData.documentation_url || null
     )
     .first();
 
@@ -113,6 +166,17 @@ export async function updateProduct(
     }
   }
 
+  // Prepare JSON fields
+  const imagesJson = productData.images !== undefined
+    ? (productData.images ? JSON.stringify(productData.images) : null)
+    : undefined;
+  const featuresJson = productData.features !== undefined
+    ? (productData.features ? JSON.stringify(productData.features) : null)
+    : undefined;
+  const specificationsJson = productData.specifications !== undefined
+    ? (productData.specifications ? JSON.stringify(productData.specifications) : null)
+    : undefined;
+
   const result = await db
     .prepare(
       `UPDATE products SET
@@ -123,6 +187,15 @@ export async function updateProduct(
         shopify_url = COALESCE(?, shopify_url),
         image_url = COALESCE(?, image_url),
         category = COALESCE(?, category),
+        status = COALESCE(?, status),
+        images = COALESCE(?, images),
+        features = COALESCE(?, features),
+        specifications = COALESCE(?, specifications),
+        shipping_weight = COALESCE(?, shipping_weight),
+        stock_quantity = COALESCE(?, stock_quantity),
+        is_open_source = COALESCE(?, is_open_source),
+        github_repo = COALESCE(?, github_repo),
+        documentation_url = COALESCE(?, documentation_url),
         is_active = COALESCE(?, is_active),
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ? AND creator_id = ?
@@ -133,9 +206,18 @@ export async function updateProduct(
       slug,
       productData.description !== undefined ? productData.description : null,
       productData.price || null,
-      productData.shopify_url !== undefined ? productData.shopify_url : null,
+      productData.shopify_url !== undefined ? (productData.shopify_url || "") : null,
       productData.image_url !== undefined ? productData.image_url : null,
       productData.category !== undefined ? productData.category : null,
+      productData.status || null,
+      imagesJson !== undefined ? imagesJson : null,
+      featuresJson !== undefined ? featuresJson : null,
+      specificationsJson !== undefined ? specificationsJson : null,
+      productData.shipping_weight !== undefined ? productData.shipping_weight : null,
+      productData.stock_quantity !== undefined ? productData.stock_quantity : null,
+      productData.is_open_source !== undefined ? productData.is_open_source : null,
+      productData.github_repo !== undefined ? productData.github_repo : null,
+      productData.documentation_url !== undefined ? productData.documentation_url : null,
       productData.is_active !== undefined ? productData.is_active : null,
       productId,
       userId
@@ -187,4 +269,30 @@ export function parsePrice(priceString: string): number {
     throw new Error("Invalid price format");
   }
   return Math.round(price * 100); // Convert to paise
+}
+
+// Helper function to parse JSON fields in products
+export function parseProductFields(product: Product): ParsedProduct {
+  return {
+    ...product,
+    images: product.images ? JSON.parse(product.images) : null,
+    features: product.features ? JSON.parse(product.features) : null,
+    specifications: product.specifications ? JSON.parse(product.specifications) : null,
+  };
+}
+
+// Helper function to validate product status transitions
+export function validateStatusTransition(currentStatus: ProductStatus, newStatus: ProductStatus): boolean {
+  // Define allowed transitions
+  const allowedTransitions: Record<ProductStatus, ProductStatus[]> = {
+    'concept': ['development', 'active', 'discontinued'],
+    'development': ['prototype', 'active', 'discontinued'],
+    'prototype': ['testing', 'active', 'discontinued'],
+    'testing': ['active', 'development', 'discontinued'],
+    'active': ['out_of_stock', 'discontinued', 'development'],
+    'out_of_stock': ['active', 'discontinued'],
+    'discontinued': ['development', 'concept'] // Allow revival
+  };
+
+  return allowedTransitions[currentStatus]?.includes(newStatus) ?? false;
 }

@@ -23,7 +23,7 @@ export function ProductCard({ product, isEditing = false }: ProductCardProps) {
             📦
           </div>
         )}
-        <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+        <div className="absolute top-4 right-4 bg-gray-900/30 text-white px-3 py-1 rounded-full text-sm font-bold">
           In Stock
         </div>
       </div>
