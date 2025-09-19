@@ -16,7 +16,7 @@ const requestHandler = createRequestHandler(
 
 export default {
   async fetch(request, env, ctx) {
-    return await requestHandler(request, {
+    return requestHandler(request, {
       cloudflare: { env, ctx },
     });
   },
