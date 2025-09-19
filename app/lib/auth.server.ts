@@ -59,7 +59,7 @@ async function sendMagicLinkEmail(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Absurd Guild <noreply@mailer.absurd.industries>",
+        from: "Absurd Guild <mailer@mailer.absurd.industries>",
         to: [email],
         subject: "Sign in to Absurd Guild",
         html: `

@@ -19,7 +19,7 @@ export function ProductForm({ product, isEditing = false }: ProductFormProps) {
         {isEditing ? "Edit Product" : "Add New Product"}
       </h3>
 
-      <Form method="post" className="space-y-4">
+      <Form method="post" encType="multipart/form-data" className="space-y-4">
         <input
           type="hidden"
           name="_action"
@@ -144,27 +144,54 @@ export function ProductForm({ product, isEditing = false }: ProductFormProps) {
           </p>
         </div>
 
-        {/* Image URL */}
+        {/* Product Image */}
         <div>
-          <label
-            htmlFor="imageUrl"
-            className="block text-sm font-medium text-primary mb-2"
-          >
-            Product Image URL
+          <label className="block text-sm font-medium text-primary mb-2">
+            Product Image
           </label>
-          <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
-            defaultValue={
-              product?.image_url || searchParams.get("imageUrl") || ""
-            }
-            className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-            placeholder="https://example.com/product-image.jpg"
-          />
-          <p className="text-xs text-secondary mt-1">
-            Add a link to your product image
-          </p>
+
+          {/* File Upload */}
+          <div className="mb-3">
+            <label
+              htmlFor={isEditing ? "productImageEdit" : "productImage"}
+              className="block text-xs font-medium text-secondary mb-1"
+            >
+              Upload Image
+            </label>
+            <input
+              type="file"
+              id={isEditing ? "productImageEdit" : "productImage"}
+              name="productImage"
+              accept="image/*"
+              className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+            />
+            <p className="text-xs text-secondary mt-1">
+              Recommended: Upload JPEG, PNG, WebP, or GIF (max 5MB)
+            </p>
+          </div>
+
+          {/* URL Alternative */}
+          <div>
+            <label
+              htmlFor="imageUrl"
+              className="block text-xs font-medium text-secondary mb-1"
+            >
+              Or enter image URL
+            </label>
+            <input
+              type="url"
+              id="imageUrl"
+              name="imageUrl"
+              defaultValue={
+                product?.image_url || searchParams.get("imageUrl") || ""
+              }
+              className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+              placeholder="https://example.com/product-image.jpg"
+            />
+            <p className="text-xs text-secondary mt-1">
+              Alternative: Link to an existing image{isEditing ? " (current image will be replaced if you upload a new one)" : ""}
+            </p>
+          </div>
         </div>
 
         {/* Shopify URL */}

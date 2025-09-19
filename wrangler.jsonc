@@ -4,11 +4,12 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "absurd",
+  "name": "absurd-maker-platform",
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
     "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
+    "R2_ACCOUNT_ID": "2b193209af2d4a6412693d956514074e",
   },
   "observability": {
     "enabled": true,
@@ -17,14 +18,20 @@
     {
       "binding": "DB",
       "database_name": "absurd-guild-db",
-      "database_id": "7ce91918-0503-498e-90ae-e80028ec4fa0",
+      "database_id": "fa0decce-887c-42ae-a20d-fbaa07db7bb5",
     },
   ],
   "kv_namespaces": [
     {
       "binding": "absurd_guild_sessions",
-      "id": "e1ad7ba0b2a84a7ea148214a2c73355b",
-      "preview_id": "a802114f8e444dfaa610d0233348d5ab",
+      "id": "f1e8f2b90d1547caa0802b39589c6d15",
+      "preview_id": "d24a2027ec1446a7982bcc00d7bd46b8",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "absurd-maker-platform",
     },
   ],
   /**
