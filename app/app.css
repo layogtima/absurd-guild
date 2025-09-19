@@ -3,17 +3,16 @@
 @theme {
   --font-main: "Jura", ui-sans-serif, system-ui, sans-serif;
 
-  /* Light Theme Colors */
-  --bg-primary: #ece0cf;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #e0d4c3;
-  --text-primary: #1a1a1a;
-  --text-secondary: #5c5c5c;
-  --border-color: #d1c4b3;
-
-  --accent-orange: #ff4500;
-  --accent-yellow: #ffd700;
-  --text-on-accent: #ffffff;
+  /* Colors */
+  --color-primary: #ece0cf;
+  --color-secondary: #ffffff;
+  --color-tertiary: #e0d4c3;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5c5c5c;
+  --color-border: #d1c4b3;
+  --color-accent-orange: #ff4500;
+  --color-accent-yellow: #ffd700;
+  --color-text-on-accent: #ffffff;
 }
 
 html {
@@ -24,40 +23,40 @@ html {
 @media (prefers-color-scheme: dark) {
   html:not(.light) {
     /* Dark Theme Overrides */
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2a2a2a;
-    --bg-tertiary: #111111;
-    --text-primary: #ece0cf;
-    --text-secondary: #9ca3af;
-    --border-color: #3a3a3a;
+    --color-primary: #1a1a1a;
+    --color-secondary: #2a2a2a;
+    --color-tertiary: #111111;
+    --color-text-primary: #ece0cf;
+    --color-text-secondary: #9ca3af;
+    --color-border: #3a3a3a;
   }
 }
 
 /* Explicit dark theme (when JavaScript sets .dark class) */
 html.dark {
   /* Dark Theme Overrides */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #2a2a2a;
-  --bg-tertiary: #111111;
-  --text-primary: #ece0cf;
-  --text-secondary: #9ca3af;
-  --border-color: #3a3a3a;
+  --color-primary: #1a1a1a;
+  --color-secondary: #2a2a2a;
+  --color-tertiary: #111111;
+  --color-text-primary: #ece0cf;
+  --color-text-secondary: #9ca3af;
+  --color-border: #3a3a3a;
 }
 
 /* Explicit light theme (when JavaScript sets .light class) */
 html.light {
   /* Force light theme even if system prefers dark */
-  --bg-primary: #ece0cf;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #e0d4c3;
-  --text-primary: #1a1a1a;
-  --text-secondary: #5c5c5c;
-  --border-color: #d1c4b3;
+  --color-primary: #ece0cf;
+  --color-secondary: #ffffff;
+  --color-tertiary: #e0d4c3;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5c5c5c;
+  --color-border: #d1c4b3;
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
@@ -65,29 +64,29 @@ body {
 
 /* Helper classes */
 .bg-primary {
-  background-color: var(--bg-primary);
+  background-color: var(--color-primary);
 }
 .bg-secondary {
-  background-color: var(--bg-secondary);
+  background-color: var(--color-secondary);
 }
 .bg-tertiary {
-  background-color: var(--bg-tertiary);
+  background-color: var(--color-tertiary);
 }
 .text-primary {
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 .text-secondary {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 .border-theme {
-  border-color: var(--border-color);
+  border-color: var(--color-border);
 }
 .accent-orange {
-  background-color: var(--accent-orange);
+  background-color: var(--color-accent-orange);
 }
 .accent-orange-text {
-  color: var(--accent-orange);
+  color: var(--color-accent-orange);
 }
 .text-on-accent {
-  color: var(--text-on-accent);
+  color: var(--color-text-on-accent);
 }
