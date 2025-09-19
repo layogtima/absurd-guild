@@ -31,7 +31,7 @@
   "r2_buckets": [
     {
       "binding": "UPLOADS",
-      "bucket_name": "absurd-guild-uploads",
+      "bucket_name": "absurd-maker-platform",
     },
   ],
   /**
