@@ -17,59 +17,8 @@ export function Navigation({ user }: NavigationProps) {
         {/* Logo and Brand */}
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 accent-orange rounded-full flex items-center justify-center">
-              <svg
-                viewBox="0 0 200 200"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-              >
-                <defs>
-                  <radialGradient
-                    id="nucleusGradient"
-                    cx="50%"
-                    cy="50%"
-                    r="50%"
-                  >
-                    <stop offset="0%" stopColor="#FFB347" />
-                    <stop offset="100%" stopColor="#FF6B35" />
-                  </radialGradient>
-                </defs>
-                <g transform="translate(100,100)">
-                  <ellipse
-                    cx="0"
-                    cy="0"
-                    rx="50"
-                    ry="15"
-                    fill="none"
-                    stroke="#40E0D0"
-                    strokeWidth="2"
-                    opacity="0.8"
-                  />
-                  <ellipse
-                    cx="0"
-                    cy="0"
-                    rx="50"
-                    ry="15"
-                    fill="none"
-                    stroke="#40E0D0"
-                    strokeWidth="2"
-                    opacity="0.8"
-                    transform="rotate(60)"
-                  />
-                  <ellipse
-                    cx="0"
-                    cy="0"
-                    rx="50"
-                    ry="15"
-                    fill="none"
-                    stroke="#40E0D0"
-                    strokeWidth="2"
-                    opacity="0.8"
-                    transform="rotate(120)"
-                  />
-                </g>
-                <circle cx="100" cy="100" r="15" fill="url(#nucleusGradient)" />
-              </svg>
+            <div className="w-24 h-24 accent-orange rounded-full flex items-center justify-center">
+              <img src="absurd-logo.png" />
             </div>
             <h1 className="text-xl font-bold text-primary">ABSURD</h1>
           </Link>
