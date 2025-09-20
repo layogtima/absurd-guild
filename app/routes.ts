@@ -14,10 +14,17 @@ export default [
   // Maker public profiles
   route("m/:id", "routes/m.$id.tsx"),
 
+  // Campaign routes
+  route("campaigns", "routes/campaigns._index.tsx"),
+  route("campaigns/create", "routes/campaigns.create.tsx"),
+  route("campaigns/:slug", "routes/campaigns.$slug.tsx"),
+  route("campaigns/:slug/edit", "routes/campaigns.$slug.edit.tsx"),
+  route("campaigns/:slug/back", "routes/campaigns.$slug.back.tsx"),
+  route("campaigns/:slug/back/confirm", "routes/campaigns.$slug.back.confirm.tsx"),
+  route("campaigns/:slug/back/success", "routes/campaigns.$slug.back.success.tsx"),
+  route("profile/campaigns", "routes/profile.campaigns.tsx"),
+
   // Future routes (placeholder comments)
-  // route("campaigns", "routes/campaigns/_index.tsx"),
-  // route("campaigns/:slug", "routes/campaigns/$slug.tsx"),
-  // route("campaigns/create", "routes/campaigns/create.tsx"),
   // route("shop", "routes/shop/_index.tsx"),
   // route("guild", "routes/guild/_index.tsx"),
   // route("makers/:username", "routes/makers/$username.tsx"),

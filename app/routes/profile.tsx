@@ -23,6 +23,7 @@ import {
   deleteProduct,
   parsePrice,
 } from "~/lib/products.server";
+import { getCampaignsByCreator } from "~/lib/campaigns.server";
 import { useLoaderData, useActionData } from "react-router";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
@@ -42,7 +43,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   // Get user products
   const products = await getUserProducts(db, user.id);
 
-  return { profile, user, products };
+  // Get user campaigns
+  const campaigns = await getCampaignsByCreator(db, user.id, 10);
+
+  return { profile, user, products, campaigns };
 }
 
 // Helper function to handle avatar/image uploads
@@ -429,7 +433,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-  const { profile, user, products } = useLoaderData<typeof loader>();
+  const { profile, user, products, campaigns } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const [searchParams] = useSearchParams();
@@ -746,6 +750,151 @@ export default function Profile() {
 
               {/* Products Section */}
               <ProductManagement products={products} />
+
+              {/* Campaigns Section */}
+              <div className="bg-secondary rounded-lg shadow-md p-6 mt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-primary">
+                    My Campaigns
+                  </h2>
+                  <div className="flex space-x-3">
+                    <Link
+                      to="/profile/campaigns"
+                      className="border border-theme px-4 py-2 rounded-md hover:bg-tertiary transition-colors text-primary"
+                    >
+                      View All
+                    </Link>
+                    <Link
+                      to="/campaigns/create"
+                      className="accent-orange text-on-accent px-4 py-2 rounded-md hover:bg-orange-600 transition-colors"
+                    >
+                      Create Campaign
+                    </Link>
+                  </div>
+                </div>
+
+                {campaigns && campaigns.length > 0 ? (
+                  <div className="space-y-4">
+                    {campaigns.slice(0, 3).map((campaign) => {
+                      const fundingPercentage = Math.round(
+                        (campaign.current_funding / campaign.funding_goal) * 100
+                      );
+
+                      return (
+                        <div
+                          key={campaign.id}
+                          className="border border-theme rounded-lg p-4 hover:border-accent-orange transition-colors"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-3 mb-2">
+                                <h3 className="font-medium text-primary">
+                                  {campaign.title}
+                                </h3>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                                  campaign.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                                  campaign.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400' :
+                                  campaign.status === 'funded' ? 'bg-blue-500/20 text-blue-400' :
+                                  campaign.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
+                                  'bg-red-500/20 text-red-400'
+                                }`}>
+                                  {campaign.status}
+                                </span>
+                              </div>
+
+                              {campaign.short_description && (
+                                <p className="text-secondary text-sm mb-3 line-clamp-2">
+                                  {campaign.short_description}
+                                </p>
+                              )}
+
+                              <div className="grid grid-cols-3 gap-4 text-sm">
+                                <div>
+                                  <span className="text-secondary block">Funding</span>
+                                  <span className="font-medium text-primary">
+                                    ₹{campaign.current_funding.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-secondary block">Progress</span>
+                                  <span className="font-medium text-accent-orange">
+                                    {fundingPercentage}%
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-secondary block">Views</span>
+                                  <span className="font-medium text-primary">
+                                    {campaign.views_count || 0}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="w-full bg-tertiary rounded-full h-2 mt-3">
+                                <div
+                                  className="bg-accent-orange h-2 rounded-full transition-all"
+                                  style={{ width: `${Math.min(fundingPercentage, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            {campaign.hero_video_thumbnail && (
+                              <div className="ml-4 flex-shrink-0">
+                                <img
+                                  src={campaign.hero_video_thumbnail}
+                                  alt={campaign.title}
+                                  className="w-16 h-10 object-cover rounded"
+                                />
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex space-x-2 mt-4 pt-3 border-t border-theme">
+                            <Link
+                              to={`/campaigns/${campaign.slug}`}
+                              className="flex-1 text-center px-3 py-2 text-sm border border-theme rounded hover:bg-tertiary transition-colors text-primary"
+                            >
+                              View
+                            </Link>
+                            <Link
+                              to={`/campaigns/${campaign.slug}/edit`}
+                              className="flex-1 text-center px-3 py-2 text-sm bg-accent-orange text-on-accent rounded hover:bg-orange-600 transition-colors"
+                            >
+                              Edit
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {campaigns.length > 3 && (
+                      <div className="text-center pt-2">
+                        <Link
+                          to="/profile/campaigns"
+                          className="text-accent-orange hover:text-orange-600 text-sm font-medium"
+                        >
+                          View {campaigns.length - 3} more campaigns →
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-3">🚀</div>
+                    <h3 className="text-lg font-medium text-primary mb-2">
+                      No campaigns yet
+                    </h3>
+                    <p className="text-secondary text-sm mb-4">
+                      Launch your first campaign and start building something amazing with the Guild community.
+                    </p>
+                    <Link
+                      to="/campaigns/create"
+                      className="inline-flex items-center accent-orange text-on-accent px-4 py-2 rounded-md hover:bg-orange-600 transition-colors"
+                    >
+                      Create Your First Campaign
+                    </Link>
+                  </div>
+                )}
+              </div>
 
               {/* Profile Links */}
               <div className="bg-secondary rounded-lg shadow-md p-6 mt-6">
