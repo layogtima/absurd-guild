@@ -12,15 +12,14 @@ interface NavigationProps {
 
 export function Navigation({ user }: NavigationProps) {
   return (
-    <header className="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0 z-40">
+    <header className="bg-black/40 backdrop-blur-sm border-b border-theme absolute w-full top-0 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo and Brand */}
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-24 h-24 accent-orange rounded-full flex items-center justify-center">
-              <img src="absurd-logo.png" />
+            <div className=" rounded-full flex items-center justify-center">
+              <img className="w-50 h-50 absolute left-3 -top-3 -rotate-25" src="absurd-logo.png" />
             </div>
-            <h1 className="text-xl font-bold text-primary">ABSURD</h1>
           </Link>
         </div>
 

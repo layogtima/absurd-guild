@@ -41,7 +41,7 @@ export default function Index({ loaderData }: { loaderData: { user: any } }) {
                 Handcrafted products for nerds!
               </h2>
               <p className="text-lg md:text-xl leading-relaxed font-semibold">
-                We're building open-source hardware.
+               Now with indie campaigns by makers, for makers.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -161,11 +161,10 @@ export default function Index({ loaderData }: { loaderData: { user: any } }) {
                 Open Source is About
                 <span className="accent-orange-text"> Collaboration</span>
               </h2>
-              <p className="text-lg md:text-xl text-secondary leading-relaxed">
+              <p className="text-lg md:text-xl text-white leading-relaxed">
                 We believe the best innovations happen when makers share
                 knowledge, support each other, and build on each other's work.
-                Every project here comes with complete documentation,
-                schematics, and code. Progress is a team sport.
+              
               </p>
               <Link
                 to="/guild"
@@ -174,19 +173,6 @@ export default function Index({ loaderData }: { loaderData: { user: any } }) {
                 <i className="fab fa-github mr-3"></i>
                 Explore on GitHub
               </Link>
-            </div>
-            <div className="relative order-first lg:order-last">
-              <div className="bg-secondary rounded-2xl p-6 relative overflow-hidden shadow-lg">
-                <div className="aspect-square bg-tertiary rounded-xl flex items-center justify-center text-center">
-                  <div className="text-primary">
-                    <i className="fab fa-github text-6xl mb-4 accent-orange-text"></i>
-                    <p className="text-lg">Open Source in Action</p>
-                    <p className="text-sm text-secondary mt-2">
-                      Schematics • Code • Community
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -198,10 +184,9 @@ export default function Index({ loaderData }: { loaderData: { user: any } }) {
               Ready to Make Something
               <span className="accent-orange-text"> Absurd</span>?
             </h2>
-            <p className="text-lg text-secondary mb-12 max-w-2xl mx-auto">
+            <p className="text-lg text-white mb-12 max-w-2xl mx-auto">
               Join a community where your wildest hardware dreams get the
-              support, funding, and collaboration they deserve. Because the
-              future belongs to makers.
+              support, funding, and collaboration they deserve!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {user ? (
@@ -379,8 +364,8 @@ export default function Index({ loaderData }: { loaderData: { user: any } }) {
             </div>
           </div>
           <div className="border-t border-theme mt-12 pt-8 text-center">
-            <p className="text-secondary text-sm">
-              © 2025 Absurd Explorations (OPC) Private Limited. Made with ❤️ in
+            <p className="text-secondary text-sm leading-7">
+              © Copyleft 2025 Absurd Explorations (OPC) Private Limited. Fueled by Chaos!<br /><a href="https://github.com/layogtima/absurd-guild" target="_blank">Grab, Adapt, Credit, Broadcast.</a><br />Made with ❤️ in
               Bengaluru.
             </p>
           </div>
