@@ -19,6 +19,7 @@ export interface MakerProfile {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  avatar_key: string | null;
   is_maker: boolean;
   created_at: string;
   updated_at: string;
@@ -37,12 +38,14 @@ export interface CreateMakerData {
   displayName?: string;
   bio?: string;
   avatarUrl?: string;
+  avatarKey?: string;
 }
 
 export interface UpdateMakerData {
   displayName?: string;
   bio?: string;
   avatarUrl?: string;
+  avatarKey?: string;
 }
 
 /**
@@ -90,6 +93,7 @@ export async function createMakerProfile(
       display_name = ?,
       bio = ?,
       avatar_url = ?,
+      avatar_key = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
     RETURNING *
@@ -100,6 +104,7 @@ export async function createMakerProfile(
       data.displayName || null,
       data.bio || null,
       data.avatarUrl || null,
+      data.avatarKey || null,
       userId
     )
     .first<MakerProfile>();
@@ -126,6 +131,7 @@ export async function updateMakerProfile(
       display_name = ?,
       bio = ?,
       avatar_url = ?,
+      avatar_key = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ? AND is_maker = 1
     RETURNING *
@@ -135,6 +141,7 @@ export async function updateMakerProfile(
       data.displayName || null,
       data.bio || null,
       data.avatarUrl || null,
+      data.avatarKey || null,
       userId
     )
     .first<MakerProfile>();

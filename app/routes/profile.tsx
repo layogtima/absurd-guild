@@ -9,6 +9,7 @@ import {
 import { requireAuth, createAuthService } from "~/lib/auth.server";
 import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { uploadImage } from "~/lib/upload.server";
+import { getImageUrl } from "~/lib/images.server";
 import {
   getFullMakerProfile,
   updateMakerProfile,
@@ -42,7 +43,19 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   // Get user products
   const products = await getUserProducts(db, user.id);
 
-  return { profile, user, products };
+  // Process profile avatar URL
+  const profileWithImageUrl = profile ? {
+    ...profile,
+    avatar_url: getImageUrl(profile.avatar_key || null, profile.avatar_url, env)
+  } : null;
+
+  // Process product image URLs
+  const productsWithImageUrls = products.map(product => ({
+    ...product,
+    image_url: getImageUrl(product.image_key || null, product.image_url, env)
+  }));
+
+  return { profile: profileWithImageUrl, user, products: productsWithImageUrls };
 }
 
 // Helper function to handle avatar/image uploads
@@ -52,7 +65,7 @@ async function handleImageUpload(
   userId: number,
   type: "profile" | "product",
   fallbackUrlField: string
-): Promise<string | undefined> {
+): Promise<{ url: string | undefined; key: string | undefined }> {
   console.log("=== HANDLE IMAGE UPLOAD ===");
   console.log(
     "Type:",
@@ -79,8 +92,8 @@ async function handleImageUpload(
     console.log("Upload result:", uploadResult);
 
     if (uploadResult.success) {
-      console.log("File upload successful, returning URL:", uploadResult.url);
-      return uploadResult.url;
+      console.log("File upload successful, returning URL and key:", uploadResult.url, uploadResult.key);
+      return { url: uploadResult.url, key: uploadResult.key };
     }
     // If upload fails, fall back to URL input
     console.warn(
@@ -94,7 +107,7 @@ async function handleImageUpload(
   // Fall back to URL input if provided
   const finalUrl = urlInput?.trim() || undefined;
   console.log("Final URL:", finalUrl);
-  return finalUrl;
+  return { url: finalUrl, key: undefined };
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -126,7 +139,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
       try {
         // Handle avatar upload/URL
-        const avatarUrl = await handleImageUpload(
+        const avatarResult = await handleImageUpload(
           context,
           formData,
           user.id,
@@ -138,7 +151,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
           makerName,
           displayName,
           bio,
-          avatarUrl,
+          avatarUrl: avatarResult.url,
+          avatarKey: avatarResult.key,
         });
 
         return redirect("/profile?success=Profile created successfully");
@@ -156,7 +170,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
       try {
         // Handle avatar upload/URL
-        const avatarUrl = await handleImageUpload(
+        const avatarResult = await handleImageUpload(
           context,
           formData,
           user.id,
@@ -167,7 +181,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
         await updateMakerProfile(db, user.id, {
           displayName,
           bio,
-          avatarUrl,
+          avatarUrl: avatarResult.url,
+          avatarKey: avatarResult.key,
         });
 
         // console.log("Profile updated successfully, redirecting...");
@@ -260,7 +275,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         const price = priceStr?.trim() ? parsePrice(priceStr) : 0;
 
         // Handle product image upload/URL
-        const imageUrl = await handleImageUpload(
+        const imageResult = await handleImageUpload(
           context,
           formData,
           user.id,
@@ -281,7 +296,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
           description: description || undefined,
           price,
           category: category || undefined,
-          image_url: imageUrl || undefined,
+          image_url: imageResult.url || undefined,
+          image_key: imageResult.key || undefined,
           shopify_url: shopifyUrl || "",
           status: status as any,
           stock_quantity: stockQuantity ? parseInt(stockQuantity) : undefined,
@@ -342,15 +358,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
         if (category !== null) updateData.category = category || undefined;
 
         // Handle product image upload/URL
-        const imageUrl = await handleImageUpload(
+        const imageResult = await handleImageUpload(
           context,
           formData,
           user.id,
           "product",
           "imageUrl"
         );
-        if (imageUrl !== undefined)
-          updateData.image_url = imageUrl || undefined;
+        if (imageResult.url !== undefined)
+          updateData.image_url = imageResult.url || undefined;
+        if (imageResult.key !== undefined)
+          updateData.image_key = imageResult.key || undefined;
 
         if (shopifyUrl !== null) updateData.shopify_url = shopifyUrl || "";
         if (status) updateData.status = status;
