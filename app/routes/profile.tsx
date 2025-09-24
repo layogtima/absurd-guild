@@ -26,7 +26,6 @@ import {
 import { useLoaderData, useActionData } from "react-router";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
-import { ProductManagement } from "~/components/profile/ProductManagement";
 import { ProductList } from "~/components/profile/ProductList";
 import { EditModal } from "~/components/profile/EditModal";
 import { EditorToolbar } from "~/components/profile/EditorToolbar";
@@ -156,6 +155,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       // console.log("Handling updateProfile action");
       const displayName = formData.get("displayName") as string;
       const bio = formData.get("bio") as string;
+      const makerName = formData.get("makerName") as string;
 
       try {
         // Handle avatar upload/URL
@@ -171,6 +171,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           displayName,
           bio,
           avatarUrl,
+          makerName,
         });
 
         // console.log("Profile updated successfully, redirecting...");
@@ -209,8 +210,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
       try {
         await addProfileLink(db, user.id, title, linkUrl);
         // console.log("Link added successfully, redirecting...");
-        // Redirect to profile with success message (removes add-link automatically)
-        return redirect("/profile?success=Link+added+successfully");
+        // Preserve edit mode if it was active
+        const url = new URL(request.url);
+        const wasInEditMode = url.searchParams.get("edit") === "true";
+
+        const redirectParams = new URLSearchParams();
+        if (wasInEditMode) {
+          redirectParams.set("edit", "true");
+        }
+        redirectParams.set("success", "Link added successfully");
+
+        return redirect(`/profile?${redirectParams.toString()}`);
       } catch (error) {
         console.error("Error adding link:", error);
         return {
@@ -306,7 +316,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
           documentation_url: documentationUrl || undefined,
         });
 
-        return redirect("/profile?success=Product+created+successfully");
+        // Preserve edit mode if it was active
+        const url = new URL(request.url);
+        const wasInEditMode = url.searchParams.get("edit") === "true";
+
+        const redirectParams = new URLSearchParams();
+        if (wasInEditMode) {
+          redirectParams.set("edit", "true");
+        }
+        redirectParams.set("success", "Product created successfully");
+
+        return redirect(`/profile?${redirectParams.toString()}`);
       } catch (error) {
         console.error("Error creating product:", error);
         return {
@@ -396,7 +416,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
         await updateProduct(db, user.id, productId, updateData);
 
-        return redirect("/profile?success=Product+updated+successfully");
+        // Preserve edit mode if it was active
+        const url = new URL(request.url);
+        const wasInEditMode = url.searchParams.get("edit") === "true";
+
+        const redirectParams = new URLSearchParams();
+        if (wasInEditMode) {
+          redirectParams.set("edit", "true");
+        }
+        redirectParams.set("success", "Product updated successfully");
+
+        return redirect(`/profile?${redirectParams.toString()}`);
       } catch (error) {
         console.error("Error updating product:", error);
         return {
@@ -453,7 +483,8 @@ export default function Profile() {
 
   // Modal state from URL params
   const editingModal = searchParams.get("editing");
-  const isModalOpen = editingModal !== null;
+  const editingProductId = searchParams.get("edit-product");
+  const isModalOpen = editingModal !== null || editingProductId !== null;
 
   // Modal configuration based on URL param
   const getModalConfig = () => {
@@ -461,8 +492,81 @@ export default function Profile() {
     const baseValues = {
       displayName: profile?.display_name || "",
       bio: profile?.bio || "",
-      avatarUrl: profile?.avatar_url || ""
+      avatarUrl: profile?.avatar_url || "",
+      makerName: profile?.maker_name || "",
     };
+
+    // Handle product editing
+    if (editingProductId) {
+      const productToEdit = products.find(
+        (p) => p.id === parseInt(editingProductId)
+      );
+      if (productToEdit) {
+        return {
+          type: "object" as const,
+          title: "Edit Product",
+          action: "updateProduct",
+          defaultValues: {
+            productId: productToEdit.id,
+            title: productToEdit.title || "",
+            description: productToEdit.description || "",
+            price: productToEdit.price ? productToEdit.price.toString() : "",
+            category: productToEdit.category || "",
+            status: productToEdit.status || "",
+            imageUrl: productToEdit.image_url || "",
+            stockQuantity: productToEdit.stock_quantity
+              ? productToEdit.stock_quantity.toString()
+              : "",
+            shippingWeight: productToEdit.shipping_weight
+              ? productToEdit.shipping_weight.toString()
+              : "",
+            features: productToEdit.features
+              ? productToEdit.features.join("\n")
+              : "",
+            isOpenSource: productToEdit.is_open_source || false,
+            githubRepo: productToEdit.github_repo || "",
+            documentationUrl: productToEdit.documentation_url || "",
+          },
+          fields: {
+            title: {
+              label: "Product Title",
+              type: "text",
+              placeholder: "Enter product name",
+            },
+            description: {
+              label: "Description",
+              type: "textarea",
+              placeholder: "Describe your product...",
+            },
+            price: {
+              label: "Price (₹)",
+              type: "number",
+              placeholder: "199 or leave empty for projects",
+            },
+            category: {
+              label: "Category",
+              type: "text",
+              placeholder: "e.g., Software, Hardware, Book",
+            },
+            status: {
+              label: "Status",
+              type: "text",
+              placeholder: "active, concept, development, prototype, testing",
+            },
+            productImage: {
+              label: "Product Image",
+              type: "file",
+              placeholder: "",
+            },
+            imageUrl: {
+              label: "Or enter image URL",
+              type: "url",
+              placeholder: "https://example.com/product-image.jpg",
+            },
+          },
+        };
+      }
+    }
 
     switch (editingModal) {
       case "avatar":
@@ -470,7 +574,7 @@ export default function Profile() {
           type: "image" as const,
           title: "Avatar",
           action: "updateProfile",
-          defaultValues: baseValues
+          defaultValues: baseValues,
         };
       case "name":
         return {
@@ -482,9 +586,9 @@ export default function Profile() {
             displayName: {
               label: "Display Name",
               type: "text",
-              placeholder: "Your full name or brand name"
-            }
-          }
+              placeholder: "Your full name or brand name",
+            },
+          },
         };
       case "bio":
         return {
@@ -496,9 +600,72 @@ export default function Profile() {
             bio: {
               label: "Bio",
               type: "textarea",
-              placeholder: "Tell us about yourself..."
-            }
-          }
+              placeholder: "Tell us about yourself...",
+            },
+          },
+        };
+      case "maker-name":
+        return {
+          type: "object" as const,
+          title: "Maker Name",
+          action: "updateProfile",
+          defaultValues: baseValues,
+          fields: {
+            makerName: {
+              label: "Maker Name",
+              type: "text",
+              placeholder: "your-unique-username",
+              pattern: "^[a-z][a-z\\-]*$",
+              title:
+                "Only lowercase letters and hyphens. Must start with a letter. 2-50 characters.",
+              minLength: 3,
+              maxLength: 50,
+            },
+          },
+        };
+      case "add-product":
+        return {
+          type: "object" as const,
+          title: "Add Product",
+          action: "createProduct",
+          defaultValues: {},
+          fields: {
+            title: {
+              label: "Product Title",
+              type: "text",
+              placeholder: "Enter product name",
+            },
+            description: {
+              label: "Description",
+              type: "textarea",
+              placeholder: "Describe your product...",
+            },
+            price: {
+              label: "Price (₹)",
+              type: "number",
+              placeholder: "199 or leave empty for projects",
+            },
+            category: {
+              label: "Category",
+              type: "text",
+              placeholder: "e.g., Software, Hardware, Book",
+            },
+            status: {
+              label: "Status",
+              type: "text",
+              placeholder: "active, concept, development, prototype, testing",
+            },
+            productImage: {
+              label: "Product Image",
+              type: "file",
+              placeholder: "",
+            },
+            imageUrl: {
+              label: "Or enter image URL",
+              type: "url",
+              placeholder: "https://example.com/product-image.jpg",
+            },
+          },
         };
       default:
         return null;
@@ -518,6 +685,7 @@ export default function Profile() {
   const getCloseModalUrl = () => {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete("editing");
+    newParams.delete("edit-product");
     return newParams.toString() ? `?${newParams.toString()}` : "/profile";
   };
 
@@ -525,7 +693,9 @@ export default function Profile() {
     <Layout>
       <Navigation user={user} />
       <EditorToolbar isVisible={editMode} />
-      <div className={`min-h-screen bg-primary py-8 ${editMode ? 'edit-mode' : ''}`}>
+      <div
+        className={`min-h-screen bg-primary py-8 ${editMode ? "edit-mode" : ""}`}
+      >
         <div className="max-w-4xl mx-auto px-4">
           {/* Success/Error Messages */}
           {(successMessage || actionData?.success) && (
@@ -579,8 +749,12 @@ export default function Profile() {
                     name="makerName"
                     defaultValue={searchParams.get("makerName") || ""}
                     required
+                    pattern="^[a-z][a-z\-]*$"
+                    minLength={3}
+                    maxLength={50}
+                    title="Only lowercase letters and hyphens. Must start with a letter. 2-50 characters."
                     className="w-full px-3 py-2 border border-tertiary rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                    placeholder="Your unique maker username"
+                    placeholder="your-unique-username"
                   />
                   <p className="text-xs text-secondary mt-1">
                     This will be your public username (e.g., /maker/yourname)
@@ -723,9 +897,17 @@ export default function Profile() {
                         {profile.display_name || profile.maker_name}
                       </h1>
                     )}
-                    <p className="text-xl lg:text-2xl text-secondary mb-6 editable">
-                      @{profile.maker_name}
-                    </p>
+                    {editMode ? (
+                      <Link to={getEditUrl("maker-name")}>
+                        <p className="text-xl lg:text-2xl text-secondary mb-6 editable">
+                          @{profile.maker_name}
+                        </p>
+                      </Link>
+                    ) : (
+                      <p className="text-xl lg:text-2xl text-secondary mb-6">
+                        @{profile.maker_name}
+                      </p>
+                    )}
 
                     {/* Bio */}
                     <div className="max-w-4xl mx-auto mb-12">
@@ -749,36 +931,16 @@ export default function Profile() {
                         </Link>
                       ) : null}
                     </div>
-
-                    {/* Edit Button for Owner */}
-                    <div className="flex justify-center mb-8">
-                      {editMode ? (
-                        <Link
-                          to="/profile"
-                          className="bg-secondary text-primary px-8 py-4 rounded-2xl text-lg font-semibold hover-lift border-2 border-theme transition-all"
-                        >
-                          <i className="fas fa-eye mr-2"></i>
-                          Preview
-                        </Link>
-                      ) : (
-                        <Link
-                          to="?edit=true"
-                          className="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all"
-                        >
-                          <i className="fas fa-edit mr-2"></i>
-                          Edit Profile
-                        </Link>
-                      )}
-                    </div>
                   </div>
                 </div>
               </section>
 
-
               {/* Main Content - matching m.$id.tsx */}
               <main className="max-w-7xl mx-auto p-6">
                 {/* Ready Products Section */}
-                {products.filter(p => ["active", "limited", "sold-out"].includes(p.status)).length > 0 && (
+                {products.filter((p) =>
+                  ["active", "limited", "sold-out"].includes(p.status)
+                ).length > 0 && (
                   <section id="products" className="mb-20">
                     <div className="text-center mb-12">
                       <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
@@ -790,8 +952,10 @@ export default function Profile() {
                     </div>
 
                     <ProductList
-                      products={products.filter(p => ["active", "limited", "sold-out"].includes(p.status))}
-                      showAdminActions={true}
+                      products={products.filter((p) =>
+                        ["active", "limited", "sold-out"].includes(p.status)
+                      )}
+                      showAdminActions={editMode}
                       mode="showcase"
                       gridCols="md:grid-cols-2"
                     />
@@ -799,7 +963,11 @@ export default function Profile() {
                 )}
 
                 {/* Development Projects Section */}
-                {products.filter(p => ["concept", "development", "prototype", "testing"].includes(p.status)).length > 0 && (
+                {products.filter((p) =>
+                  ["concept", "development", "prototype", "testing"].includes(
+                    p.status
+                  )
+                ).length > 0 && (
                   <section id="workbench" className="mb-20">
                     <div className="text-center mb-12">
                       <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
@@ -811,8 +979,15 @@ export default function Profile() {
                     </div>
 
                     <ProductList
-                      products={products.filter(p => ["concept", "development", "prototype", "testing"].includes(p.status))}
-                      showAdminActions={true}
+                      products={products.filter((p) =>
+                        [
+                          "concept",
+                          "development",
+                          "prototype",
+                          "testing",
+                        ].includes(p.status)
+                      )}
+                      showAdminActions={editMode}
                       mode="showcase"
                       gridCols="md:grid-cols-2 lg:grid-cols-3"
                     />
@@ -826,9 +1001,31 @@ export default function Profile() {
                     <h2 className="font-jura text-3xl font-bold text-primary mb-4">
                       Ready to Build
                     </h2>
-                    <p className="text-xl text-secondary">
+                    <p className="text-xl text-secondary mb-8">
                       Start creating amazing products to showcase here!
                     </p>
+                    {editMode && (
+                      <Link
+                        to={getEditUrl("add-product")}
+                        className="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all inline-flex items-center"
+                      >
+                        <i className="fas fa-plus mr-2"></i>
+                        Add Product
+                      </Link>
+                    )}
+                  </section>
+                )}
+
+                {/* Add Product Button for edit mode */}
+                {editMode && products.length > 0 && (
+                  <section className="text-center mb-20">
+                    <Link
+                      to={getEditUrl("add-product")}
+                      className="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all inline-flex items-center"
+                    >
+                      <i className="fas fa-plus mr-2"></i>
+                      Add Product
+                    </Link>
                   </section>
                 )}
               </main>
@@ -859,70 +1056,84 @@ export default function Profile() {
                       ))}
                     </div>
 
-                    {/* Add/Manage Links for Owner */}
-                    <div className="text-center">
-                      {addingLink ? (
-                        <div className="bg-secondary border-2 border-theme rounded-xl p-6 mb-4">
-                          <Form method="post" className="space-y-4">
-                            <input type="hidden" name="_action" value="addLink" />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-primary mb-2">
-                                  Title
-                                </label>
-                                <input
-                                  type="text"
-                                  name="linkTitle"
-                                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                                  placeholder="e.g., Website, GitHub, Instagram"
-                                  required
-                                />
+                    {/* Add/Manage Links for Owner - only show in edit mode */}
+                    {editMode && (
+                      <div className="text-center">
+                        {addingLink ? (
+                          <div className="bg-secondary border-2 border-theme rounded-xl p-6 mb-4">
+                            <Form method="post" className="space-y-4">
+                              <input
+                                type="hidden"
+                                name="_action"
+                                value="addLink"
+                              />
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-primary mb-2">
+                                    Title
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="linkTitle"
+                                    className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                                    placeholder="e.g., Website, GitHub, Instagram"
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-primary mb-2">
+                                    URL
+                                  </label>
+                                  <input
+                                    type="url"
+                                    name="linkUrl"
+                                    className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                                    placeholder="https://example.com"
+                                    required
+                                  />
+                                </div>
                               </div>
-                              <div>
-                                <label className="block text-sm font-medium text-primary mb-2">
-                                  URL
-                                </label>
-                                <input
-                                  type="url"
-                                  name="linkUrl"
-                                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                                  placeholder="https://example.com"
-                                  required
-                                />
+                              <div className="flex gap-4 justify-center">
+                                <button
+                                  type="submit"
+                                  className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all"
+                                >
+                                  <i className="fas fa-plus mr-2"></i>
+                                  Add Link
+                                </button>
+                                <Link
+                                  to="/profile"
+                                  className="bg-secondary text-primary px-6 py-3 rounded-xl font-semibold hover-lift border-2 border-theme transition-all"
+                                >
+                                  Cancel
+                                </Link>
                               </div>
-                            </div>
-                            <div className="flex gap-4 justify-center">
-                              <button
-                                type="submit"
-                                className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all"
-                              >
-                                <i className="fas fa-plus mr-2"></i>
-                                Add Link
-                              </button>
-                              <Link
-                                to="/profile"
-                                className="bg-secondary text-primary px-6 py-3 rounded-xl font-semibold hover-lift border-2 border-theme transition-all"
-                              >
-                                Cancel
-                              </Link>
-                            </div>
-                          </Form>
-                        </div>
-                      ) : (
-                        <Link
-                          to="?add-link=true"
-                          className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all inline-flex items-center"
-                        >
-                          <i className="fas fa-plus mr-2"></i>
-                          Add Link
-                        </Link>
-                      )}
-                    </div>
+                            </Form>
+                          </div>
+                        ) : (
+                          <Link
+                            to="?add-link=true"
+                            className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all inline-flex items-center"
+                          >
+                            <i className="fas fa-plus mr-2"></i>
+                            Add Link
+                          </Link>
+                        )}
+                      </div>
+                    )}
 
                     {/* Delete Link Forms (hidden) */}
                     {profile.links.map((link) => (
-                      <Form key={`delete-${link.id}`} method="post" className="hidden">
-                        <input type="hidden" name="_action" value="deleteLink" />
+                      <Form
+                        key={`delete-${link.id}`}
+                        method="post"
+                        className="hidden"
+                      >
+                        <input
+                          type="hidden"
+                          name="_action"
+                          value="deleteLink"
+                        />
                         <input type="hidden" name="linkId" value={link.id} />
                       </Form>
                     ))}
@@ -945,6 +1156,27 @@ export default function Profile() {
             fields={modalConfig.fields}
             action={modalConfig.action}
           />
+        )}
+      </div>
+
+      {/* Fixed Edit/Preview Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        {editMode ? (
+          <Link
+            to="/profile"
+            className="bg-secondary text-primary px-6 py-3 rounded-full text-base font-semibold hover-lift border-2 border-theme transition-all shadow-lg flex items-center"
+          >
+            <i className="fas fa-eye mr-2"></i>
+            Done editing!
+          </Link>
+        ) : (
+          <Link
+            to="?edit=true"
+            className="accent-orange text-on-accent px-6 py-3 rounded-full text-base font-semibold hover-lift transition-all shadow-lg flex items-center"
+          >
+            <i className="fas fa-edit mr-2"></i>
+            Edit Profile
+          </Link>
         )}
       </div>
     </Layout>

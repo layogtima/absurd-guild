@@ -262,13 +262,13 @@ function generateSlug(title: string): string {
 }
 
 export function parsePrice(priceString: string): number {
-  // Remove currency symbols and parse as float, then convert to paise
+  // Remove currency symbols and parse as integer - save as rupees
   const cleanPrice = priceString.replace(/[₹,\s]/g, "");
-  const price = parseFloat(cleanPrice);
+  const price = parseInt(cleanPrice);
   if (isNaN(price) || price < 0) {
-    throw new Error("Invalid price format");
+    throw new Error("Invalid price format - must be a positive integer");
   }
-  return Math.round(price * 100); // Convert to paise
+  return price; // Save as rupees (integer only)
 }
 
 // Helper function to parse JSON fields in products

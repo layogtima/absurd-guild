@@ -11,6 +11,10 @@ interface EditModalProps {
     label: string;
     type: "text" | "textarea" | "url" | "number" | "file";
     placeholder?: string;
+    pattern?: string;
+    title?: string;
+    minLength?: number;
+    maxLength?: number;
   }>;
   action: string;
   children?: React.ReactNode;
@@ -67,6 +71,11 @@ export function EditModal({
         <Form method="post" encType="multipart/form-data" className="space-y-6">
           <input type="hidden" name="_action" value={action} />
 
+          {/* Product ID for product editing */}
+          {defaultValues.productId && (
+            <input type="hidden" name="productId" value={defaultValues.productId} />
+          )}
+
           {/* Always include all profile fields as hidden inputs */}
           {/* For displayName - only hidden if we're not editing it */}
           {(!fields?.displayName) && (
@@ -76,6 +85,11 @@ export function EditModal({
           {/* For bio - only hidden if we're not editing it */}
           {(!fields?.bio) && (
             <input type="hidden" name="bio" value={defaultValues.bio || ""} />
+          )}
+
+          {/* For makerName - only hidden if we're not editing it */}
+          {(!fields?.makerName) && (
+            <input type="hidden" name="makerName" value={defaultValues.makerName || ""} />
           )}
 
           {/* For avatarUrl - only hidden if we're not editing it (image type) */}
@@ -173,10 +187,29 @@ export function EditModal({
                       defaultValue={field.type === "number" ? Number(defaultValues[key]) || "" : defaultValues[key] || ""}
                       className="w-full bg-tertiary border-2 border-theme rounded-xl p-3 text-primary focus:border-orange-300 outline-none transition-all"
                       placeholder={field.placeholder}
+                      {...(field.type === "number" && { step: "1", min: "0" })}
+                      {...(field.pattern && { pattern: field.pattern })}
+                      {...(field.title && { title: field.title })}
+                      {...(field.minLength && { minLength: field.minLength })}
+                      {...(field.maxLength && { maxLength: field.maxLength })}
                     />
                   )}
                 </div>
               ))}
+
+              {/* Product image preview */}
+              {defaultValues.imageUrl && (
+                <div className="mt-4">
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Current Product Image
+                  </label>
+                  <img
+                    src={defaultValues.imageUrl}
+                    className="max-w-full h-40 object-cover rounded-lg mx-auto"
+                    alt="Current product image"
+                  />
+                </div>
+              )}
             </div>
           )}
 

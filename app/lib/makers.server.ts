@@ -43,6 +43,43 @@ export interface UpdateMakerData {
   displayName?: string;
   bio?: string;
   avatarUrl?: string;
+  makerName?: string;
+}
+
+/**
+ * Validate maker name format
+ */
+function isValidMakerName(makerName: string): { isValid: boolean; error?: string } {
+  if (!makerName || typeof makerName !== 'string') {
+    return { isValid: false, error: "Maker name is required" };
+  }
+
+  // Check length (reasonable limits)
+  if (makerName.length < 2) {
+    return { isValid: false, error: "Maker name must be at least 2 characters long" };
+  }
+
+  if (makerName.length > 50) {
+    return { isValid: false, error: "Maker name must be less than 50 characters" };
+  }
+
+  // Check format: only lowercase letters and hyphens, must start with letter
+  const validPattern = /^[a-z][a-z\-]*$/;
+  if (!validPattern.test(makerName)) {
+    return { isValid: false, error: "Maker name can only contain lowercase letters and hyphens, and must start with a letter" };
+  }
+
+  // Check that it doesn't start or end with hyphen
+  if (makerName.startsWith('-') || makerName.endsWith('-')) {
+    return { isValid: false, error: "Maker name cannot start or end with a hyphen" };
+  }
+
+  // Check for consecutive hyphens
+  if (makerName.includes('--')) {
+    return { isValid: false, error: "Maker name cannot contain consecutive hyphens" };
+  }
+
+  return { isValid: true };
 }
 
 /**
@@ -75,6 +112,12 @@ export async function createMakerProfile(
   userId: number,
   data: CreateMakerData
 ): Promise<MakerProfile> {
+  // Validate format first
+  const validation = isValidMakerName(data.makerName);
+  if (!validation.isValid) {
+    throw new Error(validation.error!);
+  }
+
   // Check if maker name is available
   const isAvailable = await isMakerNameAvailable(db, data.makerName);
   if (!isAvailable) {
@@ -119,6 +162,23 @@ export async function updateMakerProfile(
   userId: number,
   data: UpdateMakerData
 ): Promise<MakerProfile> {
+  // If makerName is being updated, validate format and check availability
+  if (data.makerName) {
+    // Validate format first
+    const validation = isValidMakerName(data.makerName);
+    if (!validation.isValid) {
+      throw new Error(validation.error!);
+    }
+
+    const currentProfile = await getMakerProfile(db, userId);
+    if (currentProfile && currentProfile.maker_name !== data.makerName) {
+      const isAvailable = await isMakerNameAvailable(db, data.makerName);
+      if (!isAvailable) {
+        throw new Error("Maker name is already taken");
+      }
+    }
+  }
+
   const result = await db
     .prepare(
       `
@@ -126,6 +186,7 @@ export async function updateMakerProfile(
       display_name = ?,
       bio = ?,
       avatar_url = ?,
+      maker_name = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ? AND is_maker = 1
     RETURNING *
@@ -135,6 +196,7 @@ export async function updateMakerProfile(
       data.displayName || null,
       data.bio || null,
       data.avatarUrl || null,
+      data.makerName || null,
       userId
     )
     .first<MakerProfile>();
