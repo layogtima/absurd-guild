@@ -6,11 +6,16 @@ interface User {
   display_name?: string;
 }
 
-interface NavigationProps {
-  user?: User | null;
+interface UserProfile {
+  avatar_url?: string;
 }
 
-export function Navigation({ user }: NavigationProps) {
+interface NavigationProps {
+  user?: User | null;
+  userProfile?: UserProfile | null;
+}
+
+export function Navigation({ user, userProfile }: NavigationProps) {
   return (
     <header className="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
@@ -108,8 +113,16 @@ export function Navigation({ user }: NavigationProps) {
                 <div className="text-xs text-secondary">Maker</div>
               </div>
               <div className="relative group">
-                <button className="w-10 h-10 rounded-full bg-accent-orange flex items-center justify-center text-on-accent font-bold">
-                  {(user.display_name || user.email)[0].toUpperCase()}
+                <button className="w-10 h-10 rounded-full bg-accent-orange flex items-center justify-center text-on-accent font-bold overflow-hidden">
+                  {userProfile?.avatar_url ? (
+                    <img
+                      src={userProfile.avatar_url}
+                      alt={user.display_name || user.email}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>{(user.display_name || user.email)[0].toUpperCase()}</span>
+                  )}
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-secondary border-2 border-theme rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <div className="py-2">

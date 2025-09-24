@@ -1,17 +1,20 @@
-import { type LoaderFunctionArgs, useLoaderData } from "react-router";
-import { getDB } from "~/lib/db.server";
+import { type LoaderFunctionArgs, useLoaderData, Link } from "react-router";
+import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { getMakerByIdOrName, getFullMakerProfile } from "~/lib/makers.server";
 import {
   getReadyProducts,
   getDevelopmentProjects,
 } from "~/lib/products.server";
+import { createAuthService, getOptionalAuth } from "~/lib/auth.server";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
 import { ProductList } from "~/components/profile/ProductList";
 import { type Product } from "~/types/product";
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const db = getDB(context);
+  const kv = getKV(context);
+  const env = getEnv(context);
   const { id } = params;
 
   if (!id) {
@@ -41,19 +44,45 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   const readyProducts = await getReadyProducts(db, maker.id);
   const developmentProjects = await getDevelopmentProjects(db, maker.id);
 
-  return { maker, profile, readyProducts, developmentProjects };
+  // Check if the current user is the owner of this profile
+  const authService = createAuthService(db, kv, env);
+  const currentUser = await getOptionalAuth(request, authService);
+  const isOwner = currentUser && currentUser.id === maker.id;
+
+  // Get current user's profile for navigation
+  let currentUserProfile = null;
+  if (currentUser) {
+    currentUserProfile = await getFullMakerProfile(db, currentUser.id);
+  }
+
+  return {
+    maker,
+    profile,
+    readyProducts,
+    developmentProjects,
+    isOwner,
+    currentUser,
+    currentUserProfile,
+  };
 }
 
 export default function MakerProfile() {
-  const { maker, profile, readyProducts, developmentProjects } =
-    useLoaderData<typeof loader>();
+  const {
+    maker,
+    profile,
+    readyProducts,
+    developmentProjects,
+    isOwner,
+    currentUser,
+    currentUserProfile,
+  } = useLoaderData<typeof loader>();
 
   if (!profile) {
     return (
       <Layout>
-        <Navigation />
+        <Navigation user={currentUser} userProfile={currentUserProfile} />
         <div className="min-h-screen bg-primary py-8">
-          <div className="max-w-4xl mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="bg-secondary rounded-lg shadow-md p-6 text-center">
               <h1 className="text-2xl font-bold text-primary mb-4">
                 Maker Profile Not Found
@@ -70,7 +99,7 @@ export default function MakerProfile() {
 
   return (
     <Layout>
-      <Navigation />
+      <Navigation user={currentUser} userProfile={currentUserProfile} />
 
       {/* Hero Section - matching html/profile.html */}
       <section className="relative flex items-center justify-center">
@@ -180,7 +209,7 @@ export default function MakerProfile() {
 
         {/* No content state */}
         {readyProducts.length === 0 && developmentProjects.length === 0 && (
-          <section className="text-center py-20">
+          <section className="text-center pb-20">
             <div className="text-6xl mb-4">🚀</div>
             <h2 className="font-jura text-3xl font-bold text-primary mb-4">
               Coming Soon
@@ -192,6 +221,19 @@ export default function MakerProfile() {
           </section>
         )}
       </main>
+
+      {/* Edit Profile Button - only show for profile owner */}
+      {isOwner && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <Link
+            to="/profile"
+            className="accent-orange text-on-accent px-6 py-3 rounded-full text-base font-semibold hover-lift transition-all shadow-lg flex items-center"
+          >
+            <i className="fas fa-edit mr-2"></i>
+            Edit Profile
+          </Link>
+        </div>
+      )}
     </Layout>
   );
 }

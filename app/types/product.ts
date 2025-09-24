@@ -39,7 +39,7 @@ export interface Product {
   title: string;
   slug: string;
   description: string | null;
-  price: number; // in paise
+  price: number; // in rupees
   shopify_product_id: string | null;
   shopify_url: string | null;
   image_url: string | null;
@@ -63,7 +63,7 @@ export interface Product {
 export interface CreateProductData {
   title: string;
   description?: string;
-  price?: number; // in paise - optional for development projects
+  price?: number; // in rupees - optional for development projects
   shopify_url?: string;
   image_url?: string;
   image_key?: string;
@@ -83,7 +83,7 @@ export interface CreateProductData {
 export interface UpdateProductData {
   title?: string;
   description?: string;
-  price?: number; // in paise
+  price?: number; // in rupees
   shopify_url?: string;
   image_url?: string;
   image_key?: string;

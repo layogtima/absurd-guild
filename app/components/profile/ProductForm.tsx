@@ -10,8 +10,8 @@ export function ProductForm({ product, isEditing = false }: ProductFormProps) {
   const actionData = useActionData();
   const [searchParams] = useSearchParams();
 
-  // Convert price from paise to rupees for display
-  const displayPrice = product ? (product.price / 100).toString() : "";
+  // Price is already in rupees, no conversion needed
+  const displayPrice = product ? product.price.toString() : "";
 
   return (
     <div className="bg-tertiary rounded-lg p-6 mb-6">

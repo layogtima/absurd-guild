@@ -72,7 +72,7 @@ export default function ProfileSetup() {
     <Layout>
       <Navigation user={user} />
       <div className="min-h-screen bg-primary py-8">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           {/* Success/Error Messages */}
           {error && (
             <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 flex items-center justify-between">

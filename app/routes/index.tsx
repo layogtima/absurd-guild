@@ -2,6 +2,7 @@ import { type LoaderFunctionArgs } from "react-router";
 import { Link } from "react-router";
 import { getDB, getKV, getEnv } from "~/lib/db.server";
 import { createAuthService, getOptionalAuth } from "~/lib/auth.server";
+import { getFullMakerProfile } from "~/lib/makers.server";
 import { Navigation } from "~/components/Navigation";
 import { Layout } from "~/components/Layout";
 
@@ -13,15 +14,21 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
   const user = await getOptionalAuth(request, authService);
 
-  return { user };
+  // Get user's profile for navigation
+  let userProfile = null;
+  if (user) {
+    userProfile = await getFullMakerProfile(db, user.id);
+  }
+
+  return { user, userProfile };
 }
 
-export default function Index({ loaderData }: { loaderData: { user: any } }) {
-  const { user } = loaderData;
+export default function Index({ loaderData }: { loaderData: { user: any; userProfile: any } }) {
+  const { user, userProfile } = loaderData;
 
   return (
     <Layout>
-      <Navigation user={user} />
+      <Navigation user={user} userProfile={userProfile} />
 
       <main>
         {/* Hero Section */}
