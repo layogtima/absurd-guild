@@ -43,6 +43,7 @@ export interface Product {
   shopify_product_id: string | null;
   shopify_url: string | null;
   image_url: string | null;
+  image_key: string | null;
   category: string | null;
   is_active: boolean;
   created_at: string;
@@ -65,6 +66,7 @@ export interface CreateProductData {
   price?: number; // in rupees - optional for development projects
   shopify_url?: string;
   image_url?: string;
+  image_key?: string;
   category?: string;
   status?: ProductStatus;
   // Enhanced fields
@@ -84,6 +86,7 @@ export interface UpdateProductData {
   price?: number; // in rupees
   shopify_url?: string;
   image_url?: string;
+  image_key?: string;
   category?: string;
   is_active?: boolean;
   status?: ProductStatus;

@@ -19,6 +19,7 @@ export interface MakerProfile {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  avatar_key: string | null;
   is_maker: boolean;
   created_at: string;
   updated_at: string;
@@ -37,6 +38,7 @@ export interface CreateMakerData {
   displayName?: string;
   bio?: string;
   avatarUrl?: string;
+  avatarKey?: string;
 }
 
 export interface UpdateMakerData {
@@ -44,39 +46,59 @@ export interface UpdateMakerData {
   bio?: string;
   avatarUrl?: string;
   makerName?: string;
+  avatarKey?: string;
 }
 
 /**
  * Validate maker name format
  */
-function isValidMakerName(makerName: string): { isValid: boolean; error?: string } {
-  if (!makerName || typeof makerName !== 'string') {
+function isValidMakerName(makerName: string): {
+  isValid: boolean;
+  error?: string;
+} {
+  if (!makerName || typeof makerName !== "string") {
     return { isValid: false, error: "Maker name is required" };
   }
 
   // Check length (reasonable limits)
   if (makerName.length < 2) {
-    return { isValid: false, error: "Maker name must be at least 2 characters long" };
+    return {
+      isValid: false,
+      error: "Maker name must be at least 2 characters long",
+    };
   }
 
   if (makerName.length > 50) {
-    return { isValid: false, error: "Maker name must be less than 50 characters" };
+    return {
+      isValid: false,
+      error: "Maker name must be less than 50 characters",
+    };
   }
 
   // Check format: only lowercase letters and hyphens, must start with letter
   const validPattern = /^[a-z][a-z\-]*$/;
   if (!validPattern.test(makerName)) {
-    return { isValid: false, error: "Maker name can only contain lowercase letters and hyphens, and must start with a letter" };
+    return {
+      isValid: false,
+      error:
+        "Maker name can only contain lowercase letters and hyphens, and must start with a letter",
+    };
   }
 
   // Check that it doesn't start or end with hyphen
-  if (makerName.startsWith('-') || makerName.endsWith('-')) {
-    return { isValid: false, error: "Maker name cannot start or end with a hyphen" };
+  if (makerName.startsWith("-") || makerName.endsWith("-")) {
+    return {
+      isValid: false,
+      error: "Maker name cannot start or end with a hyphen",
+    };
   }
 
   // Check for consecutive hyphens
-  if (makerName.includes('--')) {
-    return { isValid: false, error: "Maker name cannot contain consecutive hyphens" };
+  if (makerName.includes("--")) {
+    return {
+      isValid: false,
+      error: "Maker name cannot contain consecutive hyphens",
+    };
   }
 
   return { isValid: true };
@@ -133,6 +155,7 @@ export async function createMakerProfile(
       display_name = ?,
       bio = ?,
       avatar_url = ?,
+      avatar_key = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
     RETURNING *
@@ -143,6 +166,7 @@ export async function createMakerProfile(
       data.displayName || null,
       data.bio || null,
       data.avatarUrl || null,
+      data.avatarKey || null,
       userId
     )
     .first<MakerProfile>();
@@ -187,6 +211,7 @@ export async function updateMakerProfile(
       bio = ?,
       avatar_url = ?,
       maker_name = ?,
+      avatar_key = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ? AND is_maker = 1
     RETURNING *
@@ -197,6 +222,7 @@ export async function updateMakerProfile(
       data.bio || null,
       data.avatarUrl || null,
       data.makerName || null,
+      data.avatarKey || null,
       userId
     )
     .first<MakerProfile>();

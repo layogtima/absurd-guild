@@ -101,11 +101,11 @@ export async function createProduct(
     .prepare(
       `INSERT INTO products (
         creator_id, title, slug, description, price,
-        shopify_url, image_url, category, status,
+        shopify_url, image_url, image_key, category, status,
         images, features, specifications, shipping_weight, stock_quantity,
         is_open_source, github_repo, documentation_url,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       RETURNING *`
     )
     .bind(
@@ -116,6 +116,7 @@ export async function createProduct(
       productData.price || 0,
       productData.shopify_url || "",
       productData.image_url || null,
+      productData.image_key || null,
       productData.category || null,
       productData.status || 'active',
       imagesJson,
@@ -186,6 +187,7 @@ export async function updateProduct(
         price = COALESCE(?, price),
         shopify_url = COALESCE(?, shopify_url),
         image_url = COALESCE(?, image_url),
+        image_key = COALESCE(?, image_key),
         category = COALESCE(?, category),
         status = COALESCE(?, status),
         images = COALESCE(?, images),
@@ -208,6 +210,7 @@ export async function updateProduct(
       productData.price || null,
       productData.shopify_url !== undefined ? (productData.shopify_url || "") : null,
       productData.image_url !== undefined ? productData.image_url : null,
+      productData.image_key !== undefined ? productData.image_key : null,
       productData.category !== undefined ? productData.category : null,
       productData.status || null,
       imagesJson !== undefined ? imagesJson : null,
