@@ -27,6 +27,9 @@ import { useLoaderData, useActionData } from "react-router";
 import { Layout } from "~/components/Layout";
 import { Navigation } from "~/components/Navigation";
 import { ProductManagement } from "~/components/profile/ProductManagement";
+import { ProductList } from "~/components/profile/ProductList";
+import { EditModal } from "~/components/profile/EditModal";
+import { EditorToolbar } from "~/components/profile/EditorToolbar";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const db = getDB(context);
@@ -171,8 +174,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
         });
 
         // console.log("Profile updated successfully, redirecting...");
-        // Redirect to profile with success message (removes edit-profile automatically)
-        return redirect("/profile?success=Profile+updated+successfully");
+        // Preserve edit mode if it was active
+        const url = new URL(request.url);
+        const wasInEditMode = url.searchParams.get("edit") === "true";
+
+        const redirectParams = new URLSearchParams();
+        if (wasInEditMode) {
+          redirectParams.set("edit", "true");
+        }
+        redirectParams.set("success", "Profile updated successfully");
+
+        return redirect(`/profile?${redirectParams.toString()}`);
       } catch (error) {
         console.error("Error updating profile:", error);
         return {
@@ -434,14 +446,86 @@ export default function Profile() {
 
   const [searchParams] = useSearchParams();
   const editingProfile = searchParams.get("edit-profile") === "true";
+  const editMode = searchParams.get("edit") === "true";
   const addingLink = searchParams.get("add-link") === "true";
   const successMessage = searchParams.get("success");
   const errorMessage = searchParams.get("error");
 
+  // Modal state from URL params
+  const editingModal = searchParams.get("editing");
+  const isModalOpen = editingModal !== null;
+
+  // Modal configuration based on URL param
+  const getModalConfig = () => {
+    // Base values to preserve existing data
+    const baseValues = {
+      displayName: profile?.display_name || "",
+      bio: profile?.bio || "",
+      avatarUrl: profile?.avatar_url || ""
+    };
+
+    switch (editingModal) {
+      case "avatar":
+        return {
+          type: "image" as const,
+          title: "Avatar",
+          action: "updateProfile",
+          defaultValues: baseValues
+        };
+      case "name":
+        return {
+          type: "object" as const,
+          title: "Profile Info",
+          action: "updateProfile",
+          defaultValues: baseValues,
+          fields: {
+            displayName: {
+              label: "Display Name",
+              type: "text",
+              placeholder: "Your full name or brand name"
+            }
+          }
+        };
+      case "bio":
+        return {
+          type: "object" as const,
+          title: "Bio",
+          action: "updateProfile",
+          defaultValues: baseValues,
+          fields: {
+            bio: {
+              label: "Bio",
+              type: "textarea",
+              placeholder: "Tell us about yourself..."
+            }
+          }
+        };
+      default:
+        return null;
+    }
+  };
+
+  const modalConfig = getModalConfig();
+
+  // Helper to get current URL with modal param
+  const getEditUrl = (editingType: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("editing", editingType);
+    return `?${newParams.toString()}`;
+  };
+
+  // Helper to get URL without modal param
+  const getCloseModalUrl = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("editing");
+    return newParams.toString() ? `?${newParams.toString()}` : "/profile";
+  };
+
   return (
     <Layout>
       <Navigation user={user} />
-      <div className="min-h-screen bg-primary py-8">
+      <EditorToolbar isVisible={editMode} />
+      <div className={`min-h-screen bg-primary py-8 ${editMode ? 'edit-mode' : ''}`}>
         <div className="max-w-4xl mx-auto px-4">
           {/* Success/Error Messages */}
           {(successMessage || actionData?.success) && (
@@ -594,282 +678,274 @@ export default function Profile() {
             </div>
           ) : (
             <>
-              {/* Existing Profile Display */}
-              <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0 w-20 h-20 bg-tertiary rounded-full flex items-center justify-center overflow-hidden">
-                      {profile.avatar_url ? (
-                        <img
-                          src={profile.avatar_url}
-                          alt={
-                            profile.display_name ||
-                            profile.maker_name ||
-                            "Profile"
-                          }
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-secondary text-2xl">👤</span>
-                      )}
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-primary">
+              {/* Hero Section - matching html/profile.html */}
+              <section className="relative min-h-[70vh] flex items-center justify-center">
+                <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
+                  <div className="flex flex-col items-center mb-12 animate-fade-in">
+                    {/* Avatar */}
+                    {editMode ? (
+                      <Link to={getEditUrl("avatar")}>
+                        <div className="w-32 h-32 lg:w-40 lg:h-40 accent-orange rounded-3xl flex items-center justify-center text-4xl lg:text-5xl font-bold overflow-hidden text-on-accent mb-6 hover-lift editable">
+                          {profile.avatar_url ? (
+                            <img
+                              src={profile.avatar_url}
+                              alt={profile.display_name || profile.maker_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-secondary text-6xl">👤</span>
+                          )}
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="w-32 h-32 lg:w-40 lg:h-40 accent-orange rounded-3xl flex items-center justify-center text-4xl lg:text-5xl font-bold overflow-hidden text-on-accent mb-6 hover-lift">
+                        {profile.avatar_url ? (
+                          <img
+                            src={profile.avatar_url}
+                            alt={profile.display_name || profile.maker_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-secondary text-6xl">👤</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Name and tagline */}
+                    {editMode ? (
+                      <Link to={getEditUrl("name")}>
+                        <h1 className="font-jura text-6xl lg:text-8xl font-bold text-primary mb-4 editable">
+                          {profile.display_name || profile.maker_name}
+                        </h1>
+                      </Link>
+                    ) : (
+                      <h1 className="font-jura text-6xl lg:text-8xl font-bold text-primary mb-4">
                         {profile.display_name || profile.maker_name}
                       </h1>
-                      <p className="text-secondary">@{profile.maker_name}</p>
-                      {profile.bio && (
-                        <p className="text-primary mt-2">{profile.bio}</p>
+                    )}
+                    <p className="text-xl lg:text-2xl text-secondary mb-6 editable">
+                      @{profile.maker_name}
+                    </p>
+
+                    {/* Bio */}
+                    <div className="max-w-4xl mx-auto mb-12">
+                      {profile.bio ? (
+                        editMode ? (
+                          <Link to={getEditUrl("bio")}>
+                            <p className="text-xl lg:text-2xl text-secondary leading-relaxed editable">
+                              {profile.bio}
+                            </p>
+                          </Link>
+                        ) : (
+                          <p className="text-xl lg:text-2xl text-secondary leading-relaxed">
+                            {profile.bio}
+                          </p>
+                        )
+                      ) : editMode ? (
+                        <Link to={getEditUrl("bio")}>
+                          <p className="text-xl lg:text-2xl text-gray-400 italic leading-relaxed editable">
+                            Missing bio
+                          </p>
+                        </Link>
+                      ) : null}
+                    </div>
+
+                    {/* Edit Button for Owner */}
+                    <div className="flex justify-center mb-8">
+                      {editMode ? (
+                        <Link
+                          to="/profile"
+                          className="bg-secondary text-primary px-8 py-4 rounded-2xl text-lg font-semibold hover-lift border-2 border-theme transition-all"
+                        >
+                          <i className="fas fa-eye mr-2"></i>
+                          Preview
+                        </Link>
+                      ) : (
+                        <Link
+                          to="?edit=true"
+                          className="accent-orange text-on-accent px-8 py-4 rounded-2xl text-lg font-semibold hover-lift transition-all"
+                        >
+                          <i className="fas fa-edit mr-2"></i>
+                          Edit Profile
+                        </Link>
                       )}
                     </div>
                   </div>
-                  {editingProfile ? (
-                    <Link
-                      to="/profile"
-                      className="border px-4 py-2 rounded-md hover:bg-orange-600"
-                    >
-                      Cancel
-                    </Link>
-                  ) : (
-                    <Link
-                      to="?edit-profile=true"
-                      className="accent-orange text-on-accent px-4 py-2 rounded-md hover:bg-orange-600 flex-shrink-0"
-                    >
-                      Edit Profile
-                    </Link>
-                  )}
                 </div>
-              </div>
+              </section>
 
-              {editingProfile && (
-                <div className="bg-secondary rounded-lg shadow-md p-6 mb-6">
-                  <h2 className="text-lg font-semibold mb-4 text-primary">
-                    Edit Profile
-                  </h2>
-                  <Form
-                    method="post"
-                    encType="multipart/form-data"
-                    className="space-y-4"
-                  >
-                    <input type="hidden" name="_action" value="updateProfile" />
 
-                    <div>
-                      <label className="block text-sm font-medium text-primary mb-1">
-                        Display Name
-                      </label>
-                      <input
-                        type="text"
-                        name="displayName"
-                        defaultValue={profile.display_name || ""}
-                        className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                        placeholder="Your full name or brand name"
-                      />
+              {/* Main Content - matching m.$id.tsx */}
+              <main className="max-w-7xl mx-auto p-6">
+                {/* Ready Products Section */}
+                {products.filter(p => ["active", "limited", "sold-out"].includes(p.status)).length > 0 && (
+                  <section id="products" className="mb-20">
+                    <div className="text-center mb-12">
+                      <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                        Shop
+                      </h2>
+                      <p className="text-xl text-secondary max-w-3xl mx-auto">
+                        These are ready to ship within two weeks of ordering!
+                      </p>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-primary mb-1">
-                        Bio
-                      </label>
-                      <textarea
-                        name="bio"
-                        defaultValue={profile.bio || ""}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                        placeholder="Tell us about yourself..."
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-primary mb-2">
-                        Profile Photo
-                      </label>
-
-                      {/* File Upload */}
-                      <div className="mb-3">
-                        <label
-                          htmlFor="profileImageEdit"
-                          className="block text-xs font-medium text-secondary mb-1"
-                        >
-                          Upload New Image
-                        </label>
-                        <input
-                          type="file"
-                          id="profileImageEdit"
-                          name="profileImage"
-                          accept="image/*"
-                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-                        />
-                        <p className="text-xs text-secondary mt-1">
-                          Upload JPEG, PNG, WebP, or GIF (max 5MB)
-                        </p>
-                      </div>
-
-                      {/* URL Alternative */}
-                      <div>
-                        <label
-                          htmlFor="avatarUrlEdit"
-                          className="block text-xs font-medium text-secondary mb-1"
-                        >
-                          Or enter image URL
-                        </label>
-                        <input
-                          type="url"
-                          id="avatarUrlEdit"
-                          name="avatarUrl"
-                          defaultValue={profile.avatar_url || ""}
-                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                          placeholder="https://example.com/photo.jpg"
-                        />
-                        <p className="text-xs text-secondary mt-1">
-                          Current image will be replaced if you upload a new one
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex space-x-3">
-                      <button
-                        type="submit"
-                        className="accent-orange text-on-accent px-4 py-2 rounded-md hover:bg-orange-600"
-                      >
-                        Save Changes
-                      </button>
-                      <Link
-                        to="/profile"
-                        className="border px-4 py-2 rounded-md hover:bg-orange-600"
-                      >
-                        Cancel
-                      </Link>
-                    </div>
-                  </Form>
-                </div>
-              )}
-
-              {/* Products Section */}
-              <ProductManagement products={products} />
-
-              {/* Profile Links */}
-              <div className="bg-secondary rounded-lg shadow-md p-6 mt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-primary">
-                    Profile Links
-                  </h2>
-                  {addingLink ? (
-                    <Link
-                      to="/profile"
-                      className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-                    >
-                      Cancel
-                    </Link>
-                  ) : (
-                    <Link
-                      to="?add-link=true"
-                      className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-                    >
-                      Add Link
-                    </Link>
-                  )}
-                </div>
-
-                {/* Add Link Form */}
-                {addingLink && (
-                  <Form
-                    method="post"
-                    className="bg-tertiary p-4 rounded-md mb-4"
-                  >
-                    <input type="hidden" name="_action" value="addLink" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-primary mb-1">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          name="linkTitle"
-                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                          placeholder="e.g., Website, GitHub, Instagram"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-primary mb-1">
-                          URL
-                        </label>
-                        <input
-                          type="url"
-                          name="linkUrl"
-                          className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
-                          placeholder="https://example.com"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <button
-                        type="submit"
-                        className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-                      >
-                        Add Link
-                      </button>
-                    </div>
-                  </Form>
+                    <ProductList
+                      products={products.filter(p => ["active", "limited", "sold-out"].includes(p.status))}
+                      showAdminActions={true}
+                      mode="showcase"
+                      gridCols="md:grid-cols-2"
+                    />
+                  </section>
                 )}
 
-                {/* Links List */}
-                <div className="space-y-2">
-                  {profile.links && profile.links.length > 0 ? (
-                    profile.links.map((link) => (
-                      <div
-                        key={link.id}
-                        className="flex items-center justify-between p-3 bg-tertiary rounded-md"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm font-medium text-primary">
-                            {link.title}
-                          </span>
-                          <a
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="accent-orange-text hover:text-orange-600 text-sm"
-                          >
-                            {link.url}
-                          </a>
-                        </div>
-                        <form method="post" className="inline">
-                          <input
-                            type="hidden"
-                            name="_action"
-                            value="deleteLink"
-                          />
-                          <input type="hidden" name="linkId" value={link.id} />
-                          <button
-                            type="submit"
-                            className="text-red-600 hover:text-red-800 text-sm"
-                            onClick={(e) => {
-                              if (
-                                !confirm(
-                                  "Are you sure you want to delete this link?"
-                                )
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </form>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-sm text-secondary">
-                      No links added yet. Add some links to showcase your work!
+                {/* Development Projects Section */}
+                {products.filter(p => ["concept", "development", "prototype", "testing"].includes(p.status)).length > 0 && (
+                  <section id="workbench" className="mb-20">
+                    <div className="text-center mb-12">
+                      <h2 className="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                        Workbench
+                      </h2>
+                      <p className="text-xl text-secondary max-w-3xl mx-auto">
+                        Projects currently being cooked.
+                      </p>
                     </div>
-                  )}
-                </div>
-              </div>
+
+                    <ProductList
+                      products={products.filter(p => ["concept", "development", "prototype", "testing"].includes(p.status))}
+                      showAdminActions={true}
+                      mode="showcase"
+                      gridCols="md:grid-cols-2 lg:grid-cols-3"
+                    />
+                  </section>
+                )}
+
+                {/* No content state */}
+                {products.length === 0 && (
+                  <section className="text-center py-20">
+                    <div className="text-6xl mb-4">🚀</div>
+                    <h2 className="font-jura text-3xl font-bold text-primary mb-4">
+                      Ready to Build
+                    </h2>
+                    <p className="text-xl text-secondary">
+                      Start creating amazing products to showcase here!
+                    </p>
+                  </section>
+                )}
+              </main>
+
+              {/* Social Links Section - matching html/profile.html */}
+              {profile.links && profile.links.length > 0 && (
+                <section className="mb-20">
+                  <div className="max-w-7xl mx-auto p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                      {profile.links.map((link) => (
+                        <a
+                          key={link.id}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-secondary border-2 border-theme rounded-xl p-4 hover-lift transition-all flex items-center gap-3 group"
+                        >
+                          <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-tertiary">
+                            <i className="fas fa-link text-xl accent-orange-text"></i>
+                          </div>
+                          <div className="flex-grow">
+                            <div className="font-bold text-primary text-base flex items-center gap-2">
+                              {link.title}
+                            </div>
+                          </div>
+                          <i className="fas fa-external-link-alt text-secondary group-hover:accent-orange-text transition-colors"></i>
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Add/Manage Links for Owner */}
+                    <div className="text-center">
+                      {addingLink ? (
+                        <div className="bg-secondary border-2 border-theme rounded-xl p-6 mb-4">
+                          <Form method="post" className="space-y-4">
+                            <input type="hidden" name="_action" value="addLink" />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-primary mb-2">
+                                  Title
+                                </label>
+                                <input
+                                  type="text"
+                                  name="linkTitle"
+                                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                                  placeholder="e.g., Website, GitHub, Instagram"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-primary mb-2">
+                                  URL
+                                </label>
+                                <input
+                                  type="url"
+                                  name="linkUrl"
+                                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-primary text-primary"
+                                  placeholder="https://example.com"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div className="flex gap-4 justify-center">
+                              <button
+                                type="submit"
+                                className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all"
+                              >
+                                <i className="fas fa-plus mr-2"></i>
+                                Add Link
+                              </button>
+                              <Link
+                                to="/profile"
+                                className="bg-secondary text-primary px-6 py-3 rounded-xl font-semibold hover-lift border-2 border-theme transition-all"
+                              >
+                                Cancel
+                              </Link>
+                            </div>
+                          </Form>
+                        </div>
+                      ) : (
+                        <Link
+                          to="?add-link=true"
+                          className="accent-orange text-on-accent px-6 py-3 rounded-xl font-semibold hover-lift transition-all inline-flex items-center"
+                        >
+                          <i className="fas fa-plus mr-2"></i>
+                          Add Link
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Delete Link Forms (hidden) */}
+                    {profile.links.map((link) => (
+                      <Form key={`delete-${link.id}`} method="post" className="hidden">
+                        <input type="hidden" name="_action" value="deleteLink" />
+                        <input type="hidden" name="linkId" value={link.id} />
+                      </Form>
+                    ))}
+                  </div>
+                </section>
+              )}
             </>
           )}
         </div>
+
+        {/* Edit Modal */}
+        {isModalOpen && modalConfig && (
+          <EditModal
+            isOpen={isModalOpen}
+            onClose={() => {}}
+            onCloseUrl={getCloseModalUrl()}
+            title={modalConfig.title}
+            type={modalConfig.type}
+            defaultValues={modalConfig.defaultValues}
+            fields={modalConfig.fields}
+            action={modalConfig.action}
+          />
+        )}
       </div>
     </Layout>
   );
