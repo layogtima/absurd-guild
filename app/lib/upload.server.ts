@@ -146,25 +146,15 @@ export async function uploadImage(
 
     // Generate public URL
     const env = context.cloudflare.env;
-    let publicUrl: string;
 
-    if (env.R2_CUSTOM_DOMAIN) {
-      // Use custom domain (preferred method)
-      const customDomain = env.R2_CUSTOM_DOMAIN.replace(/\/$/, ''); // Remove trailing slash
-      publicUrl = `${customDomain}/${key}`;
-      console.log('Using custom domain URL:', publicUrl);
-    } else if (env.R2_S3_API_URL) {
-      // Use custom S3 API URL as fallback
-      const s3ApiUrl = env.R2_S3_API_URL.replace(/\/$/, ''); // Remove trailing slash
-      publicUrl = `${s3ApiUrl}/${key}`;
-      console.log('Using S3 API URL:', publicUrl);
-    } else {
-      // Fallback to R2 public URL format
-      const bucketName = 'absurd-guild-uploads';
-      const accountId = env.R2_ACCOUNT_ID || 'YOUR_ACCOUNT_ID';
-      publicUrl = `https://${bucketName}.${accountId}.r2.cloudflarestorage.com/${key}`;
-      console.log('Using R2 default URL:', publicUrl);
+    if (!env.R2_CUSTOM_DOMAIN) {
+      throw new Error('R2_CUSTOM_DOMAIN environment variable is required for file uploads');
     }
+
+    // Use custom domain (required method)
+    const customDomain = env.R2_CUSTOM_DOMAIN.replace(/\/$/, ''); // Remove trailing slash
+    const publicUrl = `${customDomain}/${key}`;
+    console.log('Using custom domain URL:', publicUrl);
 
     console.log('=== UPLOAD SUCCESS ===');
     return {
