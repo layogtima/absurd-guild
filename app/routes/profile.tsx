@@ -990,7 +990,7 @@ export default function Profile() {
 
                 {/* No content state */}
                 {products.length === 0 && (
-                  <section className="text-center py-20">
+                  <section className="text-center pb-20">
                     <div className="text-6xl mb-4">🚀</div>
                     <h2 className="font-jura text-3xl font-bold text-primary mb-4">
                       Ready to Build

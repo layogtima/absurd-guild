@@ -55,12 +55,27 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     currentUserProfile = await getFullMakerProfile(db, currentUser.id);
   }
 
-  return { maker, profile, readyProducts, developmentProjects, isOwner, currentUser, currentUserProfile };
+  return {
+    maker,
+    profile,
+    readyProducts,
+    developmentProjects,
+    isOwner,
+    currentUser,
+    currentUserProfile,
+  };
 }
 
 export default function MakerProfile() {
-  const { maker, profile, readyProducts, developmentProjects, isOwner, currentUser, currentUserProfile } =
-    useLoaderData<typeof loader>();
+  const {
+    maker,
+    profile,
+    readyProducts,
+    developmentProjects,
+    isOwner,
+    currentUser,
+    currentUserProfile,
+  } = useLoaderData<typeof loader>();
 
   if (!profile) {
     return (
@@ -194,7 +209,7 @@ export default function MakerProfile() {
 
         {/* No content state */}
         {readyProducts.length === 0 && developmentProjects.length === 0 && (
-          <section className="text-center py-20">
+          <section className="text-center pb-20">
             <div className="text-6xl mb-4">🚀</div>
             <h2 className="font-jura text-3xl font-bold text-primary mb-4">
               Coming Soon

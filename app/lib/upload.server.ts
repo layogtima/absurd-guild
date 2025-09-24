@@ -148,8 +148,13 @@ export async function uploadImage(
     const env = context.cloudflare.env;
     let publicUrl: string;
 
-    if (env.R2_S3_API_URL) {
-      // Use custom S3 API URL
+    if (env.R2_CUSTOM_DOMAIN) {
+      // Use custom domain (preferred method)
+      const customDomain = env.R2_CUSTOM_DOMAIN.replace(/\/$/, ''); // Remove trailing slash
+      publicUrl = `${customDomain}/${key}`;
+      console.log('Using custom domain URL:', publicUrl);
+    } else if (env.R2_S3_API_URL) {
+      // Use custom S3 API URL as fallback
       const s3ApiUrl = env.R2_S3_API_URL.replace(/\/$/, ''); // Remove trailing slash
       publicUrl = `${s3ApiUrl}/${key}`;
       console.log('Using S3 API URL:', publicUrl);

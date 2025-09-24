@@ -8,7 +8,6 @@
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
     "R2_ACCOUNT_ID": "2b193209af2d4a6412693d956514074e",
   },
   "observability": {
@@ -18,7 +17,9 @@
     {
       "binding": "DB",
       "database_name": "absurd-guild-db",
-      "database_id": "7ce91918-0503-498e-90ae-e80028ec4fa0",
+      "database_id": "82f1cb4c-b067-40b0-9d3d-5231b42c4c8c",
+      "migrations_table": "d1_migrations",
+      "migrations_dir": "db/migrations",
     },
   ],
   "kv_namespaces": [
