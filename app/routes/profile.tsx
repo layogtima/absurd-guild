@@ -44,7 +44,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   // Get user products
   const products = await getUserProducts(db, user.id);
 
-  return { profile, user, products };
+  return { profile, user, products, userProfile: profile };
 }
 
 // Helper function to handle avatar/image uploads
@@ -175,17 +175,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         });
 
         // console.log("Profile updated successfully, redirecting...");
-        // Preserve edit mode if it was active
-        const url = new URL(request.url);
-        const wasInEditMode = url.searchParams.get("edit") === "true";
-
-        const redirectParams = new URLSearchParams();
-        if (wasInEditMode) {
-          redirectParams.set("edit", "true");
-        }
-        redirectParams.set("success", "Profile updated successfully");
-
-        return redirect(`/profile?${redirectParams.toString()}`);
+        return redirect("/profile?success=Profile updated successfully");
       } catch (error) {
         console.error("Error updating profile:", error);
         return {
@@ -210,17 +200,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       try {
         await addProfileLink(db, user.id, title, linkUrl);
         // console.log("Link added successfully, redirecting...");
-        // Preserve edit mode if it was active
-        const url = new URL(request.url);
-        const wasInEditMode = url.searchParams.get("edit") === "true";
-
-        const redirectParams = new URLSearchParams();
-        if (wasInEditMode) {
-          redirectParams.set("edit", "true");
-        }
-        redirectParams.set("success", "Link added successfully");
-
-        return redirect(`/profile?${redirectParams.toString()}`);
+        return redirect("/profile?success=Link added successfully");
       } catch (error) {
         console.error("Error adding link:", error);
         return {
@@ -316,17 +296,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           documentation_url: documentationUrl || undefined,
         });
 
-        // Preserve edit mode if it was active
-        const url = new URL(request.url);
-        const wasInEditMode = url.searchParams.get("edit") === "true";
-
-        const redirectParams = new URLSearchParams();
-        if (wasInEditMode) {
-          redirectParams.set("edit", "true");
-        }
-        redirectParams.set("success", "Product created successfully");
-
-        return redirect(`/profile?${redirectParams.toString()}`);
+        return redirect("/profile?success=Product created successfully");
       } catch (error) {
         console.error("Error creating product:", error);
         return {
@@ -416,17 +386,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
         await updateProduct(db, user.id, productId, updateData);
 
-        // Preserve edit mode if it was active
-        const url = new URL(request.url);
-        const wasInEditMode = url.searchParams.get("edit") === "true";
-
-        const redirectParams = new URLSearchParams();
-        if (wasInEditMode) {
-          redirectParams.set("edit", "true");
-        }
-        redirectParams.set("success", "Product updated successfully");
-
-        return redirect(`/profile?${redirectParams.toString()}`);
+        return redirect("/profile?success=Product updated successfully");
       } catch (error) {
         console.error("Error updating product:", error);
         return {
@@ -471,12 +431,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-  const { profile, user, products } = useLoaderData<typeof loader>();
+  const { profile, user, products, userProfile } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const [searchParams] = useSearchParams();
   const editingProfile = searchParams.get("edit-profile") === "true";
-  const editMode = searchParams.get("edit") === "true";
+  const editMode = true; // Always in edit mode
   const addingLink = searchParams.get("add-link") === "true";
   const successMessage = searchParams.get("success");
   const errorMessage = searchParams.get("error");
@@ -691,12 +651,12 @@ export default function Profile() {
 
   return (
     <Layout>
-      <Navigation user={user} />
+      <Navigation user={user} userProfile={userProfile} />
       <EditorToolbar isVisible={editMode} />
       <div
         className={`min-h-screen bg-primary py-8 ${editMode ? "edit-mode" : ""}`}
       >
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           {/* Success/Error Messages */}
           {(successMessage || actionData?.success) && (
             <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded mb-4 flex items-center justify-between">
@@ -1159,26 +1119,18 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Fixed Edit/Preview Button */}
-      <div className="fixed bottom-6 right-6 z-40">
-        {editMode ? (
+      {/* Public View Button - only show if profile exists */}
+      {profile && (
+        <div className="fixed bottom-6 right-6 z-40">
           <Link
-            to="/profile"
+            to={`/m/${profile.maker_name}`}
             className="bg-secondary text-primary px-6 py-3 rounded-full text-base font-semibold hover-lift border-2 border-theme transition-all shadow-lg flex items-center"
           >
-            <i className="fas fa-eye mr-2"></i>
-            Done editing!
+            <i className="fas fa-globe mr-2"></i>
+            Public View
           </Link>
-        ) : (
-          <Link
-            to="?edit=true"
-            className="accent-orange text-on-accent px-6 py-3 rounded-full text-base font-semibold hover-lift transition-all shadow-lg flex items-center"
-          >
-            <i className="fas fa-edit mr-2"></i>
-            Edit Profile
-          </Link>
-        )}
-      </div>
+        </div>
+      )}
     </Layout>
   );
 }
