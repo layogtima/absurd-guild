@@ -1,0 +1,274 @@
+{
+  "profile": {
+    "name": "Limor \"Ladyada\" Fried",
+    "tagline": "Making hardware that doesn't suck since 2005",
+    "avatar": "https://live.staticflickr.com/2941/15101708270_9e0805a257_b.jpg",
+    "currentlyObsessedWith": "Getting the RP2350's HSTX peripheral to output DVI without overclocking. Also possibly too much pear green tea.",
+    "topSkills": [
+      "Open-Source-Hardware",
+      "CircuitPython",
+      "PCB-Design",
+      "EagleCAD",
+      "Manufacturing",
+      "Education"
+    ],
+    "socialLinks": [
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com",
+        "icon": "fas fa-globe"
+      },
+      {
+        "name": "Learn",
+        "url": "https://learn.adafruit.com",
+        "icon": "fas fa-book"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/adafruit",
+        "icon": "fab fa-github"
+      },
+      {
+        "name": "Discord",
+        "url": "https://discord.gg/adafruit",
+        "icon": "fab fa-discord"
+      }
+    ]
+  },
+  "featured": [
+    {
+      "type": "product",
+      "title": "Fruit Jam - Retro Computer Board",
+      "description": "Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can probably run DOOM. Designed in one pear-green-tea-fueled afternoon.",
+      "image": "https://cdn-shop.adafruit.com/970x728/5993-00.jpg",
+      "tags": ["RP2350", "Retro-Computing", "DVI"],
+      "updatedAt": "2025-09-27"
+    },
+    {
+      "type": "project",
+      "title": "CircuitPython 9.x",
+      "description": "Hit 600+ supported boards. The Python-on-hardware movement keeps growing. Still breaking things early because we'll have more users in the future than now.",
+      "emoji": "🐍",
+      "tags": ["CircuitPython", "Embedded"],
+      "updatedAt": "2025-09-20"
+    },
+    {
+      "type": "livestream",
+      "title": "Ask an Engineer #600-something",
+      "description": "Another Wednesday, another livestream. We've been doing this every week for 14+ years. Yes, really.",
+      "emoji": "📡",
+      "tags": ["Community", "Education"],
+      "updatedAt": "2025-09-15"
+    }
+  ],
+  "projects": [
+    {
+      "id": "fruit-jam",
+      "name": "Fruit Jam - Retro Computer Board",
+      "status": "completed",
+      "year": "2025",
+      "image": "https://cdn-shop.adafruit.com/970x728/5993-00.jpg",
+      "tags": ["RP2350", "Retro-Computing", "DVI"],
+      "fullDescription": "Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can probably run DOOM. Designed in one pear-green-tea-fueled afternoon.",
+      "problemSolved": "The RP2350's HSTX peripheral needed a reference design that could output DVI without overclocking. Made a board that works as both a dev board and a retro computing platform.",
+      "toolsUsed": [
+        {
+          "tool": "EagleCAD",
+          "category": "PCB Design",
+          "purpose": "Circuit board layout and design"
+        },
+        {
+          "tool": "RP2350",
+          "category": "Hardware",
+          "purpose": "Main microcontroller with HSTX peripheral"
+        }
+      ],
+      "skillsLearned": [
+        "HSTX peripheral programming",
+        "DVI signal generation",
+        "Retro computing emulation"
+      ],
+      "links": {
+        "product": "/products/fruit-jam",
+        "github": "https://github.com/adafruit/fruit-jam"
+      },
+      "updatedAt": "2025-09-27"
+    },
+    {
+      "id": "circuitpython",
+      "name": "CircuitPython",
+      "status": "in-progress",
+      "year": "2017-present",
+      "emoji": "🐍",
+      "tags": ["Python", "Embedded", "Open-Source"],
+      "fullDescription": "Forked MicroPython in 2017 because we wanted CPython compatibility and beginner-friendly APIs. Now 600+ boards, 500+ libraries, and an August 16 holiday.",
+      "problemSolved": "Embedded programming was too hard for beginners. Created a Python environment that works on microcontrollers with no compilation step - just edit code.py and save.",
+      "toolsUsed": [
+        {
+          "tool": "MicroPython",
+          "category": "Software",
+          "purpose": "Base fork for CircuitPython"
+        },
+        {
+          "tool": "GitHub",
+          "category": "Development",
+          "purpose": "Open source collaboration"
+        }
+      ],
+      "skillsLearned": [
+        "Python interpreter internals",
+        "Embedded systems",
+        "Community building"
+      ],
+      "links": {
+        "website": "https://circuitpython.org",
+        "github": "https://github.com/adafruit/circuitpython"
+      },
+      "updatedAt": "2025-09-20"
+    },
+    {
+      "id": "feather-ecosystem",
+      "name": "Feather Ecosystem",
+      "status": "completed",
+      "year": "2015",
+      "emoji": "🪶",
+      "tags": ["Hardware-Standard", "Ecosystem", "Battery"],
+      "fullDescription": "Got tired of incompatible form factors. Made a standard: 0.9\" x 2.0\", unified pinouts, LiPo battery management. \"Boards of a Feather flock together.\"",
+      "problemSolved": "Every dev board had a different size and pinout. Created a standard that multiple manufacturers could follow, making boards interchangeable.",
+      "toolsUsed": [
+        {
+          "tool": "EagleCAD",
+          "category": "PCB Design",
+          "purpose": "Board layout standardization"
+        }
+      ],
+      "skillsLearned": [
+        "Standards creation",
+        "Ecosystem design",
+        "Battery management"
+      ],
+      "links": {
+        "products": "https://www.adafruit.com/category/943"
+      },
+      "updatedAt": "2024-03-15"
+    },
+    {
+      "id": "rp2350-hstx",
+      "name": "RP2350 HSTX for DVI",
+      "status": "planning",
+      "emoji": "📺",
+      "tags": ["RP2350", "DVI", "HSTX"],
+      "fullDescription": "Trying to get DVI output from the RP2350's HSTX peripheral without overclocking. It's technically possible. Probably. The datasheet is... optimistic.",
+      "problemSolved": "Need clean DVI output without pushing the chip beyond spec.",
+      "toolsNeeded": ["Logic Analyzer", "DVI Test Equipment"],
+      "skillsNeeded": ["HSTX Programming", "Signal Integrity Analysis"],
+      "updatedAt": "2025-09-28"
+    },
+    {
+      "id": "black-pcb-aesthetics",
+      "name": "Black PCB Aesthetics",
+      "status": "idea",
+      "emoji": "🖤",
+      "tags": ["Design", "Branding", "PCB"],
+      "fullDescription": "Started using black FR4 substrate with white silkscreen. High contrast, looks professional, and you can spot an Adafruit board across a room. The Pinguin mascot helps too.",
+      "problemSolved": "PCBs all looked the same - green and boring. Made ours instantly recognizable.",
+      "toolsNeeded": ["PCB Manufacturer", "Silkscreen Design Tools"],
+      "skillsNeeded": ["Visual Design", "Branding"],
+      "updatedAt": "2024-01-10"
+    }
+  ],
+  "tools": [
+    {
+      "name": "Hakko FX-888D",
+      "category": "Soldering",
+      "icon": "fas fa-temperature-high",
+      "image": "https://cdn-shop.adafruit.com/970x728/180-02.jpg",
+      "description": "Temperature-controlled, 70W. The industry standard. If you're serious about hardware, get one. Mine's been running for years without issues.",
+      "usedFor": "Reliable, precise temp control, fast heat-up",
+      "since": "2005"
+    },
+    {
+      "name": "EagleCAD",
+      "category": "PCB Design",
+      "icon": "fas fa-microchip",
+      "image": "https://www.autodesk.com/products/eagle/overview-card-720x360.jpg",
+      "description": "Every Adafruit board is designed in Eagle. All files on GitHub. Been using it since the beginning. Know it inside out.",
+      "usedFor": "Familiar, scriptable, good library management",
+      "since": "2005"
+    },
+    {
+      "name": "JUKI Pick & Place",
+      "category": "Manufacturing",
+      "icon": "fas fa-industry",
+      "image": "https://www.juki.co.jp/smt_e/products/img/rs-1_img_l.jpg",
+      "description": "Flying vision technology. Handles 0201s (basically dust) to 64mm parts. Produced 3M+ boards in 3 years. Worth every penny.",
+      "usedFor": "Fast, accurate, handles tiny components",
+      "since": "2012"
+    },
+    {
+      "name": "CircuitPython",
+      "category": "Development",
+      "icon": "fab fa-python",
+      "emoji": "🐍",
+      "description": "Forked MicroPython in 2017. Edit code.py, save, run. No compilation. 600+ boards supported. Made embedded accessible to everyone.",
+      "usedFor": "Beginner-friendly, fast iteration, Python",
+      "since": "2017"
+    },
+    {
+      "name": "GitHub",
+      "category": "Version Control",
+      "icon": "fab fa-github",
+      "emoji": "💻",
+      "description": "1,500+ repositories. Everything's there. Schematics, code, CAD files, docs. Open source isn't just a license, it's how we work.",
+      "usedFor": "Community, transparency, collaboration",
+      "since": "2008"
+    },
+    {
+      "name": "Learn Platform",
+      "category": "Documentation",
+      "icon": "fas fa-book",
+      "image": "https://cdn-learn.adafruit.com/assets/assets/000/000/001/medium800/learn_home.jpg",
+      "description": "3,000+ tutorials. Step-by-step, photos, wiring diagrams, code examples. \"A tutorial company with a gift shop at the end.\"",
+      "usedFor": "Education first, always",
+      "since": "2010"
+    }
+  ],
+  "campaigns": [
+    {
+      "title": "Industry City Factory Expansion",
+      "status": "Ongoing",
+      "image": "https://cdn-blog.adafruit.com/uploads/2024/08/industry-city.jpg",
+      "description": "Moved to 50,000+ sq ft in Brooklyn. Everyone said outsource to China. We said \"nah, let's train New Yorkers and iterate fast.\"",
+      "tags": ["Manufacturing", "NYC", "Local"],
+      "link": "https://blog.adafruit.com"
+    }
+  ],
+  "resources": [
+    {
+      "type": "livestream",
+      "title": "Ask an Engineer",
+      "emoji": "📹",
+      "description": "Weekly livestream every Wednesday at 8pm ET. Been running 14+ years. We answer questions, show new products, and hang out with the community.",
+      "link": "https://www.youtube.com/adafruit"
+    },
+    {
+      "type": "tutorials",
+      "title": "Learn System",
+      "emoji": "📚",
+      "description": "3,000+ guides on learn.adafruit.com. Step-by-step with photos, wiring diagrams, code. \"I think it's better to teach from the top down.\"",
+      "link": "https://learn.adafruit.com"
+    },
+    {
+      "type": "recognition",
+      "title": "Various Awards",
+      "emoji": "🏆",
+      "description": "EFF Pioneer (2009), First female engineer on Wired cover (2011), White House Champion of Change (2016), Forbes Top 50 Women in Tech (2018). They're nice, but the real win is the community we built."
+    },
+    {
+      "type": "community",
+      "title": "Open Source Hardware Summit",
+      "emoji": "🤝",
+      "description": "Helped draft the Open Source Hardware definition at the first summit in 2010. Delivered keynote. 807 OSHWA certified designs later, the movement's still growing."
+    }
+  ]
+}
