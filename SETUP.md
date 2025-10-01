@@ -124,7 +124,7 @@ Replace the placeholder values in `wrangler.jsonc` with your actual IDs:
 Execute the schema file to create all necessary tables:
 
 ```bash
-wrangler d1 execute absurd-guild-db --file=./schema.sql
+wrangler d1 migrations apply absurd-guild-db
 ```
 
 This creates all the tables needed:

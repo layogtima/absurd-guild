@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Limor "Ladyada" Fried | Absurd Industries</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 33s linear infinite',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(100%)' },
+                            '100%': { transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .bg-primary {
+            background-color: var(--bg-primary);
+        }
+
+        .bg-secondary {
+            background-color: var(--bg-secondary);
+        }
+
+        .bg-tertiary {
+            background-color: var(--bg-tertiary);
+        }
+
+        .text-primary {
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .border-theme {
+            border-color: var(--border-color);
+        }
+
+        .accent-orange {
+            background-color: var(--accent-orange);
+        }
+
+        .accent-orange-text {
+            color: var(--accent-orange);
+        }
+
+        .text-on-accent {
+            color: var(--text-on-accent);
+        }
+
+        @keyframes avatar-pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+
+        .avatar-glow::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(135deg, var(--accent-orange), #ffd700);
+            border-radius: 50%;
+            animation: avatar-pulse 3s ease-in-out infinite;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <header class="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 transition-transform hover:-translate-y-1 cursor-pointer">
+                    <img src="absurd-industries-logo.svg" class="w-full h-full animate-spin-slow"
+                        alt="Absurd Industries" />
+                </div>
+                <nav class="hidden sm:flex items-center space-x-2 text-sm lg:text-base">
+                    <a href="/" class="text-primary font-bold hover:accent-orange-text transition-colors">Absurd</a>
+                    <span class="text-secondary">/</span>
+                    <a href="/makers" class="text-secondary hover:text-primary transition-colors">Makers</a>
+                    <span class="text-secondary">/</span>
+                    <span class="font-bold accent-orange-text">Ladyada</span>
+                </nav>
+            </div>
+            <button id="themeToggle"
+                class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center transition-transform hover:-translate-y-1">
+                <i id="themeIcon" class="fas fa-sun text-base text-primary"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-tertiary">
+        <div class="absolute inset-0 opacity-40">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-6 py-20">
+            <div class="max-w-4xl mx-auto text-center">
+                <!-- Avatar -->
+                <div class="relative w-40 h-40 mx-auto mb-8 avatar-glow">
+                    <img src="https://cdn-blog.adafruit.com/uploads/2023/07/limor-fried.jpg" alt="Limor Fried"
+                        class="w-full h-full object-cover rounded-full border-4 border-primary" />
+                </div>
+
+                <!-- Name & Tagline -->
+                <h1 class="text-5xl md:text-7xl font-bold text-primary mb-4">
+                    Limor "Ladyada" Fried
+                </h1>
+                <p class="text-xl md:text-2xl text-secondary mb-8">
+                    Making hardware that doesn't suck since 2005
+                </p>
+
+                <!-- Current Obsession -->
+                <div class="max-w-2xl mx-auto bg-secondary border-2 border-theme rounded-2xl p-6 mb-8">
+                    <div class="text-xs font-bold uppercase tracking-wider accent-orange-text mb-2">
+                        Currently Obsessed With:
+                    </div>
+                    <div class="text-base text-primary leading-relaxed">
+                        Getting the RP2350's HSTX peripheral to output DVI without overclocking.
+                        Also possibly too much pear green tea.
+                    </div>
+                </div>
+
+                <!-- Skills Tags -->
+                <div class="flex flex-wrap gap-2 justify-center mb-8">
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #Open-Source-Hardware
+                    </span>
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #CircuitPython
+                    </span>
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #PCB-Design
+                    </span>
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #EagleCAD
+                    </span>
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #Manufacturing
+                    </span>
+                    <span
+                        class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all cursor-pointer">
+                        #Education
+                    </span>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="https://www.adafruit.com" target="_blank"
+                        class="flex items-center gap-2 bg-secondary border-2 border-theme px-6 py-3 rounded-xl font-semibold text-primary hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <i class="fas fa-globe"></i>
+                        <span>Adafruit</span>
+                    </a>
+                    <a href="https://learn.adafruit.com" target="_blank"
+                        class="flex items-center gap-2 bg-secondary border-2 border-theme px-6 py-3 rounded-xl font-semibold text-primary hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <i class="fas fa-book"></i>
+                        <span>Learn</span>
+                    </a>
+                    <a href="https://github.com/adafruit" target="_blank"
+                        class="flex items-center gap-2 bg-secondary border-2 border-theme px-6 py-3 rounded-xl font-semibold text-primary hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://discord.gg/adafruit" target="_blank"
+                        class="flex items-center gap-2 bg-secondary border-2 border-theme px-6 py-3 rounded-xl font-semibold text-primary hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <i class="fab fa-discord"></i>
+                        <span>Discord</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <nav class="bg-secondary border-b-2 border-theme sticky top-[73px] z-30">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex-row flex justify-center overflow-x-auto scrollbar-hide">
+                <button data-tab="featured"
+                    class="tab-button tab-active px-6 py-4 font-semibold whitespace-nowrap border-b-3 transition-all">
+                    Featured
+                </button>
+                <button data-tab="activity"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Activity
+                </button>
+                <button data-tab="campaigns"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Campaigns
+                </button>
+                <button data-tab="products"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Products
+                </button>
+                <button data-tab="tools"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Tools
+                </button>
+                <button data-tab="projects"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Projects
+                </button>
+                <button data-tab="experiments"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Experiments
+                </button>
+                <button data-tab="showcase"
+                    class="tab-button px-6 py-4 font-semibold text-secondary whitespace-nowrap border-b-3 border-transparent transition-all">
+                    Showcase
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+
+        <!-- Featured Tab -->
+        <section id="featured" class="tab-content">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-star accent-orange-text mr-3"></i>Featured
+            </h2>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                    <div
+                        class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        Added Product
+                    </div>
+                    <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                        <img src="https://cdn-shop.adafruit.com/970x728/5993-00.jpg" alt="Fruit Jam"
+                            class="w-full h-40 object-cover rounded-xl border border-theme" />
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary mb-2">Fruit Jam - Retro Computer Board</h3>
+                            <p class="text-secondary leading-relaxed mb-3">
+                                Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can probably
+                                run DOOM.
+                                Designed in one pear-green-tea-fueled afternoon.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#RP2350</span>
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Retro-Computing</span>
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#DVI</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                    <div
+                        class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        Updated Project
+                    </div>
+                    <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                        <div class="w-full h-40 bg-tertiary rounded-xl flex items-center justify-center text-6xl">🐍
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary mb-2">CircuitPython 9.x</h3>
+                            <p class="text-secondary leading-relaxed mb-3">
+                                Hit 600+ supported boards. The Python-on-hardware movement keeps growing.
+                                Still breaking things early because we'll have more users in the future than now.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#CircuitPython</span>
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Embedded</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                    <div
+                        class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        Livestream
+                    </div>
+                    <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                        <div class="w-full h-40 bg-tertiary rounded-xl flex items-center justify-center text-6xl">📡
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-primary mb-2">Ask an Engineer #600-something</h3>
+                            <p class="text-secondary leading-relaxed mb-3">
+                                Another Wednesday, another livestream. We've been doing this every week for 14+ years.
+                                Yes, really.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Community</span>
+                                <span
+                                    class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Education</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Tab -->
+        <section id="activity" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-stream accent-orange-text mr-3"></i>Activity
+            </h2>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="grid grid-cols-[100px,1fr] gap-6 items-start">
+                    <div class="text-sm font-semibold text-secondary text-right pt-2">3 days ago</div>
+                    <div
+                        class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                            Added Product
+                        </div>
+                        <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                            <img src="https://cdn-shop.adafruit.com/970x728/5993-00.jpg" alt="Fruit Jam"
+                                class="w-full h-40 object-cover rounded-xl border border-theme" />
+                            <div>
+                                <h3 class="text-xl font-bold text-primary mb-2">Fruit Jam - Retro Computer Board</h3>
+                                <p class="text-secondary leading-relaxed text-sm mb-3">
+                                    Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can
+                                    probably run DOOM.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="bg-tertiary text-secondary px-2 py-1 rounded text-xs font-semibold">#RP2350</span>
+                                    <span
+                                        class="bg-tertiary text-secondary px-2 py-1 rounded text-xs font-semibold">#Retro</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-[100px,1fr] gap-6 items-start">
+                    <div class="text-sm font-semibold text-secondary text-right pt-2">1 week ago</div>
+                    <div
+                        class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                            Updated Project
+                        </div>
+                        <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                            <div class="w-full h-40 bg-tertiary rounded-xl flex items-center justify-center text-6xl">🐍
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-primary mb-2">CircuitPython 9.x</h3>
+                                <p class="text-secondary leading-relaxed text-sm mb-3">
+                                    Hit 600+ supported boards. The Python-on-hardware movement keeps growing.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="bg-tertiary text-secondary px-2 py-1 rounded text-xs font-semibold">#CircuitPython</span>
+                                    <span
+                                        class="bg-tertiary text-secondary px-2 py-1 rounded text-xs font-semibold">#Embedded</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-[100px,1fr] gap-6 items-start">
+                    <div class="text-sm font-semibold text-secondary text-right pt-2">2 weeks ago</div>
+                    <div
+                        class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                            Livestream
+                        </div>
+                        <div class="grid md:grid-cols-[200px,1fr] gap-6">
+                            <div class="w-full h-40 bg-tertiary rounded-xl flex items-center justify-center text-6xl">📡
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-primary mb-2">Ask an Engineer</h3>
+                                <p class="text-secondary leading-relaxed text-sm mb-3">
+                                    Another Wednesday, another livestream. We've been doing this every week for 14+
+                                    years.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="bg-tertiary text-secondary px-2 py-1 rounded text-xs font-semibold">#Community</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campaigns Tab -->
+        <section id="campaigns" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-rocket accent-orange-text mr-3"></i>Campaigns
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="relative h-52 bg-tertiary">
+                        <img src="https://cdn-blog.adafruit.com/uploads/2024/08/industry-city.jpg"
+                            class="w-full h-full object-cover" alt="Industry City Factory" />
+                        <div
+                            class="absolute top-4 right-4 bg-transparent text-white px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
+                            Ongoing
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Industry City Factory Expansion</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Moved to 50,000+ sq ft in Brooklyn. Everyone said outsource to China.
+                            We said "nah, let's train New Yorkers and iterate fast."
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Manufacturing</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#NYC</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Local</span>
+                        </div>
+                        <a href="https://blog.adafruit.com"
+                            class="inline-flex items-center gap-2 accent-orange-text font-semibold hover:gap-3 transition-all">
+                            Learn More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Tab -->
+        <section id="products" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-shopping-cart accent-orange-text mr-3"></i>Products
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="relative h-52 bg-tertiary">
+                        <img src="https://cdn-shop.adafruit.com/970x728/5993-00.jpg" class="w-full h-full object-cover"
+                            alt="Fruit Jam" />
+                        <div
+                            class="absolute top-4 right-4 bg-transparent text-white px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
+                            In Stock
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Fruit Jam</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            RP2350B board that boots Mac System 7, runs retro games, and has DVI output.
+                            Designed one afternoon after too much tea.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#RP2350</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Retro</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#DVI</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-theme">
+                            <div class="text-2xl font-bold accent-orange-text">$39.95</div>
+                            <a href="https://www.adafruit.com"
+                                class="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover:bg-orange-600 hover:-translate-y-1 transition-all">
+                                Buy Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="relative h-52 bg-tertiary">
+                        <img src="https://cdn-shop.adafruit.com/970x728/3333-00.jpg" class="w-full h-full object-cover"
+                            alt="Circuit Playground Express" />
+                        <div
+                            class="absolute top-4 right-4 bg-transparent text-white px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
+                            Best Seller
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Circuit Playground Express</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            All-in-one board with LEDs, sensors, speaker. No breadboard needed.
+                            Works with MakeCode, CircuitPython, and Arduino.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Education</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#CircuitPython</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Beginner-Friendly</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-theme">
+                            <div class="text-2xl font-bold accent-orange-text">$24.95</div>
+                            <a href="https://www.adafruit.com"
+                                class="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover:bg-orange-600 hover:-translate-y-1 transition-all">
+                                Buy Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="relative h-52 bg-tertiary">
+                        <img src="https://cdn-shop.adafruit.com/970x728/2796-00.jpg" class="w-full h-full object-cover"
+                            alt="Feather Boards" />
+                        <div
+                            class="absolute top-4 right-4 bg-transparent text-white px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
+                            Ecosystem
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Feather Boards</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Standardized form factor, unified pinouts, built-in battery management.
+                            "Boards of a Feather flock together."
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Feather</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Standard</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#LiPo</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-theme">
+                            <div class="text-2xl font-bold accent-orange-text">From $19.95</div>
+                            <a href="https://www.adafruit.com"
+                                class="accent-orange text-on-accent px-6 py-3 rounded-xl font-bold hover:bg-orange-600 hover:-translate-y-1 transition-all">
+                                Browse
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Tab -->
+        <section id="tools" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-toolbox accent-orange-text mr-3"></i>Tools
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center">
+                        <img src="https://cdn-shop.adafruit.com/970x728/180-02.jpg" class="w-full h-full object-cover"
+                            alt="Hakko FX-888D" />
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            Soldering
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">Hakko FX-888D</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Temperature-controlled, 70W. The industry standard. If you're serious about hardware,
+                            get one. Mine's been running for years without issues.
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Reliable, precise temp control, fast heat-up
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center">
+                        <img src="https://www.autodesk.com/products/eagle/overview-card-720x360.jpg"
+                            class="w-full h-full object-cover" alt="EagleCAD" />
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            PCB Design
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">EagleCAD</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Every Adafruit board is designed in Eagle. All files on GitHub.
+                            Been using it since the beginning. Know it inside out.
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Familiar, scriptable, good library management
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center">
+                        <img src="https://www.juki.co.jp/smt_e/products/img/rs-1_img_l.jpg"
+                            class="w-full h-full object-cover" alt="JUKI Pick & Place" />
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            Manufacturing
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">JUKI Pick & Place</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Flying vision technology. Handles 0201s (basically dust) to 64mm parts.
+                            Produced 3M+ boards in 3 years. Worth every penny.
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Fast, accurate, handles tiny components
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">
+                        <i class="fab fa-python accent-orange-text"></i>
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            Development
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">CircuitPython</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Forked MicroPython in 2017. Edit code.py, save, run. No compilation.
+                            600+ boards supported. Made embedded accessible to everyone.
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Beginner-friendly, fast iteration, Python
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">
+                        <i class="fab fa-github accent-orange-text"></i>
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            Version Control
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">GitHub</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            1,500+ repositories. Everything's there. Schematics, code, CAD files, docs.
+                            Open source isn't just a license, it's how we work.
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Community, transparency, collaboration
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center">
+                        <img src="https://cdn-learn.adafruit.com/assets/assets/000/000/001/medium800/learn_home.jpg"
+                            class="w-full h-full object-cover" alt="Learn Platform" />
+                    </div>
+                    <div class="p-6">
+                        <div
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
+                            Documentation
+                        </div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">Learn Platform</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            3,000+ tutorials. Step-by-step, photos, wiring diagrams, code examples.
+                            "A tutorial company with a gift shop at the end."
+                        </p>
+                        <div class="pt-4 border-t border-theme">
+                            <p class="text-sm text-secondary">
+                                <strong class="text-primary">Why:</strong> Education first, always
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Tab -->
+        <section id="projects" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-code-branch accent-orange-text mr-3"></i>Projects
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">🐍</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">CircuitPython</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Forked MicroPython in 2017 because we wanted CPython compatibility and beginner-friendly
+                            APIs.
+                            Now 600+ boards, 503+ libraries, and an August 16 holiday.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Python</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Embedded</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Open-Source</span>
+                        </div>
+                        <a href="https://circuitpython.org"
+                            class="inline-flex items-center gap-2 accent-orange-text font-semibold hover:gap-3 transition-all">
+                            Check it Out <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">🪶</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Feather Ecosystem</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Got tired of incompatible form factors. Made a standard: 0.9" x 2.0", unified pinouts, LiPo
+                            battery management.
+                            "Boards of a Feather flock together."
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Hardware-Standard</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Ecosystem</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Battery</span>
+                        </div>
+                        <a href="https://www.adafruit.com/category/943"
+                            class="inline-flex items-center gap-2 accent-orange-text font-semibold hover:gap-3 transition-all">
+                            Browse Feathers <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experiments Tab -->
+        <section id="experiments" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-flask accent-orange-text mr-3"></i>Experiments
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">📺</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">RP2350 HSTX for DVI</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Trying to get DVI output from the RP2350's HSTX peripheral without overclocking.
+                            It's technically possible. Probably. The datasheet is... optimistic.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#RP2350</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#DVI</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#HSTX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center text-8xl">🖤</div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Black PCB Aesthetics</h3>
+                        <p class="text-secondary leading-relaxed mb-4">
+                            Started using black FR4 substrate with white silkscreen. High contrast, looks professional,
+                            and you can spot an Adafruit board across a room. The Pinguin mascot helps too.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Design</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#Branding</span>
+                            <span
+                                class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">#PCB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showcase Tab -->
+        <section id="showcase" class="tab-content hidden">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-12 text-center md:text-center">
+                <i class="fas fa-microphone-alt accent-orange-text mr-3"></i>Showcase
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div
+                        class="inline-flex items-center gap-2 bg-tertiary accent-orange-text px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fas fa-video"></i>
+                        <span>Livestream</span>
+                    </div>
+                    <!-- Placeholder for YouTube thumbnail -->
+                    <div class="w-full h-48 bg-tertiary rounded-xl mb-4 flex items-center justify-center text-6xl">
+                        📹
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Ask an Engineer</h3>
+                    <p class="text-secondary leading-relaxed text-sm mb-4">
+                        Weekly livestream every Wednesday at 8pm ET. Been running 14+ years.
+                        We answer questions, show new products, and hang out with the community.
+                    </p>
+                    <a href="https://www.youtube.com/adafruit"
+                        class="inline-flex items-center gap-2 accent-orange-text font-semibold text-sm hover:gap-3 transition-all">
+                        Watch on YouTube <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div
+                        class="inline-flex items-center gap-2 bg-tertiary accent-orange-text px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fas fa-book"></i>
+                        <span>Tutorials</span>
+                    </div>
+                    <!-- Placeholder for image -->
+                    <div class="w-full h-48 bg-tertiary rounded-xl mb-4 flex items-center justify-center text-6xl">
+                        📚
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Learn System</h3>
+                    <p class="text-secondary leading-relaxed text-sm mb-4">
+                        3,000+ guides on learn.adafruit.com. Step-by-step with photos, wiring diagrams, code.
+                        "I think it's better to teach from the top down."
+                    </p>
+                    <a href="https://learn.adafruit.com"
+                        class="inline-flex items-center gap-2 accent-orange-text font-semibold text-sm hover:gap-3 transition-all">
+                        Browse Tutorials <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div
+                        class="inline-flex items-center gap-2 bg-tertiary accent-orange-text px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fas fa-award"></i>
+                        <span>Recognition</span>
+                    </div>
+                    <!-- Placeholder for image -->
+                    <div class="w-full h-48 bg-tertiary rounded-xl mb-4 flex items-center justify-center text-6xl">
+                        🏆
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Various Awards</h3>
+                    <p class="text-secondary leading-relaxed text-sm">
+                        EFF Pioneer (2009), First female engineer on Wired cover (2011),
+                        White House Champion of Change (2016), Forbes Top 50 Women in Tech (2018).
+                        They're nice, but the real win is the community we built.
+                    </p>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div
+                        class="inline-flex items-center gap-2 bg-tertiary accent-orange-text px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </div>
+                    <!-- Placeholder for image -->
+                    <div class="w-full h-48 bg-tertiary rounded-xl mb-4 flex items-center justify-center text-6xl">
+                        🤝
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Open Source Hardware Summit</h3>
+                    <p class="text-secondary leading-relaxed text-sm">
+                        Helped draft the Open Source Hardware definition at the first summit in 2010.
+                        Delivered keynote. 807 OSHWA certified designs later, the movement's still growing.
+                    </p>
+                </div>
+
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div
+                        class="inline-flex items-center gap-2 bg-tertiary accent-orange-text px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fas fa-code"></i>
+                        <span>Code</span>
+                    </div>
+                    <!-- Placeholder for image -->
+                    <div class="w-full h-48 bg-tertiary rounded-xl mb-4 flex items-center justify-center text-6xl">
+                        💻
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Driver Libraries</h3>
+                    <p class="text-secondary leading-relaxed text-sm">
+                        Write microcontroller drivers that become de facto standards.
+                        ChatGPT apparently learned from my coding style. Not sure if that's good or concerning.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-tertiary border-t border-theme py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <img src="absurd-industries-logo.svg" class="w-16 h-16 mx-auto mb-4 opacity-50" alt="Absurd Industries" />
+            <p class="text-secondary mb-2">
+                "Who gives a fuck, just do whatever you want."
+            </p>
+            <p class="text-xs text-secondary">
+                Profile built with the Absurd Industries Maker Profile System
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // THEME MANAGEMENT
+        // ============================================
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to 'dark'
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.classList.toggle('dark', currentTheme === 'dark');
+        updateThemeIcon();
+
+        function updateThemeIcon() {
+            const isDark = html.classList.contains('dark');
+            themeIcon.className = isDark ? 'fas fa-sun text-base text-primary' : 'fas fa-moon text-base text-primary';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const theme = html.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            updateThemeIcon();
+        });
+
+        // ============================================
+        // TAB NAVIGATION
+        // ============================================
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('tab-active', 'accent-orange-text', 'border-orange-500');
+                    btn.classList.add('text-secondary', 'border-transparent');
+                });
+
+                // Add active class to clicked button
+                button.classList.add('tab-active', 'accent-orange-text', 'border-orange-500');
+                button.classList.remove('text-secondary', 'border-transparent');
+
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+
+                // Show selected tab content
+                const selectedTab = document.getElementById(tabName);
+                if (selectedTab) {
+                    selectedTab.classList.remove('hidden');
+
+                    // Smooth scroll to content
+                    selectedTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ============================================
+        // SCROLL ANIMATIONS
+        // ============================================
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe cards for animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.bg-secondary.border-2');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                observer.observe(card);
+            });
+        });
+
+        // ============================================
+        // SMOOTH SCROLL FOR ANCHOR LINKS
+        // ============================================
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 100;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ============================================
+        // CONSOLE EASTER EGG
+        // ============================================
+
+        console.log('%c👋 Hey there!', 'font-size: 24px; font-weight: bold;');
+        console.log('%cThis profile is built with the Absurd Industries Maker Profile System', 'font-size: 14px;');
+        console.log('%cCheck out https://absurd.industries to build your own!', 'font-size: 12px; color: #ff4500;');
+    </script>
+</body>
+
+</html>
