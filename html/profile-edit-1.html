@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Maker Profile | Absurd Industries</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "spin-slow": "spin 33s linear infinite",
+                        "fade-in": "fadeIn 0.6s ease-out",
+                        "slide-up": "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                        "pulse-gentle": "pulseGentle 2s ease-in-out infinite",
+                        "gradient-shift": "gradientShift 5s ease infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(100%)" },
+                            "100%": { transform: "translateY(0)" },
+                        },
+                        pulseGentle: {
+                            "0%, 100%": { opacity: "0.7" },
+                            "50%": { opacity: "1" },
+                        },
+                        gradientShift: {
+                            "0%, 100%": { backgroundPosition: "0% 50%" },
+                            "50%": { backgroundPosition: "100% 50%" },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .border-theme { border-color: var(--border-color); }
+        .accent-orange { background-color: var(--accent-orange); }
+        .accent-orange-text { color: var(--accent-orange); }
+        .text-on-accent { color: var(--text-on-accent); }
+
+        .inspiration-card {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.05), rgba(255, 215, 0, 0.05));
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .inspiration-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.2);
+        }
+
+        .add-something-btn {
+            background: linear-gradient(135deg, var(--accent-orange), #ff6b35);
+            background-size: 200% 200%;
+            animation: gradient-shift 5s ease infinite;
+        }
+
+        .celebration-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        .progress-celebration {
+            background: linear-gradient(to right, var(--accent-orange), #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <header class="bg-secondary/90 backdrop-blur-sm border-b border-theme">
+        <div class="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 transition-transform hover:-translate-y-1 cursor-pointer">
+                    <img src="absurd-industries-logo.svg" class="w-full h-full animate-spin-slow" alt="Absurd Industries" />
+                </div>
+                <nav class="hidden sm:flex items-center space-x-2 text-sm lg:text-base">
+                    <a href="/" class="text-primary font-bold hover:accent-orange-text transition-colors">Absurd</a>
+                    <span class="text-secondary">/</span>
+                    <a href="/makers" class="text-secondary hover:text-primary transition-colors">Makers</a>
+                    <span class="text-secondary">/</span>
+                    <span class="font-bold accent-orange-text">You!</span>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- Celebration Counter -->
+                <div class="px-4 py-2 bg-tertiary rounded-full">
+                    <span class="text-sm font-bold progress-celebration">3 Amazing Things Added!</span>
+                </div>
+                <button class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center transition-transform hover:-translate-y-1">
+                    <i class="fas fa-sun text-base text-primary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero with Affirmations -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-tertiary">
+        <div class="absolute inset-0 opacity-40">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-6 py-20">
+            <div class="max-w-4xl mx-auto text-center">
+                <!-- Welcome Message -->
+                <div class="mb-8 bg-secondary/80 backdrop-blur rounded-2xl p-6 border-2 border-theme">
+                    <h2 class="text-2xl font-bold text-primary mb-3">Welcome to Your Maker Journey! 🎉</h2>
+                    <p class="text-lg text-secondary">
+                        "The expert in anything was once a disaster at it." - Every maker ever
+                    </p>
+                </div>
+
+                <!-- Avatar -->
+                <div class="relative w-40 h-40 mx-auto mb-8">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NewMaker" alt="You" class="w-full h-full object-cover rounded-full border-4 border-primary" />
+                    <button class="absolute -bottom-2 -right-2 w-12 h-12 accent-orange rounded-full flex items-center justify-center border-4 border-primary hover:scale-110 transition-transform">
+                        <i class="fas fa-camera text-white text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Name & Tagline (Always Editable) -->
+                <div class="space-y-4 mb-8">
+                    <input type="text" placeholder="Your Name" value="Alex Thompson"
+                        class="text-5xl md:text-7xl font-bold text-primary bg-transparent text-center outline-none border-b-2 border-transparent hover:border-orange-500 focus:border-orange-500 transition-colors" />
+                    <input type="text" placeholder="Your maker tagline (be weird, be you!)" value="Making things that sometimes work"
+                        class="text-xl md:text-2xl text-secondary bg-transparent text-center outline-none border-b-2 border-transparent hover:border-orange-500 focus:border-orange-500 transition-colors" />
+                </div>
+
+                <!-- Currently Obsessed With -->
+                <div class="max-w-2xl mx-auto bg-secondary border-2 border-theme rounded-2xl p-6 mb-8 hover:border-orange-500 transition-all">
+                    <div class="text-xs font-bold uppercase tracking-wider accent-orange-text mb-2">
+                        Currently Obsessed With:
+                    </div>
+                    <textarea placeholder="What's keeping you up at night? (Besides debugging)"
+                        class="w-full text-base text-primary leading-relaxed bg-transparent outline-none resize-none"
+                        rows="2">Trying to make my Arduino control more than just an LED. Maybe even TWO LEDs!</textarea>
+                </div>
+
+                <!-- Skills - Always Add More -->
+                <div class="mb-8">
+                    <div class="flex flex-wrap gap-2 justify-center mb-4">
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text">Arduino</span>
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text">LED Enthusiast</span>
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text">Googling</span>
+                        <button class="bg-secondary border-2 border-dashed border-orange-500 px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:bg-orange-500 hover:text-white transition-all">
+                            <i class="fas fa-plus mr-1"></i>Add Skill
+                        </button>
+                    </div>
+                    <p class="text-sm text-secondary italic">
+                        Tip: "Professional Googler" is a totally valid skill. We all have it.
+                    </p>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="#" class="flex items-center gap-2 bg-secondary border-2 border-theme px-6 py-3 rounded-xl font-semibold text-primary hover:border-orange-500 hover:-translate-y-1 transition-all">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <button class="flex items-center gap-2 bg-secondary border-2 border-dashed border-orange-500 px-6 py-3 rounded-xl font-semibold accent-orange-text hover:bg-orange-500 hover:text-white hover:-translate-y-1 transition-all">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Link</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content - Everything Available, Nothing Locked -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+
+        <!-- Projects Section - Always Open -->
+        <section class="mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-4 text-center">
+                <i class="fas fa-code-branch accent-orange-text mr-3"></i>Projects
+            </h2>
+            <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">
+                "The only way to do great work is to love what you do... even if it's just blinking LEDs."
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Their First Project -->
+                <div class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="aspect-video relative overflow-hidden">
+                        <div class="w-full h-full bg-tertiary flex items-center justify-center text-6xl">💡</div>
+                        <div class="absolute top-4 right-4 celebration-badge px-3 py-1 rounded-full text-xs">
+                            First Project! 🎉
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-4">Arduino LED Blinker</h3>
+                        <p class="text-secondary mb-4">It blinks! Took me 3 hours to realize the LED was backwards.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">Arduino</span>
+                            <span class="bg-tertiary text-secondary px-3 py-1 rounded-lg text-xs font-semibold">LED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Another Project Card -->
+                <div class="inspiration-card rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer">
+                    <div class="w-20 h-20 mb-6 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-plus accent-orange-text text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Add Another Project</h3>
+                    <p class="text-sm text-secondary mb-4">
+                        Got something brewing? Even ideas count!
+                    </p>
+                    <div class="text-xs text-secondary space-y-1">
+                        <p>• "Idea for a robot" ✅</p>
+                        <p>• "Thing that almost worked" ✅</p>
+                        <p>• "Epic fail I learned from" ✅</p>
+                    </div>
+                </div>
+
+                <!-- Example/Inspiration Card -->
+                <div class="bg-tertiary/50 border-2 border-dashed border-theme rounded-3xl p-8 flex flex-col items-center justify-center text-center">
+                    <div class="mb-4 text-6xl">🌟</div>
+                    <h3 class="text-lg font-bold text-primary mb-3">Need Ideas?</h3>
+                    <p class="text-sm text-secondary mb-4">
+                        Other makers started with:
+                    </p>
+                    <ul class="text-xs text-secondary space-y-2 text-left">
+                        <li>• "Moisture sensor that tweets"</li>
+                        <li>• "LED cube (2x2 counts!)"</li>
+                        <li>• "Smart doorbell (it beeps)"</li>
+                        <li>• "Robot that turns left"</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Section - Celebrate What They Have -->
+        <section class="mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-4 text-center">
+                <i class="fas fa-toolbox accent-orange-text mr-3"></i>Tools & Gear
+            </h2>
+            <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">
+                "It's not about the tools you have, it's about what you create with them. (But tools are fun.)"
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Example Tool -->
+                <div class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-52 bg-tertiary flex items-center justify-center">
+                        <i class="fas fa-code text-6xl accent-orange-text"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Arduino IDE</h3>
+                        <p class="text-secondary leading-relaxed">
+                            Where the magic happens. Sometimes.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Add Tool Inspiration -->
+                <div class="inspiration-card rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer">
+                    <div class="w-20 h-20 mb-6 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-wrench accent-orange-text text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-3">Share Your Tools</h3>
+                    <p class="text-sm text-secondary mb-4">
+                        Every tool counts:
+                    </p>
+                    <div class="text-xs text-secondary space-y-1">
+                        <p>• Screwdriver from the kitchen</p>
+                        <p>• That one good USB cable</p>
+                        <p>• Coffee (essential tool)</p>
+                        <p>• YouTube tutorials</p>
+                    </div>
+                </div>
+
+                <!-- Tool Suggestion -->
+                <div class="bg-tertiary/50 border-2 border-dashed border-theme rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                    <div class="mb-4 text-6xl">🔧</div>
+                    <h3 class="text-lg font-bold text-primary mb-3">Tool Discovery</h3>
+                    <p class="text-sm text-secondary mb-4">
+                        Based on your projects, you might like:
+                    </p>
+                    <ul class="text-xs text-secondary space-y-2">
+                        <li>• Breadboard (no more twisting wires!)</li>
+                        <li>• Multimeter (see the invisible)</li>
+                        <li>• Soldering iron (level up!)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity/Updates - Make It Feel Alive -->
+        <section class="mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-4 text-center">
+                <i class="fas fa-stream accent-orange-text mr-3"></i>Your Journey
+            </h2>
+            <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">
+                "Progress isn't always forward. Sometimes it's sideways. Sometimes it's on fire."
+            </p>
+
+            <div class="max-w-4xl mx-auto">
+                <!-- Add Update Prompt -->
+                <div class="inspiration-card rounded-2xl p-6 mb-8">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-pencil-alt accent-orange-text"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-primary mb-2">What happened today?</h3>
+                            <textarea placeholder="Burned a resistor? Found the perfect tutorial? Finally understood pull-up resistors? Share it all!"
+                                class="w-full text-sm text-secondary bg-transparent border border-theme rounded-lg p-3 outline-none focus:border-orange-500 transition-colors"
+                                rows="3"></textarea>
+                            <button class="mt-3 px-4 py-2 add-something-btn text-white rounded-lg font-semibold hover:scale-105 transition-transform">
+                                Share Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Updates -->
+                <div class="space-y-6">
+                    <div class="border-l-4 border-orange-500 pl-6">
+                        <div class="text-sm text-secondary mb-1">Today</div>
+                        <p class="text-primary">Finally figured out why nothing was working - the Arduino wasn't plugged in. 🤦</p>
+                    </div>
+                    <div class="border-l-4 border-theme pl-6">
+                        <div class="text-sm text-secondary mb-1">Yesterday</div>
+                        <p class="text-primary">LED is blinking! Only took 3 hours and 47 Google searches.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community & Campaigns - Always Available -->
+        <section class="mb-20">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary mb-4 text-center">
+                <i class="fas fa-rocket accent-orange-text mr-3"></i>Join the Fun
+            </h2>
+            <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">
+                "The best part of making is the friends you debug with along the way."
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Start a Campaign -->
+                <div class="inspiration-card rounded-2xl p-8 text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-megaphone accent-orange-text text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Start Something</h3>
+                    <p class="text-secondary mb-6">
+                        Got an idea that needs collaborators? Want to teach something? Start a campaign!
+                    </p>
+                    <div class="text-sm text-secondary space-y-2 text-left max-w-xs mx-auto">
+                        <p>• "Let's all build plant monitors"</p>
+                        <p>• "30-day LED challenge"</p>
+                        <p>• "Teach kids Arduino basics"</p>
+                    </div>
+                </div>
+
+                <!-- Share Resources -->
+                <div class="inspiration-card rounded-2xl p-8 text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-book-open accent-orange-text text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Share Knowledge</h3>
+                    <p class="text-secondary mb-6">
+                        Found an amazing tutorial? Wrote a guide? Made a mistake others can learn from?
+                    </p>
+                    <div class="text-sm text-secondary space-y-2 text-left max-w-xs mx-auto">
+                        <p>• Tutorial that finally made sense</p>
+                        <p>• Mistakes to avoid (I made them all)</p>
+                        <p>• "This YouTube channel is gold"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inspiration Section -->
+        <section class="mb-20">
+            <div class="bg-secondary border-2 border-theme rounded-3xl p-12 text-center">
+                <h2 class="text-3xl font-bold text-primary mb-6">Remember: You're Already a Maker! 🎉</h2>
+                <div class="max-w-3xl mx-auto space-y-6 text-lg text-secondary">
+                    <p>
+                        <span class="accent-orange-text font-bold">Limor Fried</span> started with a minty MP3 player in an Altoids tin.
+                    </p>
+                    <p>
+                        <span class="accent-orange-text font-bold">Simone Giertz</span> started by making useless robots that barely worked.
+                    </p>
+                    <p>
+                        <span class="accent-orange-text font-bold">You</span> started by making that LED blink. What's next is up to you.
+                    </p>
+                    <div class="pt-6 border-t border-theme mt-6">
+                        <p class="text-2xl font-bold progress-celebration">
+                            "The best time to plant a tree was 20 years ago. The second best time is now."
+                        </p>
+                        <p class="text-sm text-secondary mt-2">- Ancient maker proverb (probably)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-tertiary border-t border-theme py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <img src="absurd-industries-logo.svg" class="w-16 h-16 mx-auto mb-4 opacity-50" alt="Absurd Industries" />
+            <h3 class="text-xl font-bold text-primary mb-2">Keep Making, Keep Sharing, Keep Being Absurd</h3>
+            <p class="text-secondary mb-4">
+                Your profile grows with you. No pressure, no unlocks, just possibilities.
+            </p>
+            <div class="flex justify-center gap-4 mt-6">
+                <button class="px-6 py-3 add-something-btn text-white rounded-xl font-semibold hover:scale-105 transition-transform">
+                    <i class="fas fa-plus mr-2"></i>Add Something Cool
+                </button>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

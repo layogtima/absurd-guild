@@ -1,0 +1,1494 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Absurd Industries Design System | Guild</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "spin-slow": "spin 33s linear infinite",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        /* Color System - The Sacred Palette */
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+            /* accent-orange and text-on-accent remain the same */
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Utility Classes */
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .border-theme { border-color: var(--border-color); }
+        .accent-orange { background-color: var(--accent-orange); }
+        .accent-orange-text { color: var(--accent-orange); }
+        .text-on-accent { color: var(--text-on-accent); }
+
+        /* Grid Background for Sections */
+        .grid-bg {
+            background-image: repeating-linear-gradient(0deg, var(--border-color) 0px, transparent 1px, transparent 40px, var(--border-color) 41px),
+                            repeating-linear-gradient(90deg, var(--border-color) 0px, transparent 1px, transparent 40px, var(--border-color) 41px);
+            background-size: 41px 41px;
+            background-position: -1px -1px;
+        }
+
+        /* Component Classes */
+        .card-base {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card-base:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-orange);
+            color: var(--text-on-accent);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(255, 69, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-2px);
+        }
+
+        .input-base {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-base:focus {
+            border-color: var(--accent-orange);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-display {
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Animation Classes */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .animate-spin {
+            animation: spinner 1s linear infinite;
+        }
+
+        /* Toast Styles */
+        .toast {
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-left-width: 4px;
+            border-left-color: var(--accent-orange);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tab Styles */
+        .tab-active {
+            border-bottom: 3px solid var(--accent-orange);
+            color: var(--text-primary);
+        }
+
+        .tab-inactive {
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+        }
+
+        /* Enhanced Form Controls */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: var(--accent-orange);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(255, 69, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(255, 69, 0, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-orange), #ff6b35);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Remove default select arrow */
+        select.input-base {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: none;
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: 0.3s;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-secondary);
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background-color: var(--text-on-accent);
+        }
+
+        /* Theme Toggle Icon Animation */
+        .theme-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .theme-icon.rotating {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 640px) {
+            .section-display {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Theme Toggle -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-3">
+        <span class="text-sm text-secondary">Theme:</span>
+        <button onclick="toggleTheme()" class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border-2 border-theme hover:border-orange-500 hover:accent-orange-text transition-all">
+            <i id="themeIcon" class="fas fa-moon text-primary theme-icon"></i>
+        </button>
+    </div>
+
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <header class="text-center py-12 mb-12">
+            <div class="w-20 h-20 mx-auto mb-6">
+                <img src="absurd-industries-logo.svg" class="w-full h-full animate-spin-slow" alt="Absurd Industries" />
+            </div>
+            <h1 class="text-5xl font-bold text-primary mb-4">Absurd Industries Design System</h1>
+            <p class="text-xl text-secondary">Guild Maker Profile Components</p>
+        </header>
+
+        <!-- Color Palette -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Color Palette</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Primary Background -->
+                <div class="text-center">
+                    <div class="bg-primary border-2 border-theme rounded-xl h-32 mb-3"></div>
+                    <p class="font-semibold text-primary">Primary BG</p>
+                    <p class="text-xs text-secondary mt-1">Light: #ece0cf</p>
+                    <p class="text-xs text-secondary">Dark: #1a1a1a</p>
+                </div>
+
+                <!-- Secondary Background -->
+                <div class="text-center">
+                    <div class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3"></div>
+                    <p class="font-semibold text-primary">Secondary BG</p>
+                    <p class="text-xs text-secondary mt-1">Light: #ffffff</p>
+                    <p class="text-xs text-secondary">Dark: #2a2a2a</p>
+                </div>
+
+                <!-- Tertiary Background -->
+                <div class="text-center">
+                    <div class="bg-tertiary border-2 border-theme rounded-xl h-32 mb-3"></div>
+                    <p class="font-semibold text-primary">Tertiary BG</p>
+                    <p class="text-xs text-secondary mt-1">Light: #e0d4c3</p>
+                    <p class="text-xs text-secondary">Dark: #111111</p>
+                </div>
+
+                <!-- Accent Orange -->
+                <div class="text-center">
+                    <div class="accent-orange border-2 border-theme rounded-xl h-32 mb-3"></div>
+                    <p class="font-semibold text-primary">Accent Orange</p>
+                    <p class="text-xs text-secondary mt-1">#ff4500</p>
+                    <p class="text-xs text-secondary">Both themes</p>
+                </div>
+
+                <!-- Text Primary -->
+                <div class="text-center">
+                    <div class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
+                        <span class="text-primary text-2xl font-bold">Aa</span>
+                    </div>
+                    <p class="font-semibold text-primary">Text Primary</p>
+                    <p class="text-xs text-secondary mt-1">Light: #1a1a1a</p>
+                    <p class="text-xs text-secondary">Dark: #ece0cf</p>
+                </div>
+
+                <!-- Text Secondary -->
+                <div class="text-center">
+                    <div class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
+                        <span class="text-secondary text-2xl font-bold">Aa</span>
+                    </div>
+                    <p class="font-semibold text-primary">Text Secondary</p>
+                    <p class="text-xs text-secondary mt-1">Light: #5c5c5c</p>
+                    <p class="text-xs text-secondary">Dark: #9ca3af</p>
+                </div>
+
+                <!-- Border Color -->
+                <div class="text-center">
+                    <div class="bg-secondary border-4 border-theme rounded-xl h-32 mb-3"></div>
+                    <p class="font-semibold text-primary">Border Color</p>
+                    <p class="text-xs text-secondary mt-1">Light: #d1c4b3</p>
+                    <p class="text-xs text-secondary">Dark: #3a3a3a</p>
+                </div>
+
+                <!-- Text on Accent -->
+                <div class="text-center">
+                    <div class="accent-orange rounded-xl h-32 mb-3 flex items-center justify-center">
+                        <span class="text-on-accent text-2xl font-bold">Aa</span>
+                    </div>
+                    <p class="font-semibold text-primary">Text on Accent</p>
+                    <p class="text-xs text-secondary mt-1">#ffffff</p>
+                    <p class="text-xs text-secondary">Both themes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Typography</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                <p class="text-xs text-secondary mb-2">Font Family: Jura</p>
+                <h1 class="text-5xl md:text-7xl font-bold text-primary mb-4">Heading 1</h1>
+                <h2 class="text-4xl md:text-5xl font-bold text-primary mb-4">Heading 2</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-primary mb-4">Heading 3</h3>
+                <h4 class="text-2xl font-bold text-primary mb-4">Heading 4</h4>
+                <h5 class="text-xl font-semibold text-primary mb-4">Heading 5</h5>
+                <p class="text-lg text-primary mb-4">Body Text Large - Used for important paragraphs and lead text.</p>
+                <p class="text-base text-primary mb-4">Body Text Regular - The quick brown fox jumps over the lazy dog. This is the standard body text used throughout the application.</p>
+                <p class="text-sm text-secondary mb-4">Small Text - Used for captions, hints, and secondary information.</p>
+                <p class="text-xs text-secondary">Extra Small - Timestamps, metadata, and fine print.</p>
+            </div>
+        </section>
+
+        <!-- Buttons -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Buttons</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8 space-y-6">
+                <!-- Primary Buttons -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Primary Actions</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="btn-primary">Save Changes</button>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus mr-2"></i>Add Project
+                        </button>
+                        <button class="btn-primary rounded-full">
+                            <i class="fas fa-rocket mr-2"></i>Launch
+                        </button>
+                        <button class="btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Disabled</button>
+                    </div>
+                </div>
+
+                <!-- Secondary Buttons -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Secondary Actions</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="btn-secondary">Cancel</button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
+                        <button class="btn-secondary rounded-full">View More</button>
+                        <button class="btn-secondary border-dashed border-2 border-orange-500 accent-orange-text">
+                            <i class="fas fa-plus mr-2"></i>Add Something
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Icon Buttons -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Icon Buttons</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center hover:accent-orange hover:text-on-accent transition-all">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="w-12 h-12 rounded-full border-2 border-theme flex items-center justify-center hover:border-orange-500 hover:accent-orange-text transition-all">
+                            <i class="fas fa-share"></i>
+                        </button>
+                        <button class="w-12 h-12 rounded-full accent-orange text-on-accent flex items-center justify-center hover:scale-110 transition-transform">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Elements -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Form Elements</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8 space-y-6">
+                <!-- Text Inputs -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Text Inputs</p>
+                    <div class="space-y-4 max-w-md">
+                        <input type="text" placeholder="Your name" class="input-base w-full" />
+                        <input type="text" value="Filled input" class="input-base w-full" />
+                        <input type="text" placeholder="Disabled" disabled class="input-base w-full opacity-50" />
+                        <textarea placeholder="Tell us about your project..." rows="3" class="input-base w-full resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Selects & Toggles -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Selects & Toggles</p>
+                    <div class="space-y-4 max-w-md">
+                        <select class="input-base w-full">
+                            <option>Choose a category</option>
+                            <option>Hardware</option>
+                            <option>Software</option>
+                            <option>Art</option>
+                        </select>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="check1" class="w-5 h-5 accent-orange rounded" />
+                            <label for="check1" class="text-primary">I agree to share my failures</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cards -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Cards</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Basic Card -->
+                <div class="card-base">
+                    <h3 class="text-xl font-bold text-primary mb-2">Basic Card</h3>
+                    <p class="text-secondary mb-4">This is a standard card component with hover effect.</p>
+                    <button class="text-sm accent-orange-text font-semibold">Learn More →</button>
+                </div>
+
+                <!-- Project Card -->
+                <div class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                    <div class="h-40 bg-tertiary flex items-center justify-center">
+                        <i class="fas fa-rocket text-6xl accent-orange-text"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="inline-block px-2 py-1 bg-tertiary rounded text-xs font-semibold accent-orange-text mb-3">
+                            IN PROGRESS
+                        </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">Project Card</h3>
+                        <p class="text-sm text-secondary">With image area and status badge</p>
+                    </div>
+                </div>
+
+                <!-- Inspiration Card -->
+                <div class="border-2 border-dashed border-orange-500 bg-orange-500/5 rounded-2xl p-6 text-center hover:bg-orange-500/10 transition-all cursor-pointer">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-500/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-plus accent-orange-text text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-primary mb-2">Add Something</h3>
+                    <p class="text-sm text-secondary">Inspiration card style for adding content</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Badges & Tags -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Badges & Tags</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8 space-y-6">
+                <!-- Status Badges (Using Constrained Palette) -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Status Badges - Constrained Palette</p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="badge bg-tertiary text-secondary border border-theme">IDEA</span>
+                        <span class="badge bg-tertiary accent-orange-text border border-theme">PLANNING</span>
+                        <span class="badge accent-orange text-on-accent">IN PROGRESS</span>
+                        <span class="badge bg-primary text-primary border-2 border-orange-500">COMPLETED</span>
+                    </div>
+                </div>
+
+                <!-- Skill Tags -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Skill Tags</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">Arduino</span>
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">3D Printing</span>
+                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">PCB Design</span>
+                        <span class="bg-tertiary px-4 py-2 rounded-full text-sm font-semibold text-secondary">IoT</span>
+                    </div>
+                </div>
+
+                <!-- Category Labels -->
+                <div>
+                    <p class="text-sm text-secondary mb-3">Category Labels</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Hardware</span>
+                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Software</span>
+                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Tutorial</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mobile Components & Navigation -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Mobile Navigation & Layouts</h2>
+
+            <div class="space-y-8">
+                <!-- Mobile Header Variations -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Mobile Headers</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Standard Mobile Header -->
+                        <div>
+                            <p class="text-sm text-secondary mb-3">Standard Mobile Header</p>
+                            <div class="max-w-sm mx-auto bg-tertiary rounded-xl p-4">
+                                <div class="flex items-center justify-between">
+                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
+                                        <i class="fas fa-bars text-sm"></i>
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-primary text-lg">Guild</span>
+                                    </div>
+                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
+                                        <i class="fas fa-user text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Header with Search -->
+                        <div>
+                            <p class="text-sm text-secondary mb-3">Header with Search</p>
+                            <div class="max-w-sm mx-auto bg-tertiary rounded-xl p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                                        <i class="fas fa-arrow-left text-sm"></i>
+                                    </button>
+                                    <span class="font-bold text-primary">Search Makers</span>
+                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                                        <i class="fas fa-times text-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input type="search" placeholder="Search..." class="input-base w-full text-sm pr-10" />
+                                    <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-secondary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Bottom Navigation -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Bottom Navigation</h3>
+                    <div class="max-w-sm mx-auto">
+                        <div class="bg-tertiary rounded-t-xl border-t-2 border-theme p-2">
+                            <div class="flex items-center justify-around">
+                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-home text-lg accent-orange-text"></i>
+                                    <span class="text-xs font-semibold accent-orange-text">Home</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-search text-lg text-secondary"></i>
+                                    <span class="text-xs font-semibold text-secondary">Explore</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors relative">
+                                    <i class="fas fa-plus text-lg text-secondary"></i>
+                                    <span class="text-xs font-semibold text-secondary">Create</span>
+                                    <div class="absolute -top-1 -right-1 w-5 h-5 accent-orange rounded-full flex items-center justify-center">
+                                        <i class="fas fa-plus text-xs text-on-accent"></i>
+                                    </div>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-bell text-lg text-secondary"></i>
+                                    <span class="text-xs font-semibold text-secondary">Activity</span>
+                                    <div class="absolute top-2 right-8 w-2 h-2 accent-orange rounded-full"></div>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-user text-lg text-secondary"></i>
+                                    <span class="text-xs font-semibold text-secondary">Profile</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Drawer Menu -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Slide-out Drawer</h3>
+                    <div class="max-w-sm mx-auto bg-tertiary rounded-xl overflow-hidden">
+                        <div class="h-80 flex">
+                            <!-- Drawer Content -->
+                            <div class="w-64 bg-secondary border-r border-theme p-4">
+                                <!-- Profile Section -->
+                                <div class="flex items-center gap-3 p-3 mb-6 bg-tertiary rounded-xl">
+                                    <div class="w-12 h-12 accent-orange rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-on-accent"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-primary">Alex Thompson</p>
+                                        <p class="text-xs text-secondary">@alexmakes</p>
+                                    </div>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <nav class="space-y-1">
+                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                        <i class="fas fa-home text-secondary w-5"></i>
+                                        <span class="text-primary font-medium">Dashboard</span>
+                                    </a>
+                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-tertiary accent-orange-text">
+                                        <i class="fas fa-user-friends w-5"></i>
+                                        <span class="font-medium">My Profile</span>
+                                    </a>
+                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                        <i class="fas fa-project-diagram text-secondary w-5"></i>
+                                        <span class="text-primary font-medium">Projects</span>
+                                    </a>
+                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                        <i class="fas fa-users text-secondary w-5"></i>
+                                        <span class="text-primary font-medium">Community</span>
+                                    </a>
+                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                        <i class="fas fa-cog text-secondary w-5"></i>
+                                        <span class="text-primary font-medium">Settings</span>
+                                    </a>
+                                </nav>
+
+                                <!-- Bottom Actions -->
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors text-left">
+                                        <i class="fas fa-sign-out-alt text-secondary w-5"></i>
+                                        <span class="text-primary font-medium">Sign Out</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Overlay area -->
+                            <div class="flex-1 bg-black/20"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Action Sheets -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Action Sheets</h3>
+                    <div class="max-w-sm mx-auto bg-tertiary rounded-xl overflow-hidden">
+                        <div class="h-64 relative">
+                            <!-- Background -->
+                            <div class="h-full bg-secondary/50"></div>
+
+                            <!-- Action Sheet -->
+                            <div class="absolute bottom-0 left-0 right-0 bg-secondary border-t-2 border-theme rounded-t-2xl animate-slide-up">
+                                <div class="p-6">
+                                    <div class="w-12 h-1 bg-tertiary rounded-full mx-auto mb-6"></div>
+                                    <h4 class="text-lg font-bold text-primary mb-4 text-center">Add to Project</h4>
+                                    <div class="space-y-2">
+                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div class="w-10 h-10 accent-orange rounded-full flex items-center justify-center">
+                                                <i class="fas fa-camera text-on-accent"></i>
+                                            </div>
+                                            <div class="text-left">
+                                                <p class="font-semibold text-primary">Take Photo</p>
+                                                <p class="text-sm text-secondary">Capture with camera</p>
+                                            </div>
+                                        </button>
+                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
+                                                <i class="fas fa-image text-secondary"></i>
+                                            </div>
+                                            <div class="text-left">
+                                                <p class="font-semibold text-primary">Choose Photo</p>
+                                                <p class="text-sm text-secondary">From gallery</p>
+                                            </div>
+                                        </button>
+                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
+                                                <i class="fas fa-file-alt text-secondary"></i>
+                                            </div>
+                                            <div class="text-left">
+                                                <p class="font-semibold text-primary">Add Note</p>
+                                                <p class="text-sm text-secondary">Write about progress</p>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compact Mobile Cards -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Space-Efficient Mobile Cards</h3>
+                    <div class="max-w-sm mx-auto space-y-4">
+                        <!-- Horizontal Project Card -->
+                        <div class="bg-tertiary border border-theme rounded-xl p-4">
+                            <div class="flex gap-3">
+                                <div class="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-microchip accent-orange-text text-xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between mb-1">
+                                        <h4 class="font-semibold text-primary truncate">LED Matrix Display</h4>
+                                        <span class="badge bg-tertiary accent-orange-text text-xs ml-2">ACTIVE</span>
+                                    </div>
+                                    <p class="text-sm text-secondary mb-2 line-clamp-2">Building an 8x8 LED matrix with Arduino control...</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex gap-1">
+                                            <span class="text-xs bg-secondary px-2 py-1 rounded text-secondary">Arduino</span>
+                                            <span class="text-xs bg-secondary px-2 py-1 rounded text-secondary">LED</span>
+                                        </div>
+                                        <span class="text-xs text-secondary">2 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compact Stats Card -->
+                        <div class="bg-tertiary border border-theme rounded-xl p-4">
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold accent-orange-text">12</div>
+                                    <div class="text-xs text-secondary">Projects</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold accent-orange-text">47</div>
+                                    <div class="text-xs text-secondary">Followers</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold accent-orange-text">156</div>
+                                    <div class="text-xs text-secondary">Likes</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action Card -->
+                        <div class="bg-tertiary border border-theme rounded-xl p-4">
+                            <h4 class="font-semibold text-primary mb-3">Quick Actions</h4>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-plus accent-orange-text"></i>
+                                    <span class="text-xs text-secondary">Add</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-share text-secondary"></i>
+                                    <span class="text-xs text-secondary">Share</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-edit text-secondary"></i>
+                                    <span class="text-xs text-secondary">Edit</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                    <i class="fas fa-cog text-secondary"></i>
+                                    <span class="text-xs text-secondary">Settings</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacing & Layout -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Spacing System</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <div class="bg-tertiary h-4 mb-2"></div>
+                        <p class="text-xs text-secondary">4px (1)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-8 mb-2"></div>
+                        <p class="text-xs text-secondary">8px (2)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-12 mb-2"></div>
+                        <p class="text-xs text-secondary">12px (3)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-16 mb-2"></div>
+                        <p class="text-xs text-secondary">16px (4)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-20 mb-2"></div>
+                        <p class="text-xs text-secondary">20px (5)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-24 mb-2"></div>
+                        <p class="text-xs text-secondary">24px (6)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-32 mb-2"></div>
+                        <p class="text-xs text-secondary">32px (8)</p>
+                    </div>
+                    <div>
+                        <div class="bg-tertiary h-48 mb-2"></div>
+                        <p class="text-xs text-secondary">48px (12)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive States -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Interactive States</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Default State -->
+                    <div class="text-center">
+                        <div class="bg-tertiary border-2 border-theme rounded-xl p-6 mb-3">
+                            <i class="fas fa-hand-pointer text-3xl text-secondary"></i>
+                        </div>
+                        <p class="font-semibold text-primary">Default</p>
+                        <p class="text-xs text-secondary mt-1">Base state</p>
+                    </div>
+
+                    <!-- Hover State -->
+                    <div class="text-center">
+                        <div class="bg-tertiary border-2 border-orange-500 rounded-xl p-6 mb-3 transform -translate-y-1">
+                            <i class="fas fa-hand-pointer text-3xl accent-orange-text"></i>
+                        </div>
+                        <p class="font-semibold text-primary">Hover</p>
+                        <p class="text-xs text-secondary mt-1">Border color + lift</p>
+                    </div>
+
+                    <!-- Active State -->
+                    <div class="text-center">
+                        <div class="accent-orange border-2 border-orange-500 rounded-xl p-6 mb-3">
+                            <i class="fas fa-hand-pointer text-3xl text-on-accent"></i>
+                        </div>
+                        <p class="font-semibold text-primary">Active/Selected</p>
+                        <p class="text-xs text-secondary mt-1">Filled accent</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comprehensive Forms -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Comprehensive Form Patterns</h2>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Complete Form Example -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Add New Project</h3>
+                    <form class="space-y-4">
+                        <!-- Text Input with Label -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Project Name <span class="accent-orange-text">*</span>
+                            </label>
+                            <input type="text" placeholder="My Amazing LED Cube" class="input-base w-full" />
+                            <p class="text-xs text-secondary mt-1">Give it a fun name!</p>
+                        </div>
+
+                        <!-- Select with Icon -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Status
+                            </label>
+                            <div class="relative">
+                                <select class="input-base w-full pr-10">
+                                    <option>Idea</option>
+                                    <option>Planning</option>
+                                    <option>In Progress</option>
+                                    <option>Completed</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <!-- Textarea with Character Count -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Description
+                            </label>
+                            <textarea placeholder="What makes this project special?" rows="4" class="input-base w-full resize-none"></textarea>
+                            <p class="text-xs text-secondary mt-1 text-right">0 / 500 characters</p>
+                        </div>
+
+                        <!-- Tags Input -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Tags
+                            </label>
+                            <div class="input-base flex flex-wrap gap-2 items-center">
+                                <span class="bg-tertiary px-2 py-1 rounded text-sm">Arduino</span>
+                                <span class="bg-tertiary px-2 py-1 rounded text-sm">LED</span>
+                                <input type="text" placeholder="Add tag..." class="flex-1 bg-transparent outline-none min-w-[100px]" />
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Project Image
+                            </label>
+                            <div class="border-2 border-dashed border-theme rounded-xl p-8 text-center hover:border-orange-500 transition-colors cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-secondary mb-3"></i>
+                                <p class="text-sm text-primary mb-1">Drop image here or click to browse</p>
+                                <p class="text-xs text-secondary">PNG, JPG up to 10MB</p>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit" class="btn-primary flex-1">Create Project</button>
+                            <button type="button" class="btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Field Variations -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Field Variations</h3>
+                    <div class="space-y-4">
+                        <!-- Input with Icon -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">GitHub URL</label>
+                            <div class="relative">
+                                <i class="fab fa-github absolute left-3 top-1/2 -translate-y-1/2 text-secondary"></i>
+                                <input type="url" placeholder="https://github.com/..." class="input-base w-full pl-10" />
+                            </div>
+                        </div>
+
+                        <!-- Toggle Switch -->
+                        <div>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="text-sm font-semibold text-primary">Make project public</span>
+                                <div class="relative">
+                                    <input type="checkbox" class="sr-only peer" />
+                                    <div class="w-11 h-6 bg-tertiary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:accent-orange"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Radio Group -->
+                        <div>
+                            <p class="text-sm font-semibold text-primary mb-2">Difficulty Level</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="radio" name="difficulty" class="w-4 h-4" />
+                                    <span class="text-primary"><i class="fas fa-seedling text-sm mr-2"></i>Beginner</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="radio" name="difficulty" class="w-4 h-4" />
+                                    <span class="text-primary"><i class="fas fa-rocket text-sm mr-2"></i>Intermediate</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="radio" name="difficulty" class="w-4 h-4" />
+                                    <span class="text-primary"><i class="fas fa-bolt text-sm mr-2"></i>Advanced</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Date Picker -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Project Date</label>
+                            <input type="date" class="input-base w-full" />
+                        </div>
+
+                        <!-- Range Slider -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">
+                                Progress: <span class="accent-orange-text">75%</span>
+                            </label>
+                            <input type="range" min="0" max="100" value="75" class="w-full" />
+                        </div>
+
+                        <!-- Custom Progress Bar -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Project Completion</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                            <p class="text-xs text-secondary mt-1">65% complete</p>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Search Makers</label>
+                            <div class="relative">
+                                <input type="search" placeholder="Search..." class="input-base w-full pr-10" />
+                                <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-secondary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inline Editing Pattern -->
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8 mt-8">
+                <h3 class="text-xl font-bold text-primary mb-6">Inline Editing</h3>
+                <div class="space-y-4">
+                    <div class="group">
+                        <div class="flex items-center justify-between p-3 rounded-lg hover:bg-tertiary transition-colors">
+                            <div>
+                                <p class="font-semibold text-primary">Project Name</p>
+                                <p class="text-sm text-secondary">Click to edit</p>
+                            </div>
+                            <i class="fas fa-pencil-alt text-secondary opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-tertiary rounded-lg">
+                        <input type="text" value="LED Blinker 3000" class="bg-transparent w-full outline-none text-primary font-semibold" />
+                        <div class="flex gap-2 mt-2">
+                            <button class="text-xs accent-orange-text font-semibold">Save</button>
+                            <button class="text-xs text-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal Windows -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Modal Windows</h2>
+
+            <div class="space-y-8">
+                <!-- Standard Modal -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Standard Modal</h3>
+                    <div class="relative bg-tertiary rounded-2xl overflow-hidden">
+                        <!-- Modal Example (static) -->
+                        <div class="bg-secondary rounded-2xl max-w-lg mx-auto m-8">
+                            <div class="p-6 border-b border-theme">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-2xl font-bold text-primary">Project Details</h4>
+                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                        <i class="fas fa-times text-secondary"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-secondary mb-4">This is a standard modal with header, body, and footer sections.</p>
+                                <div class="bg-tertiary rounded-lg p-4">
+                                    <p class="text-sm text-primary">Modal content goes here...</p>
+                                </div>
+                            </div>
+                            <div class="p-6 border-t border-theme flex gap-3 justify-end">
+                                <button class="btn-secondary">Cancel</button>
+                                <button class="btn-primary">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation Modal -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Confirmation Modal</h3>
+                    <div class="relative bg-tertiary rounded-2xl overflow-hidden">
+                        <div class="bg-secondary rounded-2xl max-w-md mx-auto m-8 text-center">
+                            <div class="p-8">
+                                <div class="w-20 h-20 mx-auto mb-6 bg-orange-500/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle accent-orange-text text-3xl"></i>
+                                </div>
+                                <h4 class="text-2xl font-bold text-primary mb-3">Delete Project?</h4>
+                                <p class="text-secondary mb-6">This action cannot be undone. Your project "LED Blinker" will be permanently deleted.</p>
+                                <div class="flex gap-3">
+                                    <button class="btn-secondary flex-1">Keep It</button>
+                                    <button class="accent-orange text-on-accent px-6 py-3 rounded-lg font-semibold flex-1 hover:scale-105 transition-transform">Yes, Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Modal -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Success Modal</h3>
+                    <div class="relative bg-tertiary rounded-2xl overflow-hidden">
+                        <div class="bg-secondary rounded-2xl max-w-md mx-auto m-8 text-center animate-slide-up">
+                            <div class="p-8">
+                                <div class="w-20 h-20 mx-auto mb-6 accent-orange rounded-full flex items-center justify-center animate-pulse">
+                                    <i class="fas fa-check text-on-accent text-3xl"></i>
+                                </div>
+                                <h4 class="text-2xl font-bold text-primary mb-3">Project Created!</h4>
+                                <p class="text-secondary mb-6">Your project has been added to your profile. Time to share it with the world!</p>
+                                <button class="btn-primary">View Project</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Screen Modal -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Full Screen Modal</h3>
+                    <div class="relative bg-tertiary rounded-2xl overflow-hidden h-64">
+                        <div class="bg-secondary h-full flex flex-col">
+                            <div class="flex items-center justify-between p-4 border-b border-theme">
+                                <h4 class="text-xl font-bold text-primary">Image Editor</h4>
+                                <div class="flex gap-2">
+                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                        <i class="fas fa-expand text-secondary"></i>
+                                    </button>
+                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                        <i class="fas fa-times text-secondary"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex items-center justify-center">
+                                <p class="text-secondary">Full screen content area</p>
+                            </div>
+                            <div class="p-4 border-t border-theme flex justify-between">
+                                <div class="flex gap-2">
+                                    <button class="btn-secondary text-sm"><i class="fas fa-crop mr-2"></i>Crop</button>
+                                    <button class="btn-secondary text-sm"><i class="fas fa-adjust mr-2"></i>Adjust</button>
+                                </div>
+                                <button class="btn-primary text-sm">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toast Notifications -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Toast Notifications</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                <div class="space-y-4">
+                    <!-- Success Toast -->
+                    <div class="toast animate-slide-up">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-on-accent text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-primary">Project Saved!</p>
+                                <p class="text-sm text-secondary">Your changes have been saved successfully.</p>
+                            </div>
+                            <button class="text-secondary hover:text-primary transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Error Toast -->
+                    <div class="toast border-left-color-red">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation accent-orange-text"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-primary">Upload Failed</p>
+                                <p class="text-sm text-secondary">File size exceeds 10MB limit.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info Toast with Action -->
+                    <div class="toast">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-info text-secondary"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-primary">New Feature!</p>
+                                <p class="text-sm text-secondary mb-2">Try our new project templates.</p>
+                                <button class="text-sm accent-orange-text font-semibold">Learn More →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading States -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Loading States</h2>
+
+            <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Spinner -->
+                    <div class="text-center">
+                        <div class="bg-tertiary rounded-xl p-8 mb-3">
+                            <div class="w-12 h-12 border-4 border-theme border-t-orange-500 rounded-full animate-spin mx-auto"></div>
+                        </div>
+                        <p class="font-semibold text-primary">Spinner</p>
+                    </div>
+
+                    <!-- Pulse -->
+                    <div class="text-center">
+                        <div class="bg-tertiary rounded-xl p-8 mb-3">
+                            <div class="flex gap-2 justify-center">
+                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse"></div>
+                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                            </div>
+                        </div>
+                        <p class="font-semibold text-primary">Dots</p>
+                    </div>
+
+                    <!-- Skeleton -->
+                    <div class="text-center">
+                        <div class="bg-tertiary rounded-xl p-8 mb-3">
+                            <div class="space-y-3">
+                                <div class="h-3 bg-secondary rounded animate-pulse"></div>
+                                <div class="h-3 bg-secondary rounded animate-pulse w-3/4"></div>
+                                <div class="h-3 bg-secondary rounded animate-pulse w-1/2"></div>
+                            </div>
+                        </div>
+                        <p class="font-semibold text-primary">Skeleton</p>
+                    </div>
+                </div>
+
+                <!-- Loading Button States -->
+                <div class="mt-8">
+                    <p class="text-sm text-secondary mb-4">Button Loading States</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="btn-primary opacity-75 cursor-wait">
+                            <i class="fas fa-spinner animate-spin mr-2"></i>Saving...
+                        </button>
+                        <button class="btn-secondary opacity-75 cursor-wait">
+                            <span class="inline-flex gap-1 mr-2">
+                                <span class="w-2 h-2 bg-current rounded-full animate-pulse"></span>
+                                <span class="w-2 h-2 bg-current rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-current rounded-full animate-pulse" style="animation-delay: 0.4s"></span>
+                            </span>
+                            Loading
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Patterns -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-primary mb-8">Navigation Patterns</h2>
+
+            <div class="space-y-8">
+                <!-- Tab Navigation -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Tabs</h3>
+                    <div class="border-b border-theme">
+                        <div class="flex gap-8">
+                            <button class="pb-3 tab-active font-semibold">Overview</button>
+                            <button class="pb-3 tab-inactive hover:text-primary transition-colors">Projects</button>
+                            <button class="pb-3 tab-inactive hover:text-primary transition-colors">Activity</button>
+                            <button class="pb-3 tab-inactive hover:text-primary transition-colors">Settings</button>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <p class="text-secondary">Tab content appears here...</p>
+                    </div>
+                </div>
+
+                <!-- Breadcrumbs -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Breadcrumbs</h3>
+                    <nav class="flex items-center gap-2 text-sm">
+                        <a href="#" class="text-secondary hover:text-primary transition-colors">Home</a>
+                        <i class="fas fa-chevron-right text-secondary text-xs"></i>
+                        <a href="#" class="text-secondary hover:text-primary transition-colors">Makers</a>
+                        <i class="fas fa-chevron-right text-secondary text-xs"></i>
+                        <span class="text-primary font-semibold">Alex Thompson</span>
+                    </nav>
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-secondary border-2 border-theme rounded-xl p-8">
+                    <h3 class="text-xl font-bold text-primary mb-6">Pagination</h3>
+                    <div class="flex items-center justify-center gap-2">
+                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
+                            <i class="fas fa-chevron-left text-secondary"></i>
+                        </button>
+                        <button class="w-10 h-10 rounded-lg accent-orange text-on-accent font-semibold">1</button>
+                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">2</button>
+                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">3</button>
+                        <span class="text-secondary px-2">...</span>
+                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">12</button>
+                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-12 mt-20 border-t-2 border-theme">
+            <p class="text-secondary mb-2">Absurd Industries Design System v1.0</p>
+            <p class="text-sm accent-orange-text font-semibold">"Who gives a fuck, just do whatever you want."</p>
+            <p class="text-xs text-secondary mt-4">But also, please use these consistent components 😅</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle with smooth sun/moon transition
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+
+            // Add rotation animation
+            icon.classList.add('rotating');
+
+            setTimeout(() => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    icon.className = 'fas fa-sun text-primary theme-icon';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.add('dark');
+                    icon.className = 'fas fa-moon text-primary theme-icon';
+                    localStorage.setItem('theme', 'dark');
+                }
+
+                // Remove rotation class after animation
+                setTimeout(() => {
+                    icon.classList.remove('rotating');
+                }, 300);
+            }, 150);
+        }
+
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                icon.className = 'fas fa-moon text-primary theme-icon';
+            } else {
+                html.classList.remove('dark');
+                icon.className = 'fas fa-sun text-primary theme-icon';
+            }
+        });
+
+        // Example form control interactions
+        function updateProgressBar(value) {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = value + '%';
+            }
+        }
+
+        // Example character counter
+        function updateCharacterCount(textarea, countElement, maxLength) {
+            const currentLength = textarea.value.length;
+            countElement.textContent = `${currentLength} / ${maxLength} characters`;
+
+            if (currentLength > maxLength * 0.9) {
+                countElement.style.color = 'var(--accent-orange)';
+            } else {
+                countElement.style.color = 'var(--text-secondary)';
+            }
+        }
+
+        // Example tag input functionality
+        function addTag(inputElement, container) {
+            const value = inputElement.value.trim();
+            if (value && !container.querySelector(`[data-tag="${value}"]`)) {
+                const tag = document.createElement('span');
+                tag.className = 'bg-tertiary px-2 py-1 rounded text-sm flex items-center gap-2';
+                tag.setAttribute('data-tag', value);
+                tag.innerHTML = `
+                    ${value}
+                    <button onclick="this.parentElement.remove()" class="text-xs hover:accent-orange-text">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.insertBefore(tag, inputElement);
+                inputElement.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
