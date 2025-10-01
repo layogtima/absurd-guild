@@ -5,12 +5,12 @@
     "avatar": "https://live.staticflickr.com/2941/15101708270_9e0805a257_b.jpg",
     "currentlyObsessedWith": "Getting the RP2350's HSTX peripheral to output DVI without overclocking. Also possibly too much pear green tea.",
     "topSkills": [
-      "#Open-Source-Hardware",
-      "#CircuitPython",
-      "#PCB-Design",
-      "#EagleCAD",
-      "#Manufacturing",
-      "#Education"
+      "Open-Source-Hardware",
+      "CircuitPython",
+      "PCB-Design",
+      "EagleCAD",
+      "Manufacturing",
+      "Education"
     ],
     "socialLinks": [
       {
@@ -41,7 +41,7 @@
       "title": "Fruit Jam - Retro Computer Board",
       "description": "Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can probably run DOOM. Designed in one pear-green-tea-fueled afternoon.",
       "image": "https://cdn-shop.adafruit.com/970x728/5993-00.jpg",
-      "tags": ["#RP2350", "#Retro-Computing", "#DVI"],
+      "tags": ["RP2350", "Retro-Computing", "DVI"],
       "updatedAt": "2025-09-27"
     },
     {
@@ -49,7 +49,7 @@
       "title": "CircuitPython 9.x",
       "description": "Hit 600+ supported boards. The Python-on-hardware movement keeps growing. Still breaking things early because we'll have more users in the future than now.",
       "emoji": "🐍",
-      "tags": ["#CircuitPython", "#Embedded"],
+      "tags": ["CircuitPython", "Embedded"],
       "updatedAt": "2025-09-20"
     },
     {
@@ -57,7 +57,7 @@
       "title": "Ask an Engineer #600-something",
       "description": "Another Wednesday, another livestream. We've been doing this every week for 14+ years. Yes, really.",
       "emoji": "📡",
-      "tags": ["#Community", "#Education"],
+      "tags": ["Community", "Education"],
       "updatedAt": "2025-09-15"
     }
   ],
@@ -68,7 +68,7 @@
       "status": "completed",
       "year": "2025",
       "image": "https://cdn-shop.adafruit.com/970x728/5993-00.jpg",
-      "tags": ["#RP2350", "#Retro-Computing", "#DVI"],
+      "tags": ["RP2350", "Retro-Computing", "DVI"],
       "fullDescription": "Credit card-sized RP2350 board that boots Mac System 7, runs NES games, and can probably run DOOM. Designed in one pear-green-tea-fueled afternoon.",
       "problemSolved": "The RP2350's HSTX peripheral needed a reference design that could output DVI without overclocking. Made a board that works as both a dev board and a retro computing platform.",
       "toolsUsed": [
@@ -100,7 +100,7 @@
       "status": "in-progress",
       "year": "2017-present",
       "emoji": "🐍",
-      "tags": ["#Python", "#Embedded", "#Open-Source"],
+      "tags": ["Python", "Embedded", "Open-Source"],
       "fullDescription": "Forked MicroPython in 2017 because we wanted CPython compatibility and beginner-friendly APIs. Now 600+ boards, 500+ libraries, and an August 16 holiday.",
       "problemSolved": "Embedded programming was too hard for beginners. Created a Python environment that works on microcontrollers with no compilation step - just edit code.py and save.",
       "toolsUsed": [
@@ -132,7 +132,7 @@
       "status": "completed",
       "year": "2015",
       "emoji": "🪶",
-      "tags": ["#Hardware-Standard", "#Ecosystem", "#Battery"],
+      "tags": ["Hardware-Standard", "Ecosystem", "Battery"],
       "fullDescription": "Got tired of incompatible form factors. Made a standard: 0.9\" x 2.0\", unified pinouts, LiPo battery management. \"Boards of a Feather flock together.\"",
       "problemSolved": "Every dev board had a different size and pinout. Created a standard that multiple manufacturers could follow, making boards interchangeable.",
       "toolsUsed": [
@@ -157,7 +157,7 @@
       "name": "RP2350 HSTX for DVI",
       "status": "planning",
       "emoji": "📺",
-      "tags": ["#RP2350", "#DVI", "#HSTX"],
+      "tags": ["RP2350", "DVI", "HSTX"],
       "fullDescription": "Trying to get DVI output from the RP2350's HSTX peripheral without overclocking. It's technically possible. Probably. The datasheet is... optimistic.",
       "problemSolved": "Need clean DVI output without pushing the chip beyond spec.",
       "toolsNeeded": ["Logic Analyzer", "DVI Test Equipment"],
@@ -169,7 +169,7 @@
       "name": "Black PCB Aesthetics",
       "status": "idea",
       "emoji": "🖤",
-      "tags": ["#Design", "#Branding", "#PCB"],
+      "tags": ["Design", "Branding", "PCB"],
       "fullDescription": "Started using black FR4 substrate with white silkscreen. High contrast, looks professional, and you can spot an Adafruit board across a room. The Pinguin mascot helps too.",
       "problemSolved": "PCBs all looked the same - green and boring. Made ours instantly recognizable.",
       "toolsNeeded": ["PCB Manufacturer", "Silkscreen Design Tools"],
@@ -239,7 +239,7 @@
       "status": "Ongoing",
       "image": "https://cdn-blog.adafruit.com/uploads/2024/08/industry-city.jpg",
       "description": "Moved to 50,000+ sq ft in Brooklyn. Everyone said outsource to China. We said \"nah, let's train New Yorkers and iterate fast.\"",
-      "tags": ["#Manufacturing", "#NYC", "#Local"],
+      "tags": ["Manufacturing", "NYC", "Local"],
       "link": "https://blog.adafruit.com"
     }
   ],
