@@ -1,185 +1,214 @@
-# Profile Page Merge Plan
+# Profile Merge Plan: Ada.html + Maker-Profile-Complete.html
 
-## Goal
+## Analysis Summary
 
-Merge `profile.tsx` and `m.$id.tsx` so that users see the same beautiful layout for their own profile as others see, with edit capabilities added for the owner. Use `html/profile.html` as design inspiration while keeping React Router patterns.
+### Ada.html Features
 
-## Current State Analysis
+- **Static HTML** with vanilla JavaScript
+- **Tab-based navigation** (Featured, Activity, Campaigns, Products, Tools, Projects, Experiments, Showcase)
+- **Card-based content sections** with rich imagery and metadata
+- **Timeline in Activity tab** with timestamps
+- **Product cards** with pricing and "Buy Now" CTAs
+- **Hero section** with:
+  - Avatar with glow effect animation
+  - "Currently Obsessed With" section
+  - Skill tags (hover effects, clickable)
+  - Quick links (external sites)
+- **Smooth scroll animations** using Intersection Observer
+- **Console easter egg**
 
-### html/profile.html (Design Target) - Beautiful Live Editing
+### Maker-Profile-Complete.html Features
 
-- **Hero Section**: Large avatar (w-32/w-40), big typography (text-6xl/text-8xl)
-- **Live Edit Mode**: Toggle button with visual edit indicators
-- **Edit Experience**:
-  - Dashed outlines on hover in edit mode
-  - Edit icons (✎) appearing on hover
-  - Modal-based editing for all content
-  - Sticky editor toolbar with Save/Reset/Preview
-- **Sections**: Hero, Campaigns, Products, Workbench
-- **Visual Polish**: Animations, hover effects, clean spacing
+- **Vue.js 3** reactive application
+- **Modal system** for project details (click card → modal with full info)
+- **Detailed project structure**:
+  - Full description
+  - Problem solved
+  - Tools used (with categories)
+  - Skills learned
+  - Links (GitHub, docs, video)
+- **Tool filtering system** by category (All, Electronics, Measuring, etc.)
+- **Future Projects section** with status badges (Idea, Planning, In Progress)
+- **Skills with context** - shows which projects used each skill (clickable)
+- **Richer data model** with structured tool/skill relationships
+- **Hero section** with:
+  - Avatar
+  - Bio paragraph
+  - Social links in grid layout
 
-### m.$id.tsx (Public View) - Close to Target
+---
 
-- **Hero Section**: Large avatar (w-32/w-40), big typography (text-6xl/text-8xl)
-- **Clean Layout**: Hero-style centered design with fade-in animations
-- **Product Sections**:
-  - "Shop" section for ready products
-  - "Workbench" section for development projects
-- **Social Links**: Grid layout with icons and hover effects
-- **Components Used**: ProductList with showcase mode
+## Questions for You
 
-### profile.tsx (Current Owner View) - Needs Complete Redesign
+### 1. **Framework Choice**
 
-- **Compact Layout**: Small avatar (w-20), regular typography
-- **Card-based Design**: Everything in bg-secondary cards
-- **Admin Features**:
-  - Inline edit forms for profile
-  - Profile links management (add/delete)
-  - ProductManagement component for CRUD operations
-- **Form Handling**: Complex action handlers for all operations
+- Do you want to keep **Vue.js** (reactive, modal system) or switch to **vanilla JS** (simpler, static)? simple vanilla js
+- Or would you prefer **React** (since the codebase uses React Router)?
 
-## Proposed Solution
+### 2. **Navigation Structure**
 
-### Phase 1: Adopt html/profile.html Visual Design
+Which tab structure do you prefer?
 
-1. **Hero Section** (from html/profile.html)
-   - Large centered avatar (w-32/w-40) with rounded corners
-   - Big typography (text-6xl/text-8xl) for name
-   - Tagline below name
-   - Bio in larger text with max-width constraint
-   - Social links in grid layout with icons
-   - Same animations and spacing
+- **Option A (Ada)**: Featured, Activity, Campaigns, Products, Tools, Projects, Experiments, Showcase
+- **Option B (Maker-Complete)**: What I've Built, My Workshop, What's Next, Skills & Expertise
+- **Option C (Hybrid)**: Featured, Projects, Tools, Future Projects, Skills, Activity, Showcase
 
-2. **Edit Mode Toggle** (React Router style)
-   - Use URL param: `?edit=true` (progressive enhancement)
-   - Edit button in navigation area (similar to html version)
-   - Visual edit indicators when in edit mode
-   - Modal-based editing system
+Hybrid:
 
-3. **Conditional Rendering Logic**
-   ```tsx
-   const isOwner = user.id === profile.user_id;
-   const editMode = searchParams.get("edit") === "true";
+- rename Showcase to Resources
+- Combine Projects and Experiments into Projects
 
-   // Show beautiful hero layout always (like html/profile.html)
-   // Add edit controls only for owner
-   // Show edit modals when editMode && isOwner
-   ```
+The navigation: Have the sectiion work such that we jump to a specific section using internal (#) links and don't hide other sections when switching (so that the user can scroll through instead)
 
-### Phase 2: Implement Edit System (React Router Style)
+### 3. **Project Display**
 
-1. **Visual Edit Indicators**
-   - CSS classes for edit mode styling
-   - Hover effects with dashed outlines
-   - Edit icons (✎) on hover
-   - All using CSS + conditional classes
+How should projects be displayed?
 
-2. **Modal-Based Editing**
-   - Edit forms appear in modals (like html version)
-   - Use React Router forms with proper actions
-   - Different modal types: text, image, complex objects
-   - Preserve all existing form validation
+- **Option A**: Card grid + modal (like Maker-Complete) - click for full details (this, but also allow to jump to a dedicated page; but we will implement the dedicated page later; for now point to dummy links)
+- **Option B**: Card grid only (like Ada) - all info visible on cards
+- **Option C**: Hybrid - cards with basic info, expandable sections (no modal)
 
-3. **Editor Toolbar**
-   - Sticky toolbar when in edit mode
-   - Save/Reset/Preview buttons
-   - Use React Router navigation for state changes
+### 4. **"Currently Obsessed With" Section**
 
-### Phase 3: Product & Links Integration
+- Keep this prominent callout in the hero? Yes (Ada has it, Maker-Complete doesn't)
+- If yes, should it be:
+  - Static content
+  - Pulled from latest activity/project
+  - Editable field [this]
 
-1. **Product Display**
-   - Use ProductList component (showcase mode) like m.$id.tsx
-   - Split into "Shop" and "Workbench" sections
-   - Add conditional admin actions when in edit mode
-   - Keep existing CRUD operations via modals
+### 5. **Tools Section**
 
-2. **Profile Links**
-   - Use html/profile.html grid layout design
-   - Beautiful cards with icons and hover effects
-   - Add/delete functionality only visible to owner
-   - Edit existing links via modal system
+Which approach for tools?
 
-## Implementation Steps
+- **Option A (Ada)**: Detailed cards with images, "Why" explanations, no filtering
+- **Option B (Maker-Complete)**: Compact cards with category filter, "Used For" text, "Using since" dates (this but add an image thing like in Ada) [can link out to an individual tool page; but we'll skin the the individual tool page out later]
+- **Option C**: Hybrid - detailed cards WITH category filtering
 
-### Step 1: Create New Hero Section
+### 6. **Skills Section**
 
-- [ ] Replace compact profile card with html/profile.html hero design
-- [ ] Large avatar, big typography, proper spacing
-- [ ] Add edit mode CSS classes and visual indicators
-- [ ] Add edit button for profile owners
+- Keep the "Skills with Context" approach (shows which projects used each skill)?
+- Or just display skill tags without project relationships?
+- Should clicking a skill filter/highlight related projects?
 
-### Step 2: Implement Modal Edit System
+Keep it simplest for now
 
-- [ ] Create edit modal component for different content types
-- [ ] Add CSS for edit mode visual indicators (dashed outlines, edit icons)
-- [ ] Connect modals to existing React Router actions
-- [ ] Add editor toolbar for edit mode
+### 7. **Activity/Timeline**
 
-### Step 3: Update Product & Links Sections
+- Include the Activity tab with timestamps (3 days ago, 1 week ago)? yes
+- Should this be auto-generated from project dates or manually curated? yes, using updatedAt field in the db for projects/products
 
-- [ ] Replace ProductManagement with ProductList (showcase style)
-- [ ] Split products into Shop/Workbench with proper headings
-- [ ] Update links section to match html/profile.html grid design
-- [ ] Add conditional edit controls for both sections
+### 8. **Future Projects**
 
-### Step 4: Polish & Test
+- Keep this section with status badges (Idea, Planning, In Progress)? yes
+- Include "Tools Needed" and "Skills Needed" fields? yes
 
-- [ ] Add animations and hover effects like html version
-- [ ] Test all edit flows work with React Router
-- [ ] Verify responsive design across breakpoints
-- [ ] Ensure no functionality regressions
+but combine this section into the projects section
 
-## Key Benefits
+### 9. **Products Section**
 
-1. **Stunning Visual Design**: html/profile.html has the most beautiful profile design
-2. **Consistent Experience**: Same gorgeous layout for owners and viewers
-3. **Professional Edit Experience**: Modal-based editing with visual indicators
-4. **Better UX**: Owners get the same great visual experience as visitors
-5. **Maintainability**: Single beautiful design instead of two different layouts
-6. **Progressive Enhancement**: Edit features layer on top gracefully
+- Keep the Products tab with pricing and "Buy Now" buttons? (Ada has this) yes, if the maker add these (if they at least put a link to a shop)
+- Or skip it if not selling products?
 
-## Technical Approach
+### 10. **Social Links**
 
-### React Router Integration
-- Keep existing form actions and validation
-- Use URL params for edit mode (`?edit=true`)
-- Modal components with proper form handling
-- Preserve all CRUD operations
+Which style for social links?
 
-### CSS Strategy
-- Add edit mode classes for visual indicators
-- Copy CSS animations and effects from html/profile.html
-- Dashed outlines and edit icons on hover
-- Maintain responsive design
+- **Option A (Ada)**: Horizontal row of bordered boxes with icons; this
+- **Option B (Maker-Complete)**: 2x2 grid with icon + label + external link indicator
 
-### Component Architecture
-- Create reusable edit modal component
-- Keep existing ProductList and other components
-- Add conditional editing overlays
-- Preserve image upload functionality
+### 11. **Campaigns & Showcase**
 
-## Files to Modify
+- Keep these sections from Ada? (Campaigns for major initiatives, Showcase for talks/awards) keep campaigns; rename showcase to be resources
+- These aren't in Maker-Complete
 
-- `app/routes/profile.tsx` - Complete redesign with hero layout
-- Create new components:
-  - `EditModal.tsx` - For modal-based editing
-  - CSS styles for edit mode indicators
-- Update existing:
-  - Keep all form actions working
-  - Preserve image upload functionality
+### 12. **Animations**
 
-## Design Elements to Copy from html/profile.html
+- Keep Intersection Observer scroll animations (Ada)? yes
+- Keep Vue transition animations (Maker-Complete)? no
+- Both? Neither?
 
-1. **Hero Section Layout**: Exact spacing, typography, avatar sizing
-2. **Edit Mode Styling**: Dashed outlines, edit icons, hover effects
-3. **Social Links Grid**: Beautiful cards with icons and external link indicators
-4. **Section Headers**: Large typography with subtle descriptions
-5. **Animation Classes**: fade-in, hover-lift, etc.
-6. **Color Scheme**: Consistent with existing theme system
+---
 
-## No Vue.js - Pure React Router
+## Proposed Hybrid Structure (Draft)
 
-- All interactivity through React state and URL params
-- Form submissions via React Router actions
-- No client-side persistence (server-side only)
-- Progressive enhancement patterns maintained
+### Hero Section
+
+```
+- Avatar with glow animation (Ada style)
+- Name + Tagline
+- "Currently Obsessed With" callout box (Ada)
+- Skill tags with hover effects (both have this)
+- Social links in grid (Maker-Complete style but Ada's hover effects)
+```
+
+### Tab Navigation
+
+```
+1. Featured - curated highlights
+2. Projects - all past projects (Maker-Complete's detailed data + Ada's visual style)
+3. Tools - filterable tool grid (hybrid approach)
+4. Future Projects - with status badges (Maker-Complete)
+5. Skills - with project relationships (Maker-Complete)
+6. Activity - timeline view (Ada)
+7. Showcase - talks, awards, media (Ada)
+```
+
+### Project Cards
+
+```
+- Grid display (both)
+- Click → Modal with full details (Maker-Complete)
+- Modal contains:
+  - Image
+  - Full description (Maker-Complete)
+  - Problem solved (Maker-Complete)
+  - Tools used with categories (Maker-Complete)
+  - Skills learned (Maker-Complete)
+  - Links (GitHub, docs, video)
+  - Tags (Ada style pills)
+```
+
+---
+
+## Technical Decisions Needed
+
+### A. Data Management
+
+- Should profile data be in:
+  - **Embedded in HTML** (like both current versions)
+  - **Separate JSON file** loaded at runtime: this
+  - **Database** with API endpoint (more dynamic)
+
+### B. Responsive Design
+
+Both use Tailwind with similar breakpoints. Keep this approach? yes
+
+### C. Theme System
+
+Both have dark/light mode. Keep this? (Yes, I assume)
+
+### D. Accessibility
+
+- Add proper ARIA labels? yes, but in phase 2
+- Keyboard navigation for modals? yes, but in phase 2
+- Focus management? yes, but in phase 2
+
+---
+
+## Next Steps
+
+1. **Answer the questions above**
+2. **Review the proposed structure** - modify as needed
+3. **I'll create a detailed implementation plan** with file structure
+4. **Get your approval** before coding
+
+---
+
+## Notes
+
+- Both files use the same color scheme (CSS variables)
+- Both use Jura font and similar animation styles
+- Both have the spinning Absurd Industries logo
+- Both are single-file HTML (no build process)
+
+What would you like to adjust in this plan?
