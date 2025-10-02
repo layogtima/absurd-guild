@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -60,20 +61,46 @@
         }
 
         /* Utility Classes */
-        .bg-primary { background-color: var(--bg-primary); }
-        .bg-secondary { background-color: var(--bg-secondary); }
-        .bg-tertiary { background-color: var(--bg-tertiary); }
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .border-theme { border-color: var(--border-color); }
-        .accent-orange { background-color: var(--accent-orange); }
-        .accent-orange-text { color: var(--accent-orange); }
-        .text-on-accent { color: var(--text-on-accent); }
+        .bg-primary {
+            background-color: var(--bg-primary);
+        }
+
+        .bg-secondary {
+            background-color: var(--bg-secondary);
+        }
+
+        .bg-tertiary {
+            background-color: var(--bg-tertiary);
+        }
+
+        .text-primary {
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .border-theme {
+            border-color: var(--border-color);
+        }
+
+        .accent-orange {
+            background-color: var(--accent-orange);
+        }
+
+        .accent-orange-text {
+            color: var(--accent-orange);
+        }
+
+        .text-on-accent {
+            color: var(--text-on-accent);
+        }
 
         /* Grid Background for Sections */
         .grid-bg {
             background-image: repeating-linear-gradient(0deg, var(--border-color) 0px, transparent 1px, transparent 40px, var(--border-color) 41px),
-                            repeating-linear-gradient(90deg, var(--border-color) 0px, transparent 1px, transparent 40px, var(--border-color) 41px);
+                repeating-linear-gradient(90deg, var(--border-color) 0px, transparent 1px, transparent 40px, var(--border-color) 41px);
             background-size: 41px 41px;
             background-position: -1px -1px;
         }
@@ -159,22 +186,43 @@
 
         /* Animation Classes */
         @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         @keyframes spinner {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .animate-slide-up {
@@ -216,7 +264,8 @@
         }
 
         /* Enhanced Form Controls */
-        input[type="checkbox"], input[type="radio"] {
+        input[type="checkbox"],
+        input[type="radio"] {
             accent-color: var(--accent-orange);
             width: 1.25rem;
             height: 1.25rem;
@@ -315,12 +364,12 @@
             border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
+        input:checked+.toggle-slider {
             background-color: var(--accent-orange);
             border-color: var(--accent-orange);
         }
 
-        input:checked + .toggle-slider:before {
+        input:checked+.toggle-slider:before {
             transform: translateX(20px);
             background-color: var(--text-on-accent);
         }
@@ -346,7 +395,8 @@
     <!-- Theme Toggle -->
     <div class="fixed top-4 right-4 z-50 flex items-center gap-3">
         <span class="text-sm text-secondary">Theme:</span>
-        <button onclick="toggleTheme()" class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border-2 border-theme hover:border-orange-500 hover:accent-orange-text transition-all">
+        <button onclick="toggleTheme()"
+            class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border-2 border-theme hover:border-orange-500 hover:accent-orange-text transition-all">
             <i id="themeIcon" class="fas fa-moon text-primary theme-icon"></i>
         </button>
     </div>
@@ -400,7 +450,8 @@
 
                 <!-- Text Primary -->
                 <div class="text-center">
-                    <div class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
+                    <div
+                        class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
                         <span class="text-primary text-2xl font-bold">Aa</span>
                     </div>
                     <p class="font-semibold text-primary">Text Primary</p>
@@ -410,7 +461,8 @@
 
                 <!-- Text Secondary -->
                 <div class="text-center">
-                    <div class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
+                    <div
+                        class="bg-secondary border-2 border-theme rounded-xl h-32 mb-3 flex items-center justify-center">
                         <span class="text-secondary text-2xl font-bold">Aa</span>
                     </div>
                     <p class="font-semibold text-primary">Text Secondary</p>
@@ -450,8 +502,10 @@
                 <h4 class="text-2xl font-bold text-primary mb-4">Heading 4</h4>
                 <h5 class="text-xl font-semibold text-primary mb-4">Heading 5</h5>
                 <p class="text-lg text-primary mb-4">Body Text Large - Used for important paragraphs and lead text.</p>
-                <p class="text-base text-primary mb-4">Body Text Regular - The quick brown fox jumps over the lazy dog. This is the standard body text used throughout the application.</p>
-                <p class="text-sm text-secondary mb-4">Small Text - Used for captions, hints, and secondary information.</p>
+                <p class="text-base text-primary mb-4">Body Text Regular - The quick brown fox jumps over the lazy dog.
+                    This is the standard body text used throughout the application.</p>
+                <p class="text-sm text-secondary mb-4">Small Text - Used for captions, hints, and secondary information.
+                </p>
                 <p class="text-xs text-secondary">Extra Small - Timestamps, metadata, and fine print.</p>
             </div>
         </section>
@@ -472,7 +526,8 @@
                         <button class="btn-primary rounded-full">
                             <i class="fas fa-rocket mr-2"></i>Launch
                         </button>
-                        <button class="btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Disabled</button>
+                        <button class="btn-primary" disabled
+                            style="opacity: 0.5; cursor: not-allowed;">Disabled</button>
                     </div>
                 </div>
 
@@ -495,13 +550,16 @@
                 <div>
                     <p class="text-sm text-secondary mb-3">Icon Buttons</p>
                     <div class="flex flex-wrap gap-4">
-                        <button class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center hover:accent-orange hover:text-on-accent transition-all">
+                        <button
+                            class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center hover:accent-orange hover:text-on-accent transition-all">
                             <i class="fas fa-heart"></i>
                         </button>
-                        <button class="w-12 h-12 rounded-full border-2 border-theme flex items-center justify-center hover:border-orange-500 hover:accent-orange-text transition-all">
+                        <button
+                            class="w-12 h-12 rounded-full border-2 border-theme flex items-center justify-center hover:border-orange-500 hover:accent-orange-text transition-all">
                             <i class="fas fa-share"></i>
                         </button>
-                        <button class="w-12 h-12 rounded-full accent-orange text-on-accent flex items-center justify-center hover:scale-110 transition-transform">
+                        <button
+                            class="w-12 h-12 rounded-full accent-orange text-on-accent flex items-center justify-center hover:scale-110 transition-transform">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -521,7 +579,8 @@
                         <input type="text" placeholder="Your name" class="input-base w-full" />
                         <input type="text" value="Filled input" class="input-base w-full" />
                         <input type="text" placeholder="Disabled" disabled class="input-base w-full opacity-50" />
-                        <textarea placeholder="Tell us about your project..." rows="3" class="input-base w-full resize-none"></textarea>
+                        <textarea placeholder="Tell us about your project..." rows="3"
+                            class="input-base w-full resize-none"></textarea>
                     </div>
                 </div>
 
@@ -558,12 +617,14 @@
                 </div>
 
                 <!-- Project Card -->
-                <div class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
+                <div
+                    class="bg-secondary border-2 border-theme rounded-2xl overflow-hidden hover:border-orange-500 hover:-translate-y-2 transition-all">
                     <div class="h-40 bg-tertiary flex items-center justify-center">
                         <i class="fas fa-rocket text-6xl accent-orange-text"></i>
                     </div>
                     <div class="p-6">
-                        <div class="inline-block px-2 py-1 bg-tertiary rounded text-xs font-semibold accent-orange-text mb-3">
+                        <div
+                            class="inline-block px-2 py-1 bg-tertiary rounded text-xs font-semibold accent-orange-text mb-3">
                             IN PROGRESS
                         </div>
                         <h3 class="text-xl font-bold text-primary mb-2">Project Card</h3>
@@ -572,7 +633,8 @@
                 </div>
 
                 <!-- Inspiration Card -->
-                <div class="border-2 border-dashed border-orange-500 bg-orange-500/5 rounded-2xl p-6 text-center hover:bg-orange-500/10 transition-all cursor-pointer">
+                <div
+                    class="border-2 border-dashed border-orange-500 bg-orange-500/5 rounded-2xl p-6 text-center hover:bg-orange-500/10 transition-all cursor-pointer">
                     <div class="w-16 h-16 mx-auto mb-4 bg-orange-500/20 rounded-full flex items-center justify-center">
                         <i class="fas fa-plus accent-orange-text text-2xl"></i>
                     </div>
@@ -602,9 +664,14 @@
                 <div>
                     <p class="text-sm text-secondary mb-3">Skill Tags</p>
                     <div class="flex flex-wrap gap-2">
-                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">Arduino</span>
-                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">3D Printing</span>
-                        <span class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">PCB Design</span>
+                        <span
+                            class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">Arduino</span>
+                        <span
+                            class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">3D
+                            Printing</span>
+                        <span
+                            class="bg-secondary border border-theme px-4 py-2 rounded-full text-sm font-semibold accent-orange-text hover:accent-orange hover:text-on-accent transition-all cursor-pointer">PCB
+                            Design</span>
                         <span class="bg-tertiary px-4 py-2 rounded-full text-sm font-semibold text-secondary">IoT</span>
                     </div>
                 </div>
@@ -613,9 +680,12 @@
                 <div>
                     <p class="text-sm text-secondary mb-3">Category Labels</p>
                     <div class="flex flex-wrap gap-2">
-                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Hardware</span>
-                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Software</span>
-                        <span class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Tutorial</span>
+                        <span
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Hardware</span>
+                        <span
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Software</span>
+                        <span
+                            class="inline-block bg-tertiary accent-orange-text px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Tutorial</span>
                     </div>
                 </div>
             </div>
@@ -635,13 +705,15 @@
                             <p class="text-sm text-secondary mb-3">Standard Mobile Header</p>
                             <div class="max-w-sm mx-auto bg-tertiary rounded-xl p-4">
                                 <div class="flex items-center justify-between">
-                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
+                                    <button
+                                        class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
                                         <i class="fas fa-bars text-sm"></i>
                                     </button>
                                     <div class="flex items-center gap-2">
                                         <span class="font-bold text-primary text-lg">Guild</span>
                                     </div>
-                                    <button class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
+                                    <button
+                                        class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-on-accent transition-colors">
                                         <i class="fas fa-user text-sm"></i>
                                     </button>
                                 </div>
@@ -662,8 +734,10 @@
                                     </button>
                                 </div>
                                 <div class="relative">
-                                    <input type="search" placeholder="Search..." class="input-base w-full text-sm pr-10" />
-                                    <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-secondary"></i>
+                                    <input type="search" placeholder="Search..."
+                                        class="input-base w-full text-sm pr-10" />
+                                    <i
+                                        class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-secondary"></i>
                                 </div>
                             </div>
                         </div>
@@ -676,27 +750,27 @@
                     <div class="max-w-sm mx-auto">
                         <div class="bg-tertiary rounded-t-xl border-t-2 border-theme p-2">
                             <div class="flex items-center justify-around">
-                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-home text-lg accent-orange-text"></i>
                                     <span class="text-xs font-semibold accent-orange-text">Home</span>
                                 </button>
-                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-search text-lg text-secondary"></i>
                                     <span class="text-xs font-semibold text-secondary">Explore</span>
                                 </button>
-                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors relative">
+                                <button
+                                    class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors relative">
                                     <i class="fas fa-plus text-lg text-secondary"></i>
                                     <span class="text-xs font-semibold text-secondary">Create</span>
-                                    <div class="absolute -top-1 -right-1 w-5 h-5 accent-orange rounded-full flex items-center justify-center">
+                                    <div
+                                        class="absolute -top-1 -right-1 w-5 h-5 accent-orange rounded-full flex items-center justify-center">
                                         <i class="fas fa-plus text-xs text-on-accent"></i>
                                     </div>
                                 </button>
-                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
-                                    <i class="fas fa-bell text-lg text-secondary"></i>
-                                    <span class="text-xs font-semibold text-secondary">Activity</span>
-                                    <div class="absolute top-2 right-8 w-2 h-2 accent-orange rounded-full"></div>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-user text-lg text-secondary"></i>
                                     <span class="text-xs font-semibold text-secondary">Profile</span>
                                 </button>
@@ -725,35 +799,32 @@
 
                                 <!-- Menu Items -->
                                 <nav class="space-y-1">
-                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
                                         <i class="fas fa-home text-secondary w-5"></i>
                                         <span class="text-primary font-medium">Dashboard</span>
                                     </a>
-                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-tertiary accent-orange-text">
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-lg bg-tertiary accent-orange-text">
                                         <i class="fas fa-user-friends w-5"></i>
                                         <span class="font-medium">My Profile</span>
                                     </a>
-                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
                                         <i class="fas fa-project-diagram text-secondary w-5"></i>
                                         <span class="text-primary font-medium">Projects</span>
                                     </a>
-                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
                                         <i class="fas fa-users text-secondary w-5"></i>
                                         <span class="text-primary font-medium">Community</span>
                                     </a>
-                                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
                                         <i class="fas fa-cog text-secondary w-5"></i>
                                         <span class="text-primary font-medium">Settings</span>
                                     </a>
                                 </nav>
-
-                                <!-- Bottom Actions -->
-                                <div class="absolute bottom-4 left-4 right-4">
-                                    <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors text-left">
-                                        <i class="fas fa-sign-out-alt text-secondary w-5"></i>
-                                        <span class="text-primary font-medium">Sign Out</span>
-                                    </button>
-                                </div>
                             </div>
                             <!-- Overlay area -->
                             <div class="flex-1 bg-black/20"></div>
@@ -770,13 +841,16 @@
                             <div class="h-full bg-secondary/50"></div>
 
                             <!-- Action Sheet -->
-                            <div class="absolute bottom-0 left-0 right-0 bg-secondary border-t-2 border-theme rounded-t-2xl animate-slide-up">
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-secondary border-t-2 border-theme rounded-t-2xl animate-slide-up">
                                 <div class="p-6">
                                     <div class="w-12 h-1 bg-tertiary rounded-full mx-auto mb-6"></div>
                                     <h4 class="text-lg font-bold text-primary mb-4 text-center">Add to Project</h4>
                                     <div class="space-y-2">
-                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
-                                            <div class="w-10 h-10 accent-orange rounded-full flex items-center justify-center">
+                                        <button
+                                            class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div
+                                                class="w-10 h-10 accent-orange rounded-full flex items-center justify-center">
                                                 <i class="fas fa-camera text-on-accent"></i>
                                             </div>
                                             <div class="text-left">
@@ -784,8 +858,10 @@
                                                 <p class="text-sm text-secondary">Capture with camera</p>
                                             </div>
                                         </button>
-                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
-                                            <div class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
+                                        <button
+                                            class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div
+                                                class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
                                                 <i class="fas fa-image text-secondary"></i>
                                             </div>
                                             <div class="text-left">
@@ -793,8 +869,10 @@
                                                 <p class="text-sm text-secondary">From gallery</p>
                                             </div>
                                         </button>
-                                        <button class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
-                                            <div class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
+                                        <button
+                                            class="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-tertiary transition-colors">
+                                            <div
+                                                class="w-10 h-10 bg-tertiary rounded-full flex items-center justify-center">
                                                 <i class="fas fa-file-alt text-secondary"></i>
                                             </div>
                                             <div class="text-left">
@@ -816,7 +894,8 @@
                         <!-- Horizontal Project Card -->
                         <div class="bg-tertiary border border-theme rounded-xl p-4">
                             <div class="flex gap-3">
-                                <div class="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <div
+                                    class="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
                                     <i class="fas fa-microchip accent-orange-text text-xl"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -824,11 +903,14 @@
                                         <h4 class="font-semibold text-primary truncate">LED Matrix Display</h4>
                                         <span class="badge bg-tertiary accent-orange-text text-xs ml-2">ACTIVE</span>
                                     </div>
-                                    <p class="text-sm text-secondary mb-2 line-clamp-2">Building an 8x8 LED matrix with Arduino control...</p>
+                                    <p class="text-sm text-secondary mb-2 line-clamp-2">Building an 8x8 LED matrix with
+                                        Arduino control...</p>
                                     <div class="flex items-center justify-between">
                                         <div class="flex gap-1">
-                                            <span class="text-xs bg-secondary px-2 py-1 rounded text-secondary">Arduino</span>
-                                            <span class="text-xs bg-secondary px-2 py-1 rounded text-secondary">LED</span>
+                                            <span
+                                                class="text-xs bg-secondary px-2 py-1 rounded text-secondary">Arduino</span>
+                                            <span
+                                                class="text-xs bg-secondary px-2 py-1 rounded text-secondary">LED</span>
                                         </div>
                                         <span class="text-xs text-secondary">2 days ago</span>
                                     </div>
@@ -858,19 +940,23 @@
                         <div class="bg-tertiary border border-theme rounded-xl p-4">
                             <h4 class="font-semibold text-primary mb-3">Quick Actions</h4>
                             <div class="grid grid-cols-4 gap-3">
-                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-plus accent-orange-text"></i>
                                     <span class="text-xs text-secondary">Add</span>
                                 </button>
-                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-share text-secondary"></i>
                                     <span class="text-xs text-secondary">Share</span>
                                 </button>
-                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-edit text-secondary"></i>
                                     <span class="text-xs text-secondary">Edit</span>
                                 </button>
-                                <button class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
+                                <button
+                                    class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-secondary transition-colors">
                                     <i class="fas fa-cog text-secondary"></i>
                                     <span class="text-xs text-secondary">Settings</span>
                                 </button>
@@ -940,7 +1026,8 @@
 
                     <!-- Hover State -->
                     <div class="text-center">
-                        <div class="bg-tertiary border-2 border-orange-500 rounded-xl p-6 mb-3 transform -translate-y-1">
+                        <div
+                            class="bg-tertiary border-2 border-orange-500 rounded-xl p-6 mb-3 transform -translate-y-1">
                             <i class="fas fa-hand-pointer text-3xl accent-orange-text"></i>
                         </div>
                         <p class="font-semibold text-primary">Hover</p>
@@ -989,7 +1076,8 @@
                                     <option>In Progress</option>
                                     <option>Completed</option>
                                 </select>
-                                <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"></i>
+                                <i
+                                    class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"></i>
                             </div>
                         </div>
 
@@ -998,7 +1086,8 @@
                             <label class="block text-sm font-semibold text-primary mb-2">
                                 Description
                             </label>
-                            <textarea placeholder="What makes this project special?" rows="4" class="input-base w-full resize-none"></textarea>
+                            <textarea placeholder="What makes this project special?" rows="4"
+                                class="input-base w-full resize-none"></textarea>
                             <p class="text-xs text-secondary mt-1 text-right">0 / 500 characters</p>
                         </div>
 
@@ -1010,7 +1099,8 @@
                             <div class="input-base flex flex-wrap gap-2 items-center">
                                 <span class="bg-tertiary px-2 py-1 rounded text-sm">Arduino</span>
                                 <span class="bg-tertiary px-2 py-1 rounded text-sm">LED</span>
-                                <input type="text" placeholder="Add tag..." class="flex-1 bg-transparent outline-none min-w-[100px]" />
+                                <input type="text" placeholder="Add tag..."
+                                    class="flex-1 bg-transparent outline-none min-w-[100px]" />
                             </div>
                         </div>
 
@@ -1019,7 +1109,8 @@
                             <label class="block text-sm font-semibold text-primary mb-2">
                                 Project Image
                             </label>
-                            <div class="border-2 border-dashed border-theme rounded-xl p-8 text-center hover:border-orange-500 transition-colors cursor-pointer">
+                            <div
+                                class="border-2 border-dashed border-theme rounded-xl p-8 text-center hover:border-orange-500 transition-colors cursor-pointer">
                                 <i class="fas fa-cloud-upload-alt text-4xl text-secondary mb-3"></i>
                                 <p class="text-sm text-primary mb-1">Drop image here or click to browse</p>
                                 <p class="text-xs text-secondary">PNG, JPG up to 10MB</p>
@@ -1043,7 +1134,8 @@
                             <label class="block text-sm font-semibold text-primary mb-2">GitHub URL</label>
                             <div class="relative">
                                 <i class="fab fa-github absolute left-3 top-1/2 -translate-y-1/2 text-secondary"></i>
-                                <input type="url" placeholder="https://github.com/..." class="input-base w-full pl-10" />
+                                <input type="url" placeholder="https://github.com/..."
+                                    class="input-base w-full pl-10" />
                             </div>
                         </div>
 
@@ -1053,7 +1145,9 @@
                                 <span class="text-sm font-semibold text-primary">Make project public</span>
                                 <div class="relative">
                                     <input type="checkbox" class="sr-only peer" />
-                                    <div class="w-11 h-6 bg-tertiary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:accent-orange"></div>
+                                    <div
+                                        class="w-11 h-6 bg-tertiary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:accent-orange">
+                                    </div>
                                 </div>
                             </label>
                         </div>
@@ -1064,11 +1158,13 @@
                             <div class="space-y-2">
                                 <label class="flex items-center gap-3 cursor-pointer">
                                     <input type="radio" name="difficulty" class="w-4 h-4" />
-                                    <span class="text-primary"><i class="fas fa-seedling text-sm mr-2"></i>Beginner</span>
+                                    <span class="text-primary"><i
+                                            class="fas fa-seedling text-sm mr-2"></i>Beginner</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer">
                                     <input type="radio" name="difficulty" class="w-4 h-4" />
-                                    <span class="text-primary"><i class="fas fa-rocket text-sm mr-2"></i>Intermediate</span>
+                                    <span class="text-primary"><i
+                                            class="fas fa-rocket text-sm mr-2"></i>Intermediate</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer">
                                     <input type="radio" name="difficulty" class="w-4 h-4" />
@@ -1117,16 +1213,19 @@
                 <h3 class="text-xl font-bold text-primary mb-6">Inline Editing</h3>
                 <div class="space-y-4">
                     <div class="group">
-                        <div class="flex items-center justify-between p-3 rounded-lg hover:bg-tertiary transition-colors">
+                        <div
+                            class="flex items-center justify-between p-3 rounded-lg hover:bg-tertiary transition-colors">
                             <div>
                                 <p class="font-semibold text-primary">Project Name</p>
                                 <p class="text-sm text-secondary">Click to edit</p>
                             </div>
-                            <i class="fas fa-pencil-alt text-secondary opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            <i
+                                class="fas fa-pencil-alt text-secondary opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
                     </div>
                     <div class="p-3 bg-tertiary rounded-lg">
-                        <input type="text" value="LED Blinker 3000" class="bg-transparent w-full outline-none text-primary font-semibold" />
+                        <input type="text" value="LED Blinker 3000"
+                            class="bg-transparent w-full outline-none text-primary font-semibold" />
                         <div class="flex gap-2 mt-2">
                             <button class="text-xs accent-orange-text font-semibold">Save</button>
                             <button class="text-xs text-secondary">Cancel</button>
@@ -1150,13 +1249,15 @@
                             <div class="p-6 border-b border-theme">
                                 <div class="flex items-center justify-between">
                                     <h4 class="text-2xl font-bold text-primary">Project Details</h4>
-                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                    <button
+                                        class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
                                         <i class="fas fa-times text-secondary"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="p-6">
-                                <p class="text-secondary mb-4">This is a standard modal with header, body, and footer sections.</p>
+                                <p class="text-secondary mb-4">This is a standard modal with header, body, and footer
+                                    sections.</p>
                                 <div class="bg-tertiary rounded-lg p-4">
                                     <p class="text-sm text-primary">Modal content goes here...</p>
                                 </div>
@@ -1175,14 +1276,18 @@
                     <div class="relative bg-tertiary rounded-2xl overflow-hidden">
                         <div class="bg-secondary rounded-2xl max-w-md mx-auto m-8 text-center">
                             <div class="p-8">
-                                <div class="w-20 h-20 mx-auto mb-6 bg-orange-500/10 rounded-full flex items-center justify-center">
+                                <div
+                                    class="w-20 h-20 mx-auto mb-6 bg-orange-500/10 rounded-full flex items-center justify-center">
                                     <i class="fas fa-exclamation-triangle accent-orange-text text-3xl"></i>
                                 </div>
                                 <h4 class="text-2xl font-bold text-primary mb-3">Delete Project?</h4>
-                                <p class="text-secondary mb-6">This action cannot be undone. Your project "LED Blinker" will be permanently deleted.</p>
+                                <p class="text-secondary mb-6">This action cannot be undone. Your project "LED Blinker"
+                                    will be permanently deleted.</p>
                                 <div class="flex gap-3">
                                     <button class="btn-secondary flex-1">Keep It</button>
-                                    <button class="accent-orange text-on-accent px-6 py-3 rounded-lg font-semibold flex-1 hover:scale-105 transition-transform">Yes, Delete</button>
+                                    <button
+                                        class="accent-orange text-on-accent px-6 py-3 rounded-lg font-semibold flex-1 hover:scale-105 transition-transform">Yes,
+                                        Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -1195,11 +1300,13 @@
                     <div class="relative bg-tertiary rounded-2xl overflow-hidden">
                         <div class="bg-secondary rounded-2xl max-w-md mx-auto m-8 text-center animate-slide-up">
                             <div class="p-8">
-                                <div class="w-20 h-20 mx-auto mb-6 accent-orange rounded-full flex items-center justify-center animate-pulse">
+                                <div
+                                    class="w-20 h-20 mx-auto mb-6 accent-orange rounded-full flex items-center justify-center animate-pulse">
                                     <i class="fas fa-check text-on-accent text-3xl"></i>
                                 </div>
                                 <h4 class="text-2xl font-bold text-primary mb-3">Project Created!</h4>
-                                <p class="text-secondary mb-6">Your project has been added to your profile. Time to share it with the world!</p>
+                                <p class="text-secondary mb-6">Your project has been added to your profile. Time to
+                                    share it with the world!</p>
                                 <button class="btn-primary">View Project</button>
                             </div>
                         </div>
@@ -1214,10 +1321,12 @@
                             <div class="flex items-center justify-between p-4 border-b border-theme">
                                 <h4 class="text-xl font-bold text-primary">Image Editor</h4>
                                 <div class="flex gap-2">
-                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                    <button
+                                        class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
                                         <i class="fas fa-expand text-secondary"></i>
                                     </button>
-                                    <button class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
+                                    <button
+                                        class="w-10 h-10 rounded-full hover:bg-tertiary flex items-center justify-center transition-colors">
                                         <i class="fas fa-times text-secondary"></i>
                                     </button>
                                 </div>
@@ -1228,7 +1337,8 @@
                             <div class="p-4 border-t border-theme flex justify-between">
                                 <div class="flex gap-2">
                                     <button class="btn-secondary text-sm"><i class="fas fa-crop mr-2"></i>Crop</button>
-                                    <button class="btn-secondary text-sm"><i class="fas fa-adjust mr-2"></i>Adjust</button>
+                                    <button class="btn-secondary text-sm"><i
+                                            class="fas fa-adjust mr-2"></i>Adjust</button>
                                 </div>
                                 <button class="btn-primary text-sm">Save Changes</button>
                             </div>
@@ -1247,7 +1357,8 @@
                     <!-- Success Toast -->
                     <div class="toast animate-slide-up">
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
+                            <div
+                                class="w-8 h-8 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-check text-on-accent text-sm"></i>
                             </div>
                             <div class="flex-1">
@@ -1263,7 +1374,8 @@
                     <!-- Error Toast -->
                     <div class="toast border-left-color-red">
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
+                            <div
+                                class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-exclamation accent-orange-text"></i>
                             </div>
                             <div class="flex-1">
@@ -1276,7 +1388,8 @@
                     <!-- Info Toast with Action -->
                     <div class="toast">
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
+                            <div
+                                class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-info text-secondary"></i>
                             </div>
                             <div class="flex-1">
@@ -1299,7 +1412,9 @@
                     <!-- Spinner -->
                     <div class="text-center">
                         <div class="bg-tertiary rounded-xl p-8 mb-3">
-                            <div class="w-12 h-12 border-4 border-theme border-t-orange-500 rounded-full animate-spin mx-auto"></div>
+                            <div
+                                class="w-12 h-12 border-4 border-theme border-t-orange-500 rounded-full animate-spin mx-auto">
+                            </div>
                         </div>
                         <p class="font-semibold text-primary">Spinner</p>
                     </div>
@@ -1309,8 +1424,10 @@
                         <div class="bg-tertiary rounded-xl p-8 mb-3">
                             <div class="flex gap-2 justify-center">
                                 <div class="w-3 h-3 accent-orange rounded-full animate-pulse"></div>
-                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse"
+                                    style="animation-delay: 0.2s"></div>
+                                <div class="w-3 h-3 accent-orange rounded-full animate-pulse"
+                                    style="animation-delay: 0.4s"></div>
                             </div>
                         </div>
                         <p class="font-semibold text-primary">Dots</p>
@@ -1339,8 +1456,10 @@
                         <button class="btn-secondary opacity-75 cursor-wait">
                             <span class="inline-flex gap-1 mr-2">
                                 <span class="w-2 h-2 bg-current rounded-full animate-pulse"></span>
-                                <span class="w-2 h-2 bg-current rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
-                                <span class="w-2 h-2 bg-current rounded-full animate-pulse" style="animation-delay: 0.4s"></span>
+                                <span class="w-2 h-2 bg-current rounded-full animate-pulse"
+                                    style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-current rounded-full animate-pulse"
+                                    style="animation-delay: 0.4s"></span>
                             </span>
                             Loading
                         </button>
@@ -1386,15 +1505,20 @@
                 <div class="bg-secondary border-2 border-theme rounded-xl p-8">
                     <h3 class="text-xl font-bold text-primary mb-6">Pagination</h3>
                     <div class="flex items-center justify-center gap-2">
-                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
+                        <button
+                            class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
                             <i class="fas fa-chevron-left text-secondary"></i>
                         </button>
                         <button class="w-10 h-10 rounded-lg accent-orange text-on-accent font-semibold">1</button>
-                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">2</button>
-                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">3</button>
+                        <button
+                            class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">2</button>
+                        <button
+                            class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">3</button>
                         <span class="text-secondary px-2">...</span>
-                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">12</button>
-                        <button class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
+                        <button
+                            class="w-10 h-10 rounded-lg hover:bg-tertiary text-primary font-semibold transition-colors">12</button>
+                        <button
+                            class="w-10 h-10 rounded-lg hover:bg-tertiary flex items-center justify-center transition-colors">
                             <i class="fas fa-chevron-right text-secondary"></i>
                         </button>
                     </div>
@@ -1438,7 +1562,7 @@
         }
 
         // Initialize theme on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
@@ -1491,4 +1615,5 @@
         }
     </script>
 </body>
+
 </html>
