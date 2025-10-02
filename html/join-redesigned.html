@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join the Guild | Absurd Industries</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ["Inter", "sans-serif"],
+                    },
+                    animation: {
+                        "fade-in": "fadeIn 0.8s ease-out",
+                        "slide-up": "slideUp 0.6s ease-out",
+                        "float": "float 8s ease-in-out infinite",
+                        "pulse-slow": "pulse 4s infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0" },
+                            "100%": { opacity: "1" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(30px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                        float: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-15px)" },
+                        }
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        html.dark body {
+            background: #0a0a0a;
+        }
+
+        .text-primary {
+            color: #111827;
+        }
+
+        html.dark .text-primary {
+            color: #ffffff;
+        }
+
+        .text-secondary {
+            color: #6b7280;
+        }
+
+        html.dark .text-secondary {
+            color: #9ca3af;
+        }
+
+        .text-muted {
+            color: #9ca3af;
+        }
+
+        html.dark .text-muted {
+            color: #6b7280;
+        }
+
+        .divider {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent 0%, #e5e7eb 20%, #e5e7eb 80%, transparent 100%);
+        }
+
+        html.dark .divider {
+            background: linear-gradient(to bottom, transparent 0%, #374151 20%, #374151 80%, transparent 100%);
+        }
+
+        .magic-input {
+            background: transparent;
+            transition: all 0.3s ease;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .magic-input:focus {
+            outline: none;
+            color: #ff4500;
+        }
+
+        .magic-input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        html.dark .magic-input::placeholder {
+            color: #6b7280;
+        }
+
+        .input-underline {
+            height: 2px;
+            background: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        html.dark .input-underline {
+            background: #374151;
+        }
+
+        .input-underline.focused {
+            background: #ff4500;
+            transform: scaleX(1);
+        }
+
+        .magic-button {
+            background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .magic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 69, 0, 0.25);
+        }
+
+        .magic-button:disabled {
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+            font-weight: 800;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-item {
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        html.dark .theme-toggle {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .split-container {
+                flex-direction: column;
+            }
+
+            .signin-section {
+                order: 1;
+                padding: 2rem 1.5rem;
+            }
+
+            .info-section {
+                order: 2;
+                padding: 3rem 1.5rem;
+            }
+
+            .divider {
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(to right, transparent 0%, #e5e7eb 20%, #e5e7eb 80%, transparent 100%);
+            }
+
+            html.dark .divider {
+                background: linear-gradient(to right, transparent 0%, #374151 20%, #374151 80%, transparent 100%);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div id="app">
+        <!-- Theme Toggle -->
+        <button @click="toggleTheme()" class="theme-toggle w-12 h-12 rounded-full flex items-center justify-center">
+            <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-slate-400'" class="text-lg"></i>
+        </button>
+
+        <!-- Main Container -->
+        <div class="min-h-screen flex split-container">
+            <!-- Left Side: Sign In -->
+            <div class="signin-section flex-1 flex items-center justify-center px-12 py-16">
+                <div class="w-full max-w-md">
+                    <!-- Header -->
+                    <div class="mb-12 animate-fade-in">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-rocket text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-primary">The Guild</h1>
+                                <p class="text-secondary text-sm">by Absurd Industries</p>
+                            </div>
+                        </div>
+
+                        <h2 class="text-3xl font-bold text-primary mb-3">
+                            {{ isReturning ? 'Welcome Back' : 'Join the Guild' }}
+                        </h2>
+                        <p class="text-secondary text-lg">
+                            {{ isReturning ? 'Enter your email for instant access' : 'GitHub for Hardware Makers' }}
+                        </p>
+                    </div>
+
+                    <!-- Magic Link Form -->
+                    <div class="space-y-8 animate-slide-up">
+                        <!-- Email Input -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-secondary">Email Address</label>
+                            <div class="relative">
+                                <input
+                                    v-model="email"
+                                    @keyup.enter="sendMagicLink"
+                                    @focus="inputFocused = true"
+                                    @blur="inputFocused = false"
+                                    type="email"
+                                    placeholder="your@email.com"
+                                    class="w-full py-4 magic-input text-primary"
+                                >
+                                <div :class="{ 'focused': inputFocused || email }" class="input-underline"></div>
+                                <div v-if="emailValid" class="absolute right-0 top-4">
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            @click="sendMagicLink"
+                            :disabled="!emailValid || isLoading"
+                            class="w-full py-4 text-white magic-button rounded-xl flex items-center justify-center gap-3 text-lg"
+                        >
+                            <i v-if="isLoading" class="fas fa-spinner animate-spin"></i>
+                            <i v-else class="fas fa-magic"></i>
+                            {{ isLoading ? 'Sending Magic Link...' : (isReturning ? 'Send Magic Link' : 'Get Instant Access') }}
+                        </button>
+
+                        <!-- Success State -->
+                        <div v-if="linkSent" class="text-center py-8 animate-slide-up">
+                            <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-check text-2xl text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">Magic Link Sent!</h3>
+                            <p class="text-secondary mb-4">
+                                Check your email and click the link to {{ isReturning ? 'sign in' : 'create your account' }}
+                            </p>
+                            <button @click="resetForm" class="text-orange-500 hover:underline font-medium">
+                                Didn't receive it? Try again
+                            </button>
+                        </div>
+
+                        <!-- Toggle for Returning Users -->
+                        <div v-if="!linkSent" class="text-center pt-6">
+                            <button v-if="!isReturning" @click="isReturning = true" class="text-secondary hover:text-orange-500 text-sm">
+                                Already a member? Sign in here
+                            </button>
+                            <button v-else @click="isReturning = false" class="text-secondary hover:text-orange-500 text-sm">
+                                New to the Guild? Join here
+                            </button>
+                        </div>
+
+                        <!-- Benefits Preview (for new users) -->
+                        <div v-if="!isReturning && !linkSent" class="space-y-4 pt-8">
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 text-sm">
+                                    <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <span class="text-primary">Document your builds like a pro</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-sm">
+                                    <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <span class="text-primary">Connect with {{ stats.makers.toLocaleString() }}+ makers worldwide</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-sm">
+                                    <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <span class="text-primary">Free forever, no credit card needed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="text-center pt-8 text-xs text-muted space-y-2">
+                            <p>
+                                By continuing, you agree to our
+                                <a href="#" class="text-orange-500 hover:underline">Terms</a> and
+                                <a href="#" class="text-orange-500 hover:underline">Privacy Policy</a>
+                            </p>
+                            <p>No spam, ever. Unsubscribe anytime.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider"></div>
+
+            <!-- Right Side: Information -->
+            <div class="info-section flex-1 px-12 py-16 flex items-center">
+                <div class="w-full max-w-2xl">
+                    <!-- Hero Section -->
+                    <div class="mb-16 animate-fade-in">
+                        <h2 class="text-5xl font-bold text-primary mb-6 leading-tight">
+                            The GitHub for
+                            <span class="text-orange-500">Hardware</span>
+                        </h2>
+                        <p class="text-xl text-secondary leading-relaxed">
+                            Document, share, and discover hardware projects that actually matter.
+                            Join the community of builders creating the future.
+                        </p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-8 mb-16 animate-slide-up">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-orange-500 stat-number mb-2">{{ stats.makers.toLocaleString() }}</div>
+                            <p class="text-secondary font-medium">Active Makers</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-primary stat-number mb-2">{{ stats.projects.toLocaleString() }}</div>
+                            <p class="text-secondary font-medium">Projects Shared</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-primary stat-number mb-2">{{ stats.countries }}</div>
+                            <p class="text-secondary font-medium">Countries</p>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="feature-grid">
+                        <div class="feature-item animate-slide-up" style="animation-delay: 0.1s">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-project-diagram text-blue-600 dark:text-blue-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-3">Complete Documentation</h3>
+                            <p class="text-secondary leading-relaxed">
+                                Schematics, code, 3D models, and build instructions all in one place.
+                                Make your projects reproducible and shareable.
+                            </p>
+                        </div>
+
+                        <div class="feature-item animate-slide-up" style="animation-delay: 0.2s">
+                            <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-users text-green-600 dark:text-green-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-3">Real Maker Community</h3>
+                            <p class="text-secondary leading-relaxed">
+                                Connect with engineers, hobbyists, and innovators.
+                                No corporate spam, just builders sharing what works.
+                            </p>
+                        </div>
+
+                        <div class="feature-item animate-slide-up" style="animation-delay: 0.3s">
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-search text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-3">Discover & Remix</h3>
+                            <p class="text-secondary leading-relaxed">
+                                Find amazing projects, fork them, improve them.
+                                Stand on the shoulders of makers who came before you.
+                            </p>
+                        </div>
+
+                        <div class="feature-item animate-slide-up" style="animation-delay: 0.4s">
+                            <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-heart text-orange-600 dark:text-orange-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-3">Open Source Forever</h3>
+                            <p class="text-secondary leading-relaxed">
+                                Built by makers, for makers. Free forever,
+                                with all the tools you need to build amazing things.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial -->
+                    <div class="mt-16 animate-slide-up" style="animation-delay: 0.5s">
+                        <div class="relative">
+                            <div class="absolute -top-4 -left-4">
+                                <i class="fas fa-quote-left text-4xl text-orange-500/20"></i>
+                            </div>
+                            <blockquote class="text-xl text-primary font-medium italic leading-relaxed mb-4 relative z-10">
+                                "Finally, a place where I can properly document my chaotic builds
+                                and actually help other makers avoid my mistakes."
+                            </blockquote>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">AC</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-primary">Alex Chen</p>
+                                    <p class="text-sm text-secondary">Robotics Engineer, San Francisco</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    darkMode: true,
+                    email: '',
+                    inputFocused: false,
+                    isReturning: false,
+                    isLoading: false,
+                    linkSent: false,
+                    stats: {
+                        makers: 12847,
+                        projects: 8392,
+                        countries: 67
+                    }
+                }
+            },
+            computed: {
+                emailValid() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(this.email);
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                },
+                async sendMagicLink() {
+                    if (!this.emailValid || this.isLoading) return;
+
+                    this.isLoading = true;
+
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    this.isLoading = false;
+                    this.linkSent = true;
+
+                    console.log('Sending magic link to:', this.email, 'Returning user:', this.isReturning);
+                },
+                resetForm() {
+                    this.linkSent = false;
+                    this.email = '';
+                    this.isLoading = false;
+                },
+                animateStats() {
+                    const duration = 2000;
+                    const steps = 60;
+                    const stepTime = duration / steps;
+
+                    let currentStep = 0;
+                    const interval = setInterval(() => {
+                        currentStep++;
+                        const progress = currentStep / steps;
+
+                        this.stats.makers = Math.floor(12847 * progress);
+                        this.stats.projects = Math.floor(8392 * progress);
+                        this.stats.countries = Math.floor(67 * progress);
+
+                        if (currentStep >= steps) {
+                            clearInterval(interval);
+                            this.stats.makers = 12847;
+                            this.stats.projects = 8392;
+                            this.stats.countries = 67;
+                        }
+                    }, stepTime);
+                }
+            },
+            mounted() {
+                // Initialize theme
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    this.darkMode = savedTheme === 'dark';
+                }
+                document.documentElement.classList.toggle('dark', this.darkMode);
+
+                // Animate stats on load
+                setTimeout(() => {
+                    this.animateStats();
+                }, 1000);
+
+                // Check URL params for returning users
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('returning') === 'true') {
+                    this.isReturning = true;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

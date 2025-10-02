@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join the Guild | Absurd Industries</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "fade-in": "fadeIn 0.6s ease-out",
+                        "slide-up": "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                        "pulse-glow": "pulseGlow 2s ease-in-out infinite",
+                        "float": "float 6s ease-in-out infinite",
+                        "bounce-subtle": "bounceSubtle 2s ease-in-out infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(100%)" },
+                            "100%": { transform: "translateY(0)" },
+                        },
+                        pulseGlow: {
+                            "0%, 100%": { boxShadow: "0 0 20px rgba(255, 69, 0, 0.3)" },
+                            "50%": { boxShadow: "0 0 40px rgba(255, 69, 0, 0.6)" },
+                        },
+                        float: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-10px)" },
+                        },
+                        bounceSubtle: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-5px)" },
+                        }
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .border-theme { border-color: var(--border-color); }
+        .accent-orange { background-color: var(--accent-orange); }
+        .accent-orange-text { color: var(--accent-orange); }
+        .text-on-accent { color: var(--text-on-accent); }
+
+        /* Gradient Backgrounds */
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        html.dark .glass-effect {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+        }
+
+        .magic-input {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .magic-input:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.1);
+            outline: none;
+        }
+
+        .magic-button {
+            background: var(--accent-orange);
+            transition: all 0.3s ease;
+        }
+
+        .magic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 69, 0, 0.3);
+        }
+
+        .magic-button:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .split-layout {
+                flex-direction: column !important;
+            }
+
+            .guild-info {
+                order: 2;
+            }
+
+            .signup-section {
+                order: 1;
+            }
+        }
+
+        /* Dark mode specific animations */
+        html.dark .feature-card {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        html.dark .feature-card:hover {
+            box-shadow: 0 8px 30px rgba(255, 69, 0, 0.2);
+        }
+
+        /* Stats animation */
+        .stat-counter {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+
+<body class="hero-gradient min-h-screen">
+    <div id="app">
+        <!-- Theme Toggle (Fixed) -->
+        <div class="fixed top-6 right-6 z-50">
+            <button @click="toggleTheme()"
+                class="w-12 h-12 glass-effect rounded-full flex items-center justify-center hover:-translate-y-1 transition-all">
+                <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-slate-400'" class="text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Split Layout Container -->
+        <div class="min-h-screen flex split-layout">
+            <!-- Left Side: Guild Information -->
+            <div class="guild-info flex-1 p-6 md:p-12 lg:p-16 flex flex-col justify-center">
+                <div class="max-w-2xl mx-auto space-y-8 animate-fade-in">
+                    <!-- Logo & Branding -->
+                    <div class="text-center md:text-left">
+                        <div class="inline-flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 accent-orange rounded-2xl flex items-center justify-center animate-pulse-glow">
+                                <i class="fas fa-rocket text-2xl text-on-accent"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-4xl md:text-5xl font-bold text-primary">The Guild</h1>
+                                <p class="text-lg text-secondary font-semibold">by Absurd Industries</p>
+                            </div>
+                        </div>
+                        <p class="text-xl md:text-2xl text-primary font-bold mb-4">
+                            GitHub for Hardware Makers
+                        </p>
+                        <p class="text-lg text-secondary">
+                            Document, share, and discover hardware projects that actually matter
+                        </p>
+                    </div>
+
+                    <!-- Key Features -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="feature-card rounded-xl p-6 animate-float">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 accent-orange rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-project-diagram text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-primary mb-2">Document Everything</h3>
+                                    <p class="text-sm text-secondary">Schematics, code, 3D models, build instructions - all in one place</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card rounded-xl p-6 animate-bounce-subtle">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 accent-orange rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-primary mb-2">Real Makers</h3>
+                                    <p class="text-sm text-secondary">No corporate spam. Just builders sharing what works (and what doesn't)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card rounded-xl p-6 animate-float" style="animation-delay: 0.5s;">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 accent-orange rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-search text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-primary mb-2">Find & Fork</h3>
+                                    <p class="text-sm text-secondary">Discover projects, remix them, make them better</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card rounded-xl p-6 animate-bounce-subtle" style="animation-delay: 1s;">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 accent-orange rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-heart text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-primary mb-2">Open Source</h3>
+                                    <p class="text-sm text-secondary">Free forever. By makers, for makers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Community Stats -->
+                    <div class="grid grid-cols-3 gap-6 py-8 border-t border-b border-theme">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold accent-orange-text stat-counter">{{ stats.makers.toLocaleString() }}</div>
+                            <p class="text-sm text-secondary font-semibold">Makers</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary stat-counter">{{ stats.projects.toLocaleString() }}</div>
+                            <p class="text-sm text-secondary font-semibold">Projects</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary stat-counter">{{ stats.countries }}</div>
+                            <p class="text-sm text-secondary font-semibold">Countries</p>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial -->
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-quote-left text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-primary italic mb-3">
+                                    "Finally, a place where I can properly document my chaotic builds and actually help other makers avoid my mistakes."
+                                </p>
+                                <p class="text-sm text-secondary font-semibold">
+                                    — Alex Chen, Robotics Engineer
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Sign Up / Sign In -->
+            <div class="signup-section flex-1 flex items-center justify-center p-6 md:p-12">
+                <div class="w-full max-w-md space-y-8">
+                    <!-- Quick Access for Returning Users -->
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl md:text-3xl font-bold text-primary mb-2">
+                            {{ isReturning ? 'Welcome Back!' : 'Join the Guild' }}
+                        </h2>
+                        <p class="text-secondary">
+                            {{ isReturning ? 'Enter your email for a magic link' : 'Get started in 10 seconds' }}
+                        </p>
+                        <button v-if="!isReturning" @click="isReturning = true"
+                            class="text-sm accent-orange-text hover:underline mt-2">
+                            Already a member? Click here
+                        </button>
+                        <button v-else @click="isReturning = false"
+                            class="text-sm accent-orange-text hover:underline mt-2">
+                            New to the Guild?
+                        </button>
+                    </div>
+
+                    <!-- Magic Link Form -->
+                    <div class="space-y-6">
+                        <div class="relative">
+                            <input
+                                v-model="email"
+                                @keyup.enter="sendMagicLink"
+                                type="email"
+                                placeholder="your@email.com"
+                                class="w-full px-6 py-4 text-lg magic-input rounded-xl text-primary placeholder-secondary"
+                                required
+                            >
+                            <div v-if="emailValid" class="absolute right-4 top-1/2 -translate-y-1/2">
+                                <i class="fas fa-check text-green-500"></i>
+                            </div>
+                        </div>
+
+                        <button
+                            @click="sendMagicLink"
+                            :disabled="!emailValid || isLoading"
+                            :class="{ 'opacity-50 cursor-not-allowed': !emailValid || isLoading }"
+                            class="w-full py-4 text-lg font-bold text-on-accent magic-button rounded-xl flex items-center justify-center gap-3"
+                        >
+                            <i v-if="isLoading" class="fas fa-spinner animate-spin"></i>
+                            <i v-else class="fas fa-magic"></i>
+                            {{ isLoading ? 'Sending...' : (isReturning ? 'Send Magic Link' : 'Get My Magic Link') }}
+                        </button>
+
+                        <!-- Success State -->
+                        <div v-if="linkSent" class="text-center p-6 bg-green-500/10 border-2 border-green-500 rounded-xl animate-slide-up">
+                            <i class="fas fa-check-circle text-3xl text-green-500 mb-3"></i>
+                            <h3 class="font-bold text-primary mb-2">Magic Link Sent! ✨</h3>
+                            <p class="text-sm text-secondary">
+                                Check your email and click the link to {{ isReturning ? 'sign in' : 'create your account' }}
+                            </p>
+                            <button @click="resetForm" class="text-sm accent-orange-text hover:underline mt-3">
+                                Didn't get it? Try again
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Benefits Preview (for new users) -->
+                    <div v-if="!isReturning && !linkSent" class="space-y-4 pt-6 border-t border-theme">
+                        <p class="text-sm text-secondary text-center mb-4">You'll get instant access to:</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-sm text-primary">
+                                <i class="fas fa-check accent-orange-text w-4"></i>
+                                <span>Your personal makerspace dashboard</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-primary">
+                                <i class="fas fa-check accent-orange-text w-4"></i>
+                                <span>Project documentation tools</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-primary">
+                                <i class="fas fa-check accent-orange-text w-4"></i>
+                                <span>Community of 12,000+ makers</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-primary">
+                                <i class="fas fa-check accent-orange-text w-4"></i>
+                                <span>Free forever, no credit card needed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center pt-6">
+                        <p class="text-xs text-secondary">
+                            By joining, you agree to our
+                            <a href="#" class="accent-orange-text hover:underline">Terms</a> and
+                            <a href="#" class="accent-orange-text hover:underline">Privacy Policy</a>
+                        </p>
+                        <p class="text-xs text-secondary mt-2">
+                            No spam, ever. Unsubscribe anytime.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Elements (Desktop Only) -->
+        <div class="hidden lg:block">
+            <!-- Floating Icons -->
+            <div class="fixed top-20 left-20 opacity-20 animate-float">
+                <i class="fas fa-microchip text-4xl text-primary"></i>
+            </div>
+            <div class="fixed bottom-20 left-32 opacity-20 animate-bounce-subtle" style="animation-delay: 2s;">
+                <i class="fas fa-robot text-3xl text-primary"></i>
+            </div>
+            <div class="fixed top-32 right-32 opacity-20 animate-float" style="animation-delay: 1s;">
+                <i class="fas fa-tools text-3xl text-primary"></i>
+            </div>
+            <div class="fixed bottom-32 right-20 opacity-20 animate-bounce-subtle" style="animation-delay: 3s;">
+                <i class="fas fa-code text-2xl text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    darkMode: true,
+                    email: '',
+                    isReturning: false,
+                    isLoading: false,
+                    linkSent: false,
+                    stats: {
+                        makers: 12847,
+                        projects: 8392,
+                        countries: 67
+                    }
+                }
+            },
+            computed: {
+                emailValid() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(this.email);
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                },
+                async sendMagicLink() {
+                    if (!this.emailValid || this.isLoading) return;
+
+                    this.isLoading = true;
+
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    this.isLoading = false;
+                    this.linkSent = true;
+
+                    // Here you would actually send the magic link
+                    console.log('Sending magic link to:', this.email, 'Returning user:', this.isReturning);
+                },
+                resetForm() {
+                    this.linkSent = false;
+                    this.email = '';
+                    this.isLoading = false;
+                },
+                animateStats() {
+                    // Animate stats counting up
+                    const duration = 2000;
+                    const steps = 60;
+                    const stepTime = duration / steps;
+
+                    let currentStep = 0;
+                    const interval = setInterval(() => {
+                        currentStep++;
+                        const progress = currentStep / steps;
+
+                        this.stats.makers = Math.floor(12847 * progress);
+                        this.stats.projects = Math.floor(8392 * progress);
+                        this.stats.countries = Math.floor(67 * progress);
+
+                        if (currentStep >= steps) {
+                            clearInterval(interval);
+                            this.stats.makers = 12847;
+                            this.stats.projects = 8392;
+                            this.stats.countries = 67;
+                        }
+                    }, stepTime);
+                }
+            },
+            mounted() {
+                // Initialize theme
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    this.darkMode = savedTheme === 'dark';
+                }
+                document.documentElement.classList.toggle('dark', this.darkMode);
+
+                // Animate stats on load
+                setTimeout(() => {
+                    this.animateStats();
+                }, 1000);
+
+                // Check if user came from a "returning user" link
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('returning') === 'true') {
+                    this.isReturning = true;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

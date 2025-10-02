@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Makerspace | Crowz-Inspired Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ["Inter", "sans-serif"],
+                    },
+                    animation: {
+                        "fade-in": "fadeIn 0.6s ease-out",
+                        "slide-up": "slideUp 0.4s ease-out",
+                        "float": "float 6s ease-in-out infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(10px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(20px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                        float: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-5px)" },
+                        }
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(135deg, #ff7f50 0%, #ff6b35 50%, #ff4500 100%);
+            min-height: 100vh;
+        }
+
+        html.dark body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b35 50%, #1a0a0a 100%);
+        }
+
+        .main-container {
+            background: #f8f9fa;
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.1);
+            margin: 24px;
+            min-height: calc(100vh - 48px);
+        }
+
+        html.dark .main-container {
+            background: #0f0f0f;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar {
+            background: #e9ecef;
+            border-radius: 24px 0 0 24px;
+            padding: 32px 24px;
+            width: 280px;
+        }
+
+        html.dark .sidebar {
+            background: #1a1a1a;
+        }
+
+        .content-area {
+            padding: 32px 40px;
+            flex: 1;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        html.dark .stat-card {
+            background: #111111;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        html.dark .stat-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f3f4;
+        }
+
+        html.dark .project-card {
+            background: #111111;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark .project-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .channel-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f3f4;
+        }
+
+        html.dark .channel-card {
+            background: #111111;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .channel-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .upgrade-card {
+            background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+            border-radius: 20px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upgrade-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: rotate(45deg);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #6c757d;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 69, 0, 0.1);
+            color: #ff4500;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 69, 0, 0.15);
+            color: #ff4500;
+        }
+
+        .text-primary {
+            color: #212529;
+        }
+
+        html.dark .text-primary {
+            color: #ffffff;
+        }
+
+        .text-secondary {
+            color: #6c757d;
+        }
+
+        html.dark .text-secondary {
+            color: #9ca3af;
+        }
+
+        .text-muted {
+            color: #adb5bd;
+        }
+
+        html.dark .text-muted {
+            color: #6b7280;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4500, #ff6b35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+
+        .progress-ring circle {
+            transition: stroke-dasharray 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-container flex animate-fade-in">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Profile Section -->
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="avatar">A</div>
+                    <div>
+                        <h3 class="font-bold text-primary text-lg">Alex Chen</h3>
+                        <p class="text-secondary text-sm">Hardware Hacker</p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="space-y-2 mb-8">
+                    <a href="#" class="nav-item active">
+                        <div class="w-6 h-6 bg-orange-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-home text-white text-xs"></i>
+                        </div>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-line w-6"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-rocket w-6"></i>
+                        Projects
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users w-6"></i>
+                        Community
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-tools w-6"></i>
+                        Workshop
+                    </a>
+                </nav>
+
+                <!-- Theme Toggle -->
+                <button @click="toggleTheme()" class="nav-item w-full text-left">
+                    <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="w-6"></i>
+                    {{ darkMode ? 'Light Mode' : 'Dark Mode' }}
+                </button>
+
+                <!-- Logout -->
+                <div class="mt-auto pt-8">
+                    <a href="#" class="nav-item text-red-500">
+                        <i class="fas fa-sign-out-alt w-6"></i>
+                        Log out
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-4xl font-bold text-primary mb-2">Dashboard</h1>
+                        <p class="text-secondary">Good evening, Alex! Ready to build something amazing?</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all">
+                            <i class="fas fa-bell text-sm"></i>
+                        </button>
+                        <button class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all">
+                            <i class="fas fa-cog text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-3 gap-8 mb-8">
+                    <!-- Projects Stat -->
+                    <div class="stat-card animate-slide-up">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-secondary text-sm font-medium">Projects</h3>
+                            <div class="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-rocket text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-bold text-primary mb-2">24</div>
+                        <div class="text-sm text-secondary">12 active, 8 completed</div>
+                    </div>
+
+                    <!-- Tools Stat -->
+                    <div class="stat-card animate-slide-up" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-secondary text-sm font-medium">Tools</h3>
+                            <div class="w-6 h-6 bg-green-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tools text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-bold text-primary mb-2">156</div>
+                        <div class="text-sm text-secondary">Well-equipped workshop</div>
+                    </div>
+
+                    <!-- Activity Stat -->
+                    <div class="stat-card animate-slide-up" style="animation-delay: 0.2s">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-secondary text-sm font-medium">This Week</h3>
+                            <div class="w-6 h-6 bg-purple-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-bold text-primary mb-2">18h</div>
+                        <div class="text-sm text-secondary">Building & creating</div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-3 gap-8">
+                    <!-- Activity Chart -->
+                    <div class="col-span-2">
+                        <div class="stat-card h-80">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-primary">Weekly Activity</h3>
+                                <p class="text-sm text-secondary">Building hours every day</p>
+                            </div>
+                            <div class="h-48 flex items-end justify-center gap-4">
+                                <!-- Chart Bars -->
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-200 rounded-t" style="height: 60px"></div>
+                                    <span class="text-xs text-muted">Mon</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-300 rounded-t" style="height: 80px"></div>
+                                    <span class="text-xs text-muted">Tue</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-400 rounded-t" style="height: 120px"></div>
+                                    <span class="text-xs text-muted">Wed</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-500 rounded-t" style="height: 140px"></div>
+                                    <span class="text-xs text-muted">Thu</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-300 rounded-t" style="height: 90px"></div>
+                                    <span class="text-xs text-muted">Fri</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-200 rounded-t" style="height: 40px"></div>
+                                    <span class="text-xs text-muted">Sat</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-8 bg-orange-400 rounded-t" style="height: 100px"></div>
+                                    <span class="text-xs text-muted">Sun</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <span class="text-2xl font-bold text-orange-500">32.5h</span>
+                                <span class="text-sm text-secondary ml-2">Total this week</span>
+                            </div>
+                        </div>
+
+                        <!-- Recent Projects -->
+                        <div class="mt-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-primary">Recent Projects</h3>
+                                <button class="text-orange-500 text-sm font-medium hover:underline">View all</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="project-card">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-robot text-blue-600 dark:text-blue-400"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-primary">Arduino Weather Station</h4>
+                                            <p class="text-sm text-secondary">IoT weather monitoring with web dashboard</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="w-3 h-3 bg-green-500 rounded-full mb-1"></div>
+                                            <span class="text-xs text-muted">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="project-card">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-music text-purple-600 dark:text-purple-400"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-primary">MIDI Controller</h4>
+                                            <p class="text-sm text-secondary">16-pad RGB MIDI controller with velocity</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="w-3 h-3 bg-blue-500 rounded-full mb-1"></div>
+                                            <span class="text-xs text-muted">Testing</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="project-card">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-home text-green-600 dark:text-green-400"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-primary">Smart Home Hub</h4>
+                                            <p class="text-sm text-secondary">Centralized automation control system</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="w-3 h-3 bg-yellow-500 rounded-full mb-1"></div>
+                                            <span class="text-xs text-muted">Planning</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="space-y-8">
+                        <!-- Upgrade Card -->
+                        <div class="upgrade-card animate-float">
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-crown text-white"></i>
+                                    </div>
+                                    <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">NOW</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">Level Up Your Workshop</h3>
+                                <p class="text-sm opacity-90 mb-4">Pro tools for serious makers</p>
+                                <button class="bg-white text-orange-500 px-4 py-2 rounded-lg text-sm font-semibold hover:scale-105 transition-all">
+                                    Upgrade Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Top Skills -->
+                        <div class="stat-card">
+                            <h3 class="text-lg font-bold text-primary mb-6">Top Skills</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-microchip text-blue-600 dark:text-blue-400 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-primary">Arduino Programming</p>
+                                        <p class="text-xs text-secondary">@alexchen</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-primary">89%</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-cube text-green-600 dark:text-green-400 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-primary">3D Modeling</p>
+                                        <p class="text-xs text-secondary">@alexchen</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-primary">76%</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-bolt text-purple-600 dark:text-purple-400 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-primary">PCB Design</p>
+                                        <p class="text-xs text-secondary">@alexchen</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-primary">64%</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="text-orange-500 text-sm font-medium mt-4 hover:underline">View More →</button>
+                        </div>
+
+                        <!-- Workshop Stats -->
+                        <div class="stat-card">
+                            <h3 class="text-lg font-bold text-primary mb-6">Workshop Categories</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="channel-card">
+                                    <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-microchip text-white text-sm"></i>
+                                    </div>
+                                    <p class="text-xs text-muted mb-1">Electronics</p>
+                                    <p class="font-bold text-green-600">+12</p>
+                                </div>
+
+                                <div class="channel-card">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-wrench text-white text-sm"></i>
+                                    </div>
+                                    <p class="text-xs text-muted mb-1">Mechanical</p>
+                                    <p class="font-bold text-red-600">-3</p>
+                                </div>
+
+                                <div class="channel-card">
+                                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-code text-white text-sm"></i>
+                                    </div>
+                                    <p class="text-xs text-muted mb-1">Software</p>
+                                    <p class="font-bold text-green-600">+8</p>
+                                </div>
+
+                                <div class="channel-card">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-cube text-white text-sm"></i>
+                                    </div>
+                                    <p class="text-xs text-muted mb-1">3D Printing</p>
+                                    <p class="font-bold text-green-600">+5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    darkMode: true
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    document.documentElement.classList.toggle('dark');
+                }
+            },
+            mounted() {
+                document.documentElement.classList.add('dark');
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

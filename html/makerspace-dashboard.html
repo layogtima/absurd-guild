@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Makerspace Dashboard | Build Your Maker Story</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "spin-slow": "spin 33s linear infinite",
+                        "fade-in": "fadeIn 0.6s ease-out",
+                        "slide-up": "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                        "pulse-slow": "pulse 3s ease-in-out infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(100%)" },
+                            "100%": { transform: "translateY(0)" },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .bg-primary {
+            background-color: var(--bg-primary);
+        }
+
+        .bg-secondary {
+            background-color: var(--bg-secondary);
+        }
+
+        .bg-tertiary {
+            background-color: var(--bg-tertiary);
+        }
+
+        .text-primary {
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .border-theme {
+            border-color: var(--border-color);
+        }
+
+        .accent-orange {
+            background-color: var(--accent-orange);
+        }
+
+        .accent-orange-text {
+            color: var(--accent-orange);
+        }
+
+        .text-on-accent {
+            color: var(--text-on-accent);
+        }
+
+        .dashboard-card {
+            @apply bg-secondary border-2 border-theme rounded-2xl p-6 hover:border-orange-500 hover:-translate-y-1 transition-all;
+        }
+
+        .stat-glow {
+            filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.5));
+        }
+
+        .rotating {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Theme Toggle -->
+        <div class="fixed top-4 right-4 z-50">
+            <button @click="toggleTheme()"
+                class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center border-2 border-theme hover:border-orange-500 hover:-translate-y-1 transition-all">
+                <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-primary"></i>
+            </button>
+        </div>
+
+        <!-- Header -->
+        <header class="border-b-2 border-theme bg-secondary/50 backdrop-blur-sm sticky top-0 z-40">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full accent-orange flex items-center justify-center">
+                            <i class="fas fa-rocket text-on-accent text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-primary">Your Makerspace</h1>
+                            <p class="text-xs text-secondary">Building your maker story, one project at a time</p>
+                        </div>
+                    </div>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <button @click="currentView = 'overview'"
+                            :class="currentView === 'overview' ? 'accent-orange-text font-bold' : 'text-secondary hover:text-primary'"
+                            class="transition-colors">Overview</button>
+                        <button @click="currentView = 'workshop'"
+                            :class="currentView === 'workshop' ? 'accent-orange-text font-bold' : 'text-secondary hover:text-primary'"
+                            class="transition-colors">Workshop</button>
+                        <button @click="currentView = 'projects'"
+                            :class="currentView === 'projects' ? 'accent-orange-text font-bold' : 'text-secondary hover:text-primary'"
+                            class="transition-colors">Projects</button>
+                        <button @click="currentView = 'community'"
+                            :class="currentView === 'community' ? 'accent-orange-text font-bold' : 'text-secondary hover:text-primary'"
+                            class="transition-colors">Community</button>
+                        <button @click="currentView = 'profile'"
+                            :class="currentView === 'profile' ? 'accent-orange-text font-bold' : 'text-secondary hover:text-primary'"
+                            class="transition-colors">Profile Preview</button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-6 py-8">
+            <!-- Welcome Message -->
+            <div v-if="!userData.name"
+                class="bg-orange-500/10 border-2 border-orange-500 rounded-2xl p-6 mb-8 text-center animate-pulse-slow">
+                <h2 class="text-2xl font-bold text-primary mb-2">Welcome to Your Makerspace! 🚀</h2>
+                <p class="text-secondary mb-4">Let's start by adding your name to personalize your space</p>
+                <div class="max-w-md mx-auto">
+                    <input v-model="tempName" @keyup.enter="setUserName" placeholder="What should we call you?"
+                        class="w-full px-4 py-3 bg-secondary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none transition-colors">
+                    <button @click="setUserName" v-if="tempName"
+                        class="mt-3 px-6 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                        Let's Go! →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Dashboard -->
+            <div v-if="currentView === 'overview'" class="animate-fade-in">
+                <h2 class="text-3xl font-bold text-primary mb-8">
+                    {{ userData.name ? `${userData.name}'s Maker Journey` : 'Your Maker Journey' }}
+                </h2>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="dashboard-card text-center">
+                        <div class="text-3xl font-bold accent-orange-text stat-glow">{{ stats.projects }}</div>
+                        <p class="text-sm text-secondary mt-2">Projects</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-3xl font-bold text-primary">{{ stats.tools }}</div>
+                        <p class="text-sm text-secondary mt-2">Tools</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-3xl font-bold text-primary">{{ stats.skills }}</div>
+                        <p class="text-sm text-secondary mt-2">Skills</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-3xl font-bold text-primary">{{ stats.connections }}</div>
+                        <p class="text-sm text-secondary mt-2">Connections</p>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="grid lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Recent Activity -->
+                    <div class="dashboard-card lg:col-span-2">
+                        <h3 class="text-xl font-bold text-primary mb-4">Recent Activity</h3>
+                        <div v-if="userData.activities.length === 0" class="text-center py-8">
+                            <i class="fas fa-clock text-4xl text-secondary/30 mb-3"></i>
+                            <p class="text-secondary">No activity yet. Start by adding a project!</p>
+                        </div>
+                        <div v-else class="space-y-3">
+                            <div v-for="activity in userData.activities.slice(0, 5)" :key="activity.id"
+                                class="flex items-start gap-3 p-3 rounded-lg hover:bg-tertiary transition-colors">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center flex-shrink-0">
+                                    <i :class="activity.icon" class="text-sm" :style="{color: activity.color}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-primary">{{ activity.text }}</p>
+                                    <p class="text-xs text-secondary mt-1">{{ activity.time }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="dashboard-card">
+                        <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button @click="currentView = 'projects'; showAddProject = true"
+                                class="p-4 rounded-lg border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all text-center">
+                                <i class="fas fa-plus text-2xl accent-orange-text mb-2"></i>
+                                <p class="text-xs text-secondary">New Project</p>
+                            </button>
+                            <button @click="currentView = 'workshop'"
+                                class="p-4 rounded-lg border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all text-center">
+                                <i class="fas fa-tools text-2xl text-secondary mb-2"></i>
+                                <p class="text-xs text-secondary">Add Tool</p>
+                            </button>
+                            <button @click="addQuickUpdate"
+                                class="p-4 rounded-lg border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all text-center">
+                                <i class="fas fa-comment text-2xl text-secondary mb-2"></i>
+                                <p class="text-xs text-secondary">Status Update</p>
+                            </button>
+                            <button @click="currentView = 'profile'"
+                                class="p-4 rounded-lg border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all text-center">
+                                <i class="fas fa-user text-2xl text-secondary mb-2"></i>
+                                <p class="text-xs text-secondary">View Profile</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspiration Section -->
+                <div class="dashboard-card">
+                    <h3 class="text-xl font-bold text-primary mb-4">Today's Inspiration</h3>
+                    <div class="bg-tertiary rounded-xl p-6">
+                        <p class="text-lg text-primary mb-2 italic">"{{ inspiration.quote }}"</p>
+                        <p class="text-sm text-secondary">— {{ inspiration.author }}</p>
+                    </div>
+                    <div class="mt-4 grid md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-tertiary rounded-lg">
+                            <i class="fas fa-lightbulb text-2xl accent-orange-text mb-2"></i>
+                            <p class="text-sm text-primary font-semibold">Project Idea</p>
+                            <p class="text-xs text-secondary mt-1">{{ inspiration.projectIdea }}</p>
+                        </div>
+                        <div class="text-center p-4 bg-tertiary rounded-lg">
+                            <i class="fas fa-book text-2xl text-secondary mb-2"></i>
+                            <p class="text-sm text-primary font-semibold">Learn Today</p>
+                            <p class="text-xs text-secondary mt-1">{{ inspiration.skillToLearn }}</p>
+                        </div>
+                        <div class="text-center p-4 bg-tertiary rounded-lg">
+                            <i class="fas fa-users text-2xl text-secondary mb-2"></i>
+                            <p class="text-sm text-primary font-semibold">Connect With</p>
+                            <p class="text-xs text-secondary mt-1">{{ inspiration.makerToFollow }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workshop Dashboard -->
+            <div v-if="currentView === 'workshop'" class="animate-fade-in">
+                <h2 class="text-3xl font-bold text-primary mb-8">Your Workshop</h2>
+
+                <!-- Tool Categories -->
+                <div class="grid md:grid-cols-4 gap-4 mb-8">
+                    <button v-for="category in toolCategories" :key="category.id"
+                        @click="selectedToolCategory = category.id"
+                        :class="selectedToolCategory === category.id ? 'border-orange-500' : ''"
+                        class="dashboard-card text-center">
+                        <i :class="category.icon" class="text-2xl mb-2"
+                            :class="selectedToolCategory === category.id ? 'accent-orange-text' : 'text-secondary'"></i>
+                        <p class="text-sm font-semibold text-primary">{{ category.name }}</p>
+                        <p class="text-xs text-secondary mt-1">{{ category.count }} items</p>
+                    </button>
+                </div>
+
+                <!-- Add Tool Form -->
+                <div v-if="showAddTool" class="dashboard-card mb-8">
+                    <h3 class="text-xl font-bold text-primary mb-4">Add New Tool</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Tool Name</label>
+                            <input v-model="newTool.name" placeholder="e.g., Soldering Iron, 3D Printer"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Category</label>
+                            <select v-model="newTool.category"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none">
+                                <option v-for="cat in toolCategories" :value="cat.id">{{ cat.name }}</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-primary mb-2">Notes</label>
+                            <textarea v-model="newTool.notes" placeholder="Any special notes about this tool?"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none resize-none"
+                                rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button @click="addTool"
+                            class="px-6 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Add Tool
+                        </button>
+                        <button @click="showAddTool = false"
+                            class="px-6 py-2 bg-tertiary text-primary rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tools Grid -->
+                <div class="dashboard-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-primary">Your Tools</h3>
+                        <button @click="showAddTool = !showAddTool"
+                            class="px-4 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            <i class="fas fa-plus mr-2"></i>Add Tool
+                        </button>
+                    </div>
+                    <div v-if="userData.tools.length === 0" class="text-center py-12">
+                        <i class="fas fa-toolbox text-6xl text-secondary/20 mb-4"></i>
+                        <p class="text-secondary mb-2">No tools added yet!</p>
+                        <p class="text-sm text-secondary">Even a screwdriver counts. What's in your workshop?</p>
+                    </div>
+                    <div v-else class="grid md:grid-cols-3 gap-4">
+                        <div v-for="tool in filteredTools" :key="tool.id"
+                            class="bg-tertiary rounded-xl p-4 border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h4 class="font-semibold text-primary">{{ tool.name }}</h4>
+                                    <p class="text-xs text-secondary mt-1">{{ getCategoryName(tool.category) }}</p>
+                                    <p v-if="tool.notes" class="text-sm text-secondary mt-2">{{ tool.notes }}</p>
+                                </div>
+                                <button @click="removeTool(tool.id)"
+                                    class="text-secondary hover:accent-orange-text transition-colors">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Dashboard -->
+            <div v-if="currentView === 'projects'" class="animate-fade-in">
+                <h2 class="text-3xl font-bold text-primary mb-8">Your Projects</h2>
+
+                <!-- Project Stats -->
+                <div class="grid md:grid-cols-5 gap-4 mb-8">
+                    <div class="dashboard-card text-center">
+                        <div class="text-2xl font-bold accent-orange-text">{{ projectStats.ideas }}</div>
+                        <p class="text-xs text-secondary mt-1">Ideas</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-2xl font-bold text-primary">{{ projectStats.planning }}</div>
+                        <p class="text-xs text-secondary mt-1">Planning</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-2xl font-bold text-primary">{{ projectStats.inProgress }}</div>
+                        <p class="text-xs text-secondary mt-1">In Progress</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-2xl font-bold text-primary">{{ projectStats.completed }}</div>
+                        <p class="text-xs text-secondary mt-1">Completed</p>
+                    </div>
+                    <div class="dashboard-card text-center">
+                        <div class="text-2xl font-bold text-primary">{{ projectStats.failed }}</div>
+                        <p class="text-xs text-secondary mt-1">Learning Experiences</p>
+                    </div>
+                </div>
+
+                <!-- Add Project Form -->
+                <div v-if="showAddProject" class="dashboard-card mb-8">
+                    <h3 class="text-xl font-bold text-primary mb-4">Add New Project</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Project Name</label>
+                            <input v-model="newProject.name" placeholder="Give it a fun name!"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Status</label>
+                            <select v-model="newProject.status"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none">
+                                <option value="idea">Just an Idea</option>
+                                <option value="planning">Planning</option>
+                                <option value="in-progress">Working On It</option>
+                                <option value="completed">Done!</option>
+                                <option value="failed">Didn't Work (but I learned!)</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-primary mb-2">Description</label>
+                            <textarea v-model="newProject.description" placeholder="What's this project about?"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none resize-none"
+                                rows="3"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-primary mb-2">Tags (comma separated)</label>
+                            <input v-model="newProject.tags" placeholder="arduino, LED, robotics"
+                                class="w-full px-4 py-2 bg-tertiary border-2 border-theme rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button @click="addProject"
+                            class="px-6 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Add Project
+                        </button>
+                        <button @click="showAddProject = false"
+                            class="px-6 py-2 bg-tertiary text-primary rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="dashboard-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-primary">All Projects</h3>
+                        <button @click="showAddProject = !showAddProject"
+                            class="px-4 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            <i class="fas fa-plus mr-2"></i>Add Project
+                        </button>
+                    </div>
+                    <div v-if="userData.projects.length === 0" class="text-center py-12">
+                        <i class="fas fa-rocket text-6xl text-secondary/20 mb-4"></i>
+                        <p class="text-secondary mb-2">No projects yet!</p>
+                        <p class="text-sm text-secondary">Even "LED that blinks" counts as a project!</p>
+                    </div>
+                    <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div v-for="project in userData.projects" :key="project.id"
+                            class="bg-tertiary rounded-xl overflow-hidden border-2 border-transparent hover:border-orange-500 hover:-translate-y-1 transition-all">
+                            <div class="p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-bold text-primary">{{ project.name }}</h4>
+                                    <span :class="getStatusColor(project.status)"
+                                        class="text-xs px-2 py-1 rounded-full">
+                                        {{ getStatusLabel(project.status) }}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-secondary mb-3">{{ project.description }}</p>
+                                <div class="flex flex-wrap gap-1">
+                                    <span v-for="tag in project.tags" class="text-xs bg-secondary px-2 py-1 rounded">{{
+                                        tag }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Dashboard -->
+            <div v-if="currentView === 'community'" class="animate-fade-in">
+                <h2 class="text-3xl font-bold text-primary mb-8">Maker Community</h2>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- Campaigns -->
+                    <div class="dashboard-card lg:col-span-2">
+                        <h3 class="text-xl font-bold text-primary mb-4">Active Campaigns</h3>
+                        <div class="space-y-4">
+                            <div
+                                class="bg-tertiary rounded-xl p-4 border-2 border-transparent hover:border-orange-500 transition-all">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-primary">30 Day LED Challenge</h4>
+                                        <p class="text-sm text-secondary mt-1">Create something new with LEDs every day
+                                        </p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-secondary"><i class="fas fa-users mr-1"></i>234
+                                                makers</span>
+                                            <span class="text-xs text-secondary"><i class="fas fa-calendar mr-1"></i>15
+                                                days left</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="px-3 py-1 text-sm accent-orange text-on-accent rounded-lg hover:-translate-y-1 transition-all">
+                                        Join
+                                    </button>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-tertiary rounded-xl p-4 border-2 border-transparent hover:border-orange-500 transition-all">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-primary">Robot Wars: Kitchen Edition</h4>
+                                        <p class="text-sm text-secondary mt-1">Build robots using only kitchen items</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-secondary"><i class="fas fa-users mr-1"></i>89
+                                                makers</span>
+                                            <span class="text-xs text-secondary"><i class="fas fa-calendar mr-1"></i>8
+                                                days left</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="px-3 py-1 text-sm accent-orange text-on-accent rounded-lg hover:-translate-y-1 transition-all">
+                                        Join
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Makers -->
+                    <div class="dashboard-card">
+                        <h3 class="text-xl font-bold text-primary mb-4">Featured Makers</h3>
+                        <div class="space-y-3">
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-tertiary transition-colors cursor-pointer">
+                                <div class="w-10 h-10 rounded-full accent-orange flex items-center justify-center">
+                                    <i class="fas fa-user text-on-accent"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-primary">Simone Giertz</p>
+                                    <p class="text-xs text-secondary">Queen of Useless Robots</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-tertiary transition-colors cursor-pointer">
+                                <div class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
+                                    <i class="fas fa-user text-secondary"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-primary">Mark Rober</p>
+                                    <p class="text-xs text-secondary">Science & Engineering</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-tertiary transition-colors cursor-pointer">
+                                <div class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
+                                    <i class="fas fa-user text-secondary"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-primary">Laura Kampf</p>
+                                    <p class="text-xs text-secondary">DIY & Woodworking</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Preview -->
+            <div v-if="currentView === 'profile'" class="animate-fade-in">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-primary">Your Profile Preview</h2>
+                    <button
+                        class="px-4 py-2 accent-orange text-on-accent rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                        <i class="fas fa-share mr-2"></i>Share Profile
+                    </button>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="dashboard-card max-w-4xl mx-auto">
+                    <!-- Profile Header -->
+                    <div class="flex items-center gap-6 mb-8">
+                        <div class="w-24 h-24 rounded-full accent-orange flex items-center justify-center">
+                            <i class="fas fa-user text-4xl text-on-accent"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-primary">{{ userData.name || 'Anonymous Maker' }}</h3>
+                            <p class="text-secondary">{{ userData.bio || 'Making things that sometimes work' }}</p>
+                            <div class="flex gap-4 mt-3">
+                                <span class="text-sm text-secondary"><i class="fas fa-rocket mr-1"></i>{{ stats.projects
+                                    }} Projects</span>
+                                <span class="text-sm text-secondary"><i class="fas fa-tools mr-1"></i>{{ stats.tools }}
+                                    Tools</span>
+                                <span class="text-sm text-secondary"><i class="fas fa-bolt mr-1"></i>{{ stats.skills }}
+                                    Skills</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div class="space-y-6">
+                        <!-- Projects Section -->
+                        <div v-if="userData.projects.length > 0">
+                            <h4 class="font-bold text-primary mb-3">Projects</h4>
+                            <div class="grid md:grid-cols-3 gap-3">
+                                <div v-for="project in userData.projects.slice(0, 6)"
+                                    class="bg-tertiary rounded-lg p-3">
+                                    <p class="font-semibold text-sm text-primary">{{ project.name }}</p>
+                                    <p class="text-xs text-secondary mt-1">{{ getStatusLabel(project.status) }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tools Section -->
+                        <div v-if="userData.tools.length > 0">
+                            <h4 class="font-bold text-primary mb-3">Workshop</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="tool in userData.tools.slice(0, 10)"
+                                    class="px-3 py-1 bg-tertiary rounded-lg text-sm text-primary">
+                                    {{ tool.name }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div v-if="userData.skills.length > 0">
+                            <h4 class="font-bold text-primary mb-3">Skills</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="skill in userData.skills"
+                                    class="px-3 py-1 border-2 border-theme rounded-lg text-sm text-primary hover:border-orange-500 transition-colors">
+                                    {{ skill }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State Message -->
+                        <div v-if="stats.projects === 0 && stats.tools === 0" class="text-center py-12">
+                            <i class="fas fa-hammer text-6xl text-secondary/20 mb-4"></i>
+                            <p class="text-secondary">Your maker story starts here!</p>
+                            <p class="text-sm text-secondary mt-2">Add projects and tools to build your profile</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    darkMode: true,
+                    currentView: 'overview',
+                    tempName: '',
+                    userData: {
+                        name: '',
+                        bio: 'Making things that sometimes work',
+                        projects: [],
+                        tools: [],
+                        skills: ['Enthusiasm', 'Professional Googler'],
+                        activities: [],
+                        connections: []
+                    },
+                    showAddProject: false,
+                    showAddTool: false,
+                    selectedToolCategory: 'all',
+                    newProject: {
+                        name: '',
+                        status: 'idea',
+                        description: '',
+                        tags: ''
+                    },
+                    newTool: {
+                        name: '',
+                        category: 'electronics',
+                        notes: ''
+                    },
+                    toolCategories: [
+                        { id: 'all', name: 'All Tools', icon: 'fas fa-toolbox', count: 0 },
+                        { id: 'electronics', name: 'Electronics', icon: 'fas fa-microchip', count: 0 },
+                        { id: 'mechanical', name: 'Mechanical', icon: 'fas fa-wrench', count: 0 },
+                        { id: 'software', name: 'Software', icon: 'fas fa-code', count: 0 }
+                    ],
+                    inspiration: {
+                        quote: "The expert in anything was once a disaster at it",
+                        author: "Helen Hayes",
+                        projectIdea: "Weather station with old phone",
+                        skillToLearn: "How to use shift registers",
+                        makerToFollow: "Someone doing what you love"
+                    }
+                }
+            },
+            computed: {
+                stats() {
+                    return {
+                        projects: this.userData.projects.length,
+                        tools: this.userData.tools.length,
+                        skills: this.userData.skills.length,
+                        connections: this.userData.connections.length
+                    }
+                },
+                projectStats() {
+                    const stats = {
+                        ideas: 0,
+                        planning: 0,
+                        inProgress: 0,
+                        completed: 0,
+                        failed: 0
+                    };
+                    this.userData.projects.forEach(p => {
+                        if (p.status === 'idea') stats.ideas++;
+                        else if (p.status === 'planning') stats.planning++;
+                        else if (p.status === 'in-progress') stats.inProgress++;
+                        else if (p.status === 'completed') stats.completed++;
+                        else if (p.status === 'failed') stats.failed++;
+                    });
+                    return stats;
+                },
+                filteredTools() {
+                    if (this.selectedToolCategory === 'all') {
+                        return this.userData.tools;
+                    }
+                    return this.userData.tools.filter(t => t.category === this.selectedToolCategory);
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    document.documentElement.classList.toggle('dark');
+                },
+                setUserName() {
+                    if (this.tempName) {
+                        this.userData.name = this.tempName;
+                        this.addActivity('fas fa-user', 'Joined the maker community!', 'var(--accent-orange)');
+                    }
+                },
+                addProject() {
+                    if (this.newProject.name) {
+                        const project = {
+                            id: Date.now(),
+                            name: this.newProject.name,
+                            status: this.newProject.status,
+                            description: this.newProject.description,
+                            tags: this.newProject.tags.split(',').map(t => t.trim()).filter(t => t)
+                        };
+                        this.userData.projects.push(project);
+                        this.addActivity('fas fa-rocket', `Added project: ${project.name}`, 'var(--accent-orange)');
+                        this.newProject = { name: '', status: 'idea', description: '', tags: '' };
+                        this.showAddProject = false;
+                    }
+                },
+                addTool() {
+                    if (this.newTool.name) {
+                        const tool = {
+                            id: Date.now(),
+                            name: this.newTool.name,
+                            category: this.newTool.category,
+                            notes: this.newTool.notes
+                        };
+                        this.userData.tools.push(tool);
+                        this.updateToolCounts();
+                        this.addActivity('fas fa-tools', `Added tool: ${tool.name}`, 'var(--text-secondary)');
+                        this.newTool = { name: '', category: 'electronics', notes: '' };
+                        this.showAddTool = false;
+                    }
+                },
+                removeTool(id) {
+                    this.userData.tools = this.userData.tools.filter(t => t.id !== id);
+                    this.updateToolCounts();
+                },
+                updateToolCounts() {
+                    this.toolCategories.forEach(cat => {
+                        if (cat.id === 'all') {
+                            cat.count = this.userData.tools.length;
+                        } else {
+                            cat.count = this.userData.tools.filter(t => t.category === cat.id).length;
+                        }
+                    });
+                },
+                addActivity(icon, text, color) {
+                    const activity = {
+                        id: Date.now(),
+                        icon: icon,
+                        text: text,
+                        color: color,
+                        time: 'Just now'
+                    };
+                    this.userData.activities.unshift(activity);
+                },
+                addQuickUpdate() {
+                    const updates = [
+                        "Burned another LED 🔥",
+                        "Finally understood resistors!",
+                        "3D printer is making weird noises again",
+                        "Arduino wasn't plugged in... again",
+                        "It works! (mostly)"
+                    ];
+                    const update = updates[Math.floor(Math.random() * updates.length)];
+                    this.addActivity('fas fa-comment', update, 'var(--text-secondary)');
+                },
+                getCategoryName(id) {
+                    const cat = this.toolCategories.find(c => c.id === id);
+                    return cat ? cat.name : 'Other';
+                },
+                getStatusColor(status) {
+                    const colors = {
+                        'idea': 'bg-orange-500/20 text-orange-500',
+                        'planning': 'bg-tertiary text-secondary',
+                        'in-progress': 'bg-tertiary text-primary',
+                        'completed': 'accent-orange text-on-accent',
+                        'failed': 'bg-tertiary text-secondary'
+                    };
+                    return colors[status] || 'bg-tertiary text-secondary';
+                },
+                getStatusLabel(status) {
+                    const labels = {
+                        'idea': '💡 Idea',
+                        'planning': '📝 Planning',
+                        'in-progress': '🔨 Building',
+                        'completed': '✅ Done!',
+                        'failed': '💥 Learned!'
+                    };
+                    return labels[status] || status;
+                }
+            },
+            mounted() {
+                // Initialize with dark mode
+                document.documentElement.classList.add('dark');
+
+                // Load saved data from localStorage if available
+                const saved = localStorage.getItem('makerspace-data');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    Object.assign(this.userData, data);
+                    this.updateToolCounts();
+                }
+
+                // Save data on changes
+                this.$watch('userData', (newVal) => {
+                    localStorage.setItem('makerspace-data', JSON.stringify(newVal));
+                }, { deep: true });
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Makerspace | GitHub for Hardware</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "fade-in": "fadeIn 0.3s ease-out",
+                        "slide-up": "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                        "slide-down": "slideDown 0.3s ease-out",
+                        "pulse-slow": "pulse 3s infinite",
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            "0%": { opacity: "0" },
+                            "100%": { opacity: "1" },
+                        },
+                        slideUp: {
+                            "0%": { transform: "translateY(20px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                        slideDown: {
+                            "0%": { transform: "translateY(-10px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        }
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .border-theme { border-color: var(--border-color); }
+        .accent-orange { background-color: var(--accent-orange); }
+        .accent-orange-text { color: var(--accent-orange); }
+        .text-on-accent { color: var(--text-on-accent); }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            min-height: 100vh;
+        }
+
+        @media (min-width: 1024px) {
+            .app-container {
+                border-left: 2px solid var(--border-color);
+                border-right: 2px solid var(--border-color);
+            }
+        }
+
+        .home-tile {
+            background-color: var(--bg-tertiary);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-tile:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+        }
+
+        .home-tile.active {
+            background-color: var(--accent-orange);
+        }
+
+        .home-tile.active .text-primary,
+        .home-tile.active .text-white {
+            color: var(--text-on-accent) !important;
+        }
+
+        .skill-node {
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-node:hover {
+            border-color: var(--accent-orange);
+            transform: scale(1.05);
+        }
+
+        .skill-node.acquired {
+            background-color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        .skill-node.acquired i,
+        .skill-node.acquired p {
+            color: var(--text-on-accent) !important;
+        }
+
+        .dropdown-enter-active {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .project-section {
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="app-container">
+        <!-- Header with Profile Dropdown -->
+        <header class="bg-tertiary border-b-2 border-theme sticky top-0 z-50">
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button v-if="currentView !== 'home'" @click="goBack()"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors">
+                        <i class="fas fa-arrow-left text-sm text-white"></i>
+                    </button>
+                    <h1 class="text-lg font-bold text-white">{{ getViewTitle() }}</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <button @click="showProfileMenu = !showProfileMenu"
+                            class="w-10 h-10 rounded-lg accent-orange flex items-center justify-center hover:-translate-y-1 transition-all">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </button>
+                        <div v-if="showProfileMenu"
+                            @click.stop
+                            class="absolute right-0 mt-2 w-48 bg-secondary border-2 border-theme rounded-xl shadow-xl dropdown-enter-active">
+                            <div class="p-3 border-b border-theme">
+                                <p class="font-bold text-primary">{{ userData.name || 'Maker' }}</p>
+                                <p class="text-xs text-secondary">{{ stats.projects }} projects • {{ stats.tools }} tools</p>
+                            </div>
+                            <div class="p-2">
+                                <button @click="navigateTo('home')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-home text-sm text-white w-4"></i>
+                                    <span class="text-white">Home</span>
+                                </button>
+                                <button @click="navigateTo('projects')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-rocket text-sm text-white w-4"></i>
+                                    <span class="text-white">Projects</span>
+                                </button>
+                                <button @click="navigateTo('tools')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-tools text-sm text-white w-4"></i>
+                                    <span class="text-white">Tools</span>
+                                </button>
+                                <button @click="navigateTo('skills')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-brain text-sm text-white w-4"></i>
+                                    <span class="text-white">Skills</span>
+                                </button>
+                                <button @click="navigateTo('activity')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-clock text-sm text-white w-4"></i>
+                                    <span class="text-white">Activity</span>
+                                </button>
+                                <hr class="my-2 border-theme">
+                                <button @click="navigateTo('profile')"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i class="fas fa-user-circle text-sm text-white w-4"></i>
+                                    <span class="text-white">View Profile</span>
+                                </button>
+                                <button @click="toggleTheme()"
+                                    class="w-full text-left px-3 py-2 rounded-lg hover:bg-tertiary transition-colors flex items-center gap-2">
+                                    <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-sm text-white w-4"></i>
+                                    <span class="text-white">{{ darkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Home View -->
+        <div v-if="currentView === 'home'" class="p-4 md:p-8 view-transition">
+            <!-- Welcome Section -->
+            <div v-if="!userData.name" class="text-center py-12">
+                <h2 class="text-3xl font-bold text-white mb-4">Welcome to Your Makerspace</h2>
+                <p class="text-white mb-6">What should we call you?</p>
+                <div class="max-w-sm mx-auto">
+                    <input v-model="tempName" @keyup.enter="setUserName"
+                        placeholder="Enter your name"
+                        class="w-full px-4 py-3 input-field rounded-lg text-white">
+                    <button v-if="tempName" @click="setUserName"
+                        class="mt-3 px-8 py-3 accent-orange text-white rounded-lg font-bold hover:-translate-y-1 transition-all">
+                        Start Building →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Navigation Grid -->
+            <div v-else>
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">{{ getGreeting() }}, {{ userData.name }}!</h2>
+                    <p class="text-white">What are we building today?</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Projects Tile -->
+                    <div @click="currentView = 'projects'"
+                        :class="{'active': stats.projects > 0}"
+                        class="home-tile rounded-xl p-8 text-center">
+                        <i class="fas fa-rocket text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Projects</h3>
+                        <p class="text-sm text-white font-bold">{{ stats.projects }}</p>
+                    </div>
+
+                    <!-- Tools Tile -->
+                    <div @click="currentView = 'tools'"
+                        :class="{'active': stats.tools > 0}"
+                        class="home-tile rounded-xl p-8 text-center">
+                        <i class="fas fa-tools text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Tools</h3>
+                        <p class="text-sm text-white font-bold">{{ stats.tools }}</p>
+                    </div>
+
+                    <!-- Skills Tile -->
+                    <div @click="currentView = 'skills'"
+                        :class="{'active': stats.skills > 2}"
+                        class="home-tile rounded-xl p-8 text-center">
+                        <i class="fas fa-brain text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Skills</h3>
+                        <p class="text-sm text-white font-bold">{{ stats.skills }}</p>
+                    </div>
+
+                    <!-- Notes Tile -->
+                    <div @click="currentView = 'notes'"
+                        :class="{'active': userData.notes.length > 0}"
+                        class="home-tile rounded-xl p-8 text-center">
+                        <i class="fas fa-sticky-note text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Notes</h3>
+                        <p class="text-sm text-white font-bold">{{ userData.notes.length }}</p>
+                    </div>
+
+                    <!-- Activity Tile -->
+                    <div @click="currentView = 'activity'"
+                        :class="{'active': userData.activities.length > 0}"
+                        class="home-tile rounded-xl p-8 text-center">
+                        <i class="fas fa-clock text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Activity</h3>
+                        <p class="text-sm text-white font-bold">{{ userData.activities.length }}</p>
+                    </div>
+
+                    <!-- Profile Tile -->
+                    <div @click="currentView = 'profile'"
+                        class="home-tile rounded-xl p-8 text-center accent-orange">
+                        <i class="fas fa-user text-5xl md:text-6xl text-white mb-4"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Profile</h3>
+                        <p class="text-sm text-white font-bold">View</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects View - GitHub for Hardware -->
+        <div v-if="currentView === 'projects'" class="p-4 md:p-8 view-transition">
+            <!-- Project List View -->
+            <div v-if="!selectedProject">
+                <div class="mb-6">
+                    <button @click="startNewProject()"
+                        class="px-8 py-3 accent-orange text-white rounded-lg font-bold hover:-translate-y-1 transition-all">
+                        <i class="fas fa-plus mr-2"></i>New Project
+                    </button>
+                </div>
+
+                <div v-if="userData.projects.length === 0" class="text-center py-12">
+                    <i class="fas fa-rocket text-6xl text-white/20 mb-4"></i>
+                    <p class="text-white mb-2">No projects yet!</p>
+                    <p class="text-white">Start documenting your builds</p>
+                </div>
+
+                <div v-else class="grid md:grid-cols-2 gap-4">
+                    <div v-for="project in userData.projects" :key="project.id"
+                        @click="selectProject(project)"
+                        class="project-section cursor-pointer hover:border-orange-500 transition-all">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="font-bold text-white text-xl mb-2">{{ project.name }}</h3>
+                                <p class="text-white mb-3">{{ project.description }}</p>
+                                <div class="flex gap-4 text-sm text-white">
+                                    <span v-if="project.schematics"><i class="fas fa-project-diagram mr-1"></i>Schematics</span>
+                                    <span v-if="project.code"><i class="fas fa-code mr-1"></i>Code</span>
+                                    <span v-if="project.models3d"><i class="fas fa-cube mr-1"></i>3D Models</span>
+                                    <span v-if="project.images.length"><i class="fas fa-images mr-1"></i>{{ project.images.length }} Images</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Detail/Edit View -->
+            <div v-else class="animate-slide-up">
+                <div class="mb-6 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-white">{{ editingProject ? 'Documenting' : '' }} {{ selectedProject.name }}</h2>
+                    <div class="flex gap-3">
+                        <button v-if="!editingProject" @click="editingProject = true"
+                            class="px-6 py-2 bg-tertiary text-white rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
+                        <button @click="closeProject()"
+                            class="px-6 py-2 bg-tertiary text-white rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            <i class="fas fa-times mr-2"></i>Close
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project Documentation Sections -->
+                <div class="space-y-6">
+                    <!-- Basic Info -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-info-circle mr-2"></i>Basic Information
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Project Name</label>
+                                <input v-model="selectedProject.name" :disabled="!editingProject"
+                                    class="w-full px-4 py-2 input-field rounded-lg text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Description</label>
+                                <textarea v-model="selectedProject.description" :disabled="!editingProject"
+                                    rows="3"
+                                    class="w-full px-4 py-2 input-field rounded-lg text-white resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Status</label>
+                                <select v-model="selectedProject.status" :disabled="!editingProject"
+                                    class="w-full px-4 py-2 input-field rounded-lg text-white">
+                                    <option value="planning">Planning</option>
+                                    <option value="building">Building</option>
+                                    <option value="testing">Testing</option>
+                                    <option value="complete">Complete</option>
+                                    <option value="abandoned">Abandoned (but learned!)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware Specs -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-microchip mr-2"></i>Hardware Specifications
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <button @click="addHardwareSpec()"
+                                class="px-4 py-2 accent-orange text-white rounded-lg text-sm font-semibold hover:-translate-y-1 transition-all">
+                                <i class="fas fa-plus mr-1"></i>Add Component
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <div v-for="(spec, index) in selectedProject.hardware" :key="index"
+                                class="flex items-center gap-3 p-3 bg-primary rounded-lg">
+                                <i class="fas fa-microchip text-white"></i>
+                                <input v-model="spec.name" :disabled="!editingProject"
+                                    placeholder="Component name"
+                                    class="flex-1 bg-transparent text-white outline-none">
+                                <input v-model="spec.quantity" :disabled="!editingProject"
+                                    type="number" min="1" placeholder="Qty"
+                                    class="w-16 bg-transparent text-white outline-none text-center">
+                                <button v-if="editingProject" @click="removeHardwareSpec(index)"
+                                    class="text-white hover:accent-orange-text">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schematics -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-project-diagram mr-2"></i>Schematics & Diagrams
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <textarea v-model="selectedProject.schematics"
+                                placeholder="Paste schematic URLs or describe connections..."
+                                rows="4"
+                                class="w-full px-4 py-2 input-field rounded-lg text-white resize-none"></textarea>
+                        </div>
+                        <div v-else-if="selectedProject.schematics" class="text-white whitespace-pre-wrap">
+                            {{ selectedProject.schematics }}
+                        </div>
+                        <p v-else class="text-white">No schematics added yet</p>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-code mr-2"></i>Code & Software
+                        </h3>
+                        <div v-if="editingProject" class="space-y-4">
+                            <input v-model="selectedProject.codeUrl"
+                                placeholder="GitHub/GitLab repository URL"
+                                class="w-full px-4 py-2 input-field rounded-lg text-white">
+                            <textarea v-model="selectedProject.code"
+                                placeholder="Paste your code here..."
+                                rows="10"
+                                class="w-full px-4 py-2 input-field rounded-lg text-white resize-none font-mono text-sm"></textarea>
+                        </div>
+                        <div v-else>
+                            <a v-if="selectedProject.codeUrl" :href="selectedProject.codeUrl" target="_blank"
+                                class="text-white hover:accent-orange-text">
+                                <i class="fas fa-external-link-alt mr-1"></i>{{ selectedProject.codeUrl }}
+                            </a>
+                            <pre v-if="selectedProject.code" class="mt-4 p-4 bg-primary rounded-lg text-white text-sm overflow-x-auto"><code>{{ selectedProject.code }}</code></pre>
+                            <p v-if="!selectedProject.code && !selectedProject.codeUrl" class="text-white">No code added yet</p>
+                        </div>
+                    </div>
+
+                    <!-- 3D Models -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-cube mr-2"></i>3D Models & CAD Files
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <input v-model="selectedProject.models3d"
+                                placeholder="Thingiverse, Printables, or other 3D model URLs"
+                                class="w-full px-4 py-2 input-field rounded-lg text-white">
+                        </div>
+                        <div v-else-if="selectedProject.models3d">
+                            <a :href="selectedProject.models3d" target="_blank"
+                                class="text-white hover:accent-orange-text">
+                                <i class="fas fa-external-link-alt mr-1"></i>{{ selectedProject.models3d }}
+                            </a>
+                        </div>
+                        <p v-else class="text-white">No 3D models added yet</p>
+                    </div>
+
+                    <!-- Images -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-images mr-2"></i>Images & Photos
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <button @click="addImage()"
+                                class="px-4 py-2 accent-orange text-white rounded-lg text-sm font-semibold hover:-translate-y-1 transition-all">
+                                <i class="fas fa-plus mr-1"></i>Add Image URL
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div v-for="(img, index) in selectedProject.images" :key="index"
+                                class="relative group">
+                                <div class="aspect-square bg-primary rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-3xl text-white"></i>
+                                </div>
+                                <button v-if="editingProject" @click="removeImage(index)"
+                                    class="absolute top-2 right-2 w-8 h-8 bg-tertiary rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-times text-white text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-video mr-2"></i>Video Documentation
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <input v-model="selectedProject.videoUrl"
+                                placeholder="YouTube, Vimeo, or other video URL"
+                                class="w-full px-4 py-2 input-field rounded-lg text-white">
+                        </div>
+                        <div v-else-if="selectedProject.videoUrl">
+                            <a :href="selectedProject.videoUrl" target="_blank"
+                                class="text-white hover:accent-orange-text">
+                                <i class="fas fa-external-link-alt mr-1"></i>{{ selectedProject.videoUrl }}
+                            </a>
+                        </div>
+                        <p v-else class="text-white">No video added yet</p>
+                    </div>
+
+                    <!-- Build Instructions -->
+                    <div class="project-section">
+                        <h3 class="font-bold text-white mb-4">
+                            <i class="fas fa-book mr-2"></i>Build Instructions
+                        </h3>
+                        <div v-if="editingProject" class="mb-4">
+                            <button @click="addBuildStep()"
+                                class="px-4 py-2 accent-orange text-white rounded-lg text-sm font-semibold hover:-translate-y-1 transition-all">
+                                <i class="fas fa-plus mr-1"></i>Add Step
+                            </button>
+                        </div>
+                        <div class="space-y-3">
+                            <div v-for="(step, index) in selectedProject.buildSteps" :key="index"
+                                class="flex items-start gap-3">
+                                <div class="w-8 h-8 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-white font-bold">{{ index + 1 }}</span>
+                                </div>
+                                <textarea v-model="step.text" :disabled="!editingProject"
+                                    placeholder="Describe this step..."
+                                    rows="2"
+                                    class="flex-1 px-4 py-2 input-field rounded-lg text-white resize-none"></textarea>
+                                <button v-if="editingProject" @click="removeBuildStep(index)"
+                                    class="text-white hover:accent-orange-text">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div v-if="editingProject" class="flex gap-3">
+                        <button @click="saveProject()"
+                            class="px-8 py-3 accent-orange text-white rounded-lg font-bold hover:-translate-y-1 transition-all">
+                            <i class="fas fa-save mr-2"></i>Save Project
+                        </button>
+                        <button @click="editingProject = false"
+                            class="px-8 py-3 bg-tertiary text-white rounded-lg font-bold hover:-translate-y-1 transition-all">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills View - Interactive Skill Tree -->
+        <div v-if="currentView === 'skills'" class="p-4 md:p-8 view-transition">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-white mb-2">Skill Tree</h2>
+                <div class="relative">
+                    <input v-model="skillSearch"
+                        placeholder="Search skills..."
+                        class="w-full px-4 py-3 input-field rounded-lg text-white pr-10">
+                    <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-white"></i>
+                </div>
+            </div>
+
+            <!-- Skill Categories -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div v-for="skill in filteredSkills" :key="skill.id"
+                    @click="toggleSkill(skill)"
+                    :class="{'acquired': hasSkill(skill.name)}"
+                    class="skill-node rounded-xl p-6 text-center">
+                    <i :class="skill.icon" class="text-3xl mb-3 text-white"></i>
+                    <p class="font-bold text-white text-sm">{{ skill.name }}</p>
+                    <p class="text-xs text-white mt-1">{{ skill.category }}</p>
+                </div>
+            </div>
+
+            <!-- Custom Skills -->
+            <div class="mt-8 project-section">
+                <h3 class="font-bold text-white mb-4">Add Custom Skill</h3>
+                <div class="flex gap-3">
+                    <input v-model="newSkill"
+                        @keyup.enter="addCustomSkill"
+                        placeholder="What else can you do?"
+                        class="flex-1 px-4 py-2 input-field rounded-lg text-white">
+                    <button @click="addCustomSkill" v-if="newSkill"
+                        class="px-6 py-2 accent-orange text-white rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                        Add
+                    </button>
+                </div>
+                <div v-if="customSkills.length > 0" class="mt-4 flex flex-wrap gap-2">
+                    <span v-for="(skill, index) in customSkills" :key="index"
+                        @click="removeCustomSkill(index)"
+                        class="px-4 py-2 accent-orange rounded-lg text-white text-sm cursor-pointer hover:-translate-y-1 transition-all">
+                        {{ skill }}
+                        <i class="fas fa-times ml-2"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools View -->
+        <div v-if="currentView === 'tools'" class="p-4 md:p-8 view-transition">
+            <div class="mb-6">
+                <button @click="showToolForm = true"
+                    class="px-8 py-3 accent-orange text-white rounded-lg font-bold hover:-translate-y-1 transition-all">
+                    <i class="fas fa-plus mr-2"></i>Add Tool
+                </button>
+            </div>
+
+            <div v-if="showToolForm" class="project-section mb-6 animate-slide-up">
+                <h3 class="font-bold text-white mb-4">Add to Your Workshop</h3>
+                <div class="space-y-4">
+                    <input v-model="newTool.name"
+                        placeholder="Tool name"
+                        class="w-full px-4 py-3 input-field rounded-lg text-white">
+                    <select v-model="newTool.category"
+                        class="w-full px-4 py-3 input-field rounded-lg text-white">
+                        <option value="electronics">Electronics</option>
+                        <option value="mechanical">Mechanical</option>
+                        <option value="software">Software</option>
+                        <option value="materials">Materials</option>
+                    </select>
+                    <div class="flex gap-3">
+                        <button @click="addTool()"
+                            class="px-6 py-2 accent-orange text-white rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Add Tool
+                        </button>
+                        <button @click="showToolForm = false"
+                            class="px-6 py-2 bg-tertiary text-white rounded-lg font-semibold hover:-translate-y-1 transition-all">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div v-for="tool in userData.tools" :key="tool.id"
+                    class="project-section text-center">
+                    <i class="fas fa-wrench text-3xl text-white mb-3"></i>
+                    <p class="font-bold text-white">{{ tool.name }}</p>
+                    <p class="text-xs text-white mt-1">{{ tool.category }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity View -->
+        <div v-if="currentView === 'activity'" class="p-4 md:p-8 view-transition">
+            <h2 class="text-2xl font-bold text-white mb-6">Activity Feed</h2>
+            <div class="space-y-3">
+                <div v-for="activity in userData.activities"
+                    class="project-section flex items-center gap-3">
+                    <div class="w-10 h-10 accent-orange rounded-full flex items-center justify-center flex-shrink-0">
+                        <i :class="activity.icon" class="text-white text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white">{{ activity.text }}</p>
+                        <p class="text-xs text-white mt-1">{{ activity.time }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes View -->
+        <div v-if="currentView === 'notes'" class="p-4 md:p-8 view-transition">
+            <div class="mb-6">
+                <div class="project-section">
+                    <textarea v-model="newNote"
+                        @keyup.enter.ctrl="addNote"
+                        placeholder="Quick note... (Ctrl+Enter to save)"
+                        rows="3"
+                        class="w-full bg-transparent text-white resize-none outline-none"></textarea>
+                    <button v-if="newNote" @click="addNote"
+                        class="mt-2 px-4 py-2 accent-orange text-white rounded-lg text-sm font-semibold hover:-translate-y-1 transition-all">
+                        Save Note
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div v-for="note in userData.notes" :key="note.id"
+                    class="project-section">
+                    <p class="text-white whitespace-pre-wrap">{{ note.text }}</p>
+                    <p class="text-xs text-white mt-3">{{ note.time }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile View -->
+        <div v-if="currentView === 'profile'" class="p-4 md:p-8 view-transition">
+            <div class="project-section">
+                <div class="text-center mb-8">
+                    <div class="w-24 h-24 mx-auto mb-4 accent-orange rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-4xl text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">{{ userData.name || 'Anonymous Maker' }}</h2>
+                    <p class="text-white mt-2">Hardware Hacker</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-3xl font-bold accent-orange-text">{{ stats.projects }}</div>
+                        <p class="text-sm text-white">Projects</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white">{{ stats.tools }}</div>
+                        <p class="text-sm text-white">Tools</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white">{{ stats.skills }}</div>
+                        <p class="text-sm text-white">Skills</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    darkMode: true,
+                    currentView: 'home',
+                    viewHistory: [],
+                    showProfileMenu: false,
+                    tempName: '',
+                    selectedProject: null,
+                    editingProject: false,
+                    showToolForm: false,
+                    skillSearch: '',
+                    newSkill: '',
+                    customSkills: [],
+                    newNote: '',
+                    newTool: {
+                        name: '',
+                        category: 'electronics'
+                    },
+                    userData: {
+                        name: '',
+                        projects: [],
+                        tools: [],
+                        skills: ['Enthusiasm', 'Professional Googler'],
+                        notes: [],
+                        activities: []
+                    },
+                    availableSkills: [
+                        { id: 1, name: 'Soldering', icon: 'fas fa-fire', category: 'Electronics' },
+                        { id: 2, name: 'PCB Design', icon: 'fas fa-microchip', category: 'Electronics' },
+                        { id: 3, name: 'Arduino', icon: 'fas fa-robot', category: 'Programming' },
+                        { id: 4, name: '3D Printing', icon: 'fas fa-cube', category: 'Fabrication' },
+                        { id: 5, name: 'CAD Design', icon: 'fas fa-drafting-compass', category: 'Design' },
+                        { id: 6, name: 'Welding', icon: 'fas fa-fire-flame-curved', category: 'Metalwork' },
+                        { id: 7, name: 'Python', icon: 'fab fa-python', category: 'Programming' },
+                        { id: 8, name: 'Raspberry Pi', icon: 'fas fa-raspberry-pi', category: 'Programming' },
+                        { id: 9, name: 'CNC Machining', icon: 'fas fa-industry', category: 'Fabrication' },
+                        { id: 10, name: 'Laser Cutting', icon: 'fas fa-bolt', category: 'Fabrication' },
+                        { id: 11, name: 'Circuit Analysis', icon: 'fas fa-wave-square', category: 'Electronics' },
+                        { id: 12, name: 'Woodworking', icon: 'fas fa-tree', category: 'Fabrication' },
+                        { id: 13, name: 'C++', icon: 'fas fa-code', category: 'Programming' },
+                        { id: 14, name: 'IoT', icon: 'fas fa-wifi', category: 'Electronics' },
+                        { id: 15, name: 'Robotics', icon: 'fas fa-robot', category: 'Engineering' },
+                        { id: 16, name: 'Power Tools', icon: 'fas fa-drill', category: 'Tools' }
+                    ]
+                }
+            },
+            computed: {
+                stats() {
+                    return {
+                        projects: this.userData.projects.length,
+                        tools: this.userData.tools.length,
+                        skills: this.userData.skills.length + this.customSkills.length
+                    }
+                },
+                filteredSkills() {
+                    if (!this.skillSearch) return this.availableSkills;
+                    const search = this.skillSearch.toLowerCase();
+                    return this.availableSkills.filter(skill =>
+                        skill.name.toLowerCase().includes(search) ||
+                        skill.category.toLowerCase().includes(search)
+                    );
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    this.darkMode = !this.darkMode;
+                    document.documentElement.classList.toggle('dark');
+                    this.showProfileMenu = false;
+                },
+                getViewTitle() {
+                    const titles = {
+                        'home': 'Makerspace',
+                        'projects': 'Projects',
+                        'tools': 'Tools',
+                        'skills': 'Skill Tree',
+                        'notes': 'Notes',
+                        'activity': 'Activity',
+                        'profile': 'Profile'
+                    };
+                    return titles[this.currentView] || 'Makerspace';
+                },
+                getGreeting() {
+                    const hour = new Date().getHours();
+                    if (hour < 12) return 'Good morning';
+                    if (hour < 18) return 'Good afternoon';
+                    return 'Good evening';
+                },
+                navigateTo(view) {
+                    this.viewHistory.push(this.currentView);
+                    this.currentView = view;
+                    this.showProfileMenu = false;
+                },
+                goBack() {
+                    if (this.viewHistory.length > 0) {
+                        this.currentView = this.viewHistory.pop();
+                    } else {
+                        this.currentView = 'home';
+                    }
+                },
+                setUserName() {
+                    if (this.tempName) {
+                        this.userData.name = this.tempName;
+                        this.addActivity('fas fa-user', 'Joined the makerspace!');
+                    }
+                },
+                startNewProject() {
+                    const newProject = {
+                        id: Date.now(),
+                        name: 'Untitled Project',
+                        description: '',
+                        status: 'planning',
+                        hardware: [],
+                        schematics: '',
+                        code: '',
+                        codeUrl: '',
+                        models3d: '',
+                        images: [],
+                        videoUrl: '',
+                        buildSteps: [],
+                        createdAt: new Date().toISOString()
+                    };
+                    this.userData.projects.push(newProject);
+                    this.selectedProject = newProject;
+                    this.editingProject = true;
+                },
+                selectProject(project) {
+                    this.selectedProject = project;
+                    this.editingProject = false;
+                },
+                closeProject() {
+                    this.selectedProject = null;
+                    this.editingProject = false;
+                },
+                saveProject() {
+                    this.editingProject = false;
+                    this.addActivity('fas fa-rocket', `Updated project: ${this.selectedProject.name}`);
+                },
+                addHardwareSpec() {
+                    if (!this.selectedProject.hardware) {
+                        this.selectedProject.hardware = [];
+                    }
+                    this.selectedProject.hardware.push({ name: '', quantity: 1 });
+                },
+                removeHardwareSpec(index) {
+                    this.selectedProject.hardware.splice(index, 1);
+                },
+                addBuildStep() {
+                    if (!this.selectedProject.buildSteps) {
+                        this.selectedProject.buildSteps = [];
+                    }
+                    this.selectedProject.buildSteps.push({ text: '' });
+                },
+                removeBuildStep(index) {
+                    this.selectedProject.buildSteps.splice(index, 1);
+                },
+                addImage() {
+                    if (!this.selectedProject.images) {
+                        this.selectedProject.images = [];
+                    }
+                    this.selectedProject.images.push('');
+                },
+                removeImage(index) {
+                    this.selectedProject.images.splice(index, 1);
+                },
+                toggleSkill(skill) {
+                    const index = this.userData.skills.indexOf(skill.name);
+                    if (index > -1) {
+                        this.userData.skills.splice(index, 1);
+                    } else {
+                        this.userData.skills.push(skill.name);
+                        this.addActivity('fas fa-brain', `Acquired skill: ${skill.name}`);
+                    }
+                },
+                hasSkill(skillName) {
+                    return this.userData.skills.includes(skillName);
+                },
+                addCustomSkill() {
+                    if (this.newSkill && !this.customSkills.includes(this.newSkill)) {
+                        this.customSkills.push(this.newSkill);
+                        this.addActivity('fas fa-brain', `Added custom skill: ${this.newSkill}`);
+                        this.newSkill = '';
+                    }
+                },
+                removeCustomSkill(index) {
+                    this.customSkills.splice(index, 1);
+                },
+                addTool() {
+                    if (this.newTool.name) {
+                        const tool = {
+                            id: Date.now(),
+                            ...this.newTool
+                        };
+                        this.userData.tools.push(tool);
+                        this.addActivity('fas fa-tools', `Added tool: ${tool.name}`);
+                        this.newTool = { name: '', category: 'electronics' };
+                        this.showToolForm = false;
+                    }
+                },
+                addNote() {
+                    if (this.newNote) {
+                        const note = {
+                            id: Date.now(),
+                            text: this.newNote,
+                            time: new Date().toLocaleString()
+                        };
+                        this.userData.notes.unshift(note);
+                        this.addActivity('fas fa-sticky-note', 'Added a note');
+                        this.newNote = '';
+                    }
+                },
+                addActivity(icon, text) {
+                    const activity = {
+                        id: Date.now(),
+                        icon: icon,
+                        text: text,
+                        time: new Date().toLocaleString()
+                    };
+                    this.userData.activities.unshift(activity);
+                    if (this.userData.activities.length > 50) {
+                        this.userData.activities.pop();
+                    }
+                }
+            },
+            watch: {
+                userData: {
+                    handler(newVal) {
+                        localStorage.setItem('makerspace-github-data', JSON.stringify(newVal));
+                    },
+                    deep: true
+                },
+                customSkills: {
+                    handler(newVal) {
+                        localStorage.setItem('makerspace-custom-skills', JSON.stringify(newVal));
+                    },
+                    deep: true
+                }
+            },
+            mounted() {
+                // Initialize dark mode
+                document.documentElement.classList.add('dark');
+
+                // Load saved data
+                const savedData = localStorage.getItem('makerspace-github-data');
+                if (savedData) {
+                    Object.assign(this.userData, JSON.parse(savedData));
+                }
+
+                const savedSkills = localStorage.getItem('makerspace-custom-skills');
+                if (savedSkills) {
+                    this.customSkills = JSON.parse(savedSkills);
+                }
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', () => {
+                    this.showProfileMenu = false;
+                });
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
