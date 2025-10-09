@@ -18,7 +18,8 @@
     {
       "binding": "DB",
       "database_name": "absurd-guild-db",
-      "database_id": "fa0decce-887c-42ae-a20d-fbaa07db7bb5",
+      "database_id": "82f1cb4c-b067-40b0-9d3d-5231b42c4c8c",
+      "migrations_dir": "db/migrations",
     },
   ],
   "kv_namespaces": [

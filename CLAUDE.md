@@ -68,3 +68,11 @@ export async function action({ request }) {
   return { error: "Invalid action" };
 }
 ```
+
+## DB stuff
+
+To apply migrations use:
+
+```
+wrangler d1 migrations apply absurd-guild-db
+```

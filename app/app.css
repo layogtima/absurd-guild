@@ -62,7 +62,7 @@ body {
     color 0.3s ease;
 }
 
-/* Helper classes */
+/* Design System Helper Classes */
 .bg-primary {
   background-color: var(--color-primary);
 }

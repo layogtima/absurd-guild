@@ -101,37 +101,42 @@ export function Navigation({ user }: NavigationProps) {
         <div className="flex items-center space-x-4">
           {user ? (
             <div className="flex items-center space-x-3">
-              <div className="hidden sm:block text-right">
-                <div className="text-sm font-medium text-primary">
-                  {user.display_name || user.email}
-                </div>
-                <div className="text-xs text-secondary">Maker</div>
-              </div>
+              {/* Dashboard Button - Design System Secondary Button */}
+              <Link
+                to="/dashboard"
+                className="hidden sm:block bg-secondary text-primary border-2 border-theme px-2 py-1 rounded-lg font-semibold transition-all duration-300 hover:border-orange-500 hover:-translate-y-1"
+              >
+                Dashboard
+              </Link>
+              {/* Profile Avatar Dropdown */}
               <div className="relative group">
-                <button className="w-10 h-10 rounded-full bg-accent-orange flex items-center justify-center text-on-accent font-bold">
+                <button className="w-10 h-10 rounded-full bg-accent-orange flex items-center justify-center text-on-accent font-bold transition-all duration-200 hover:-translate-y-1">
                   {(user.display_name || user.email)[0].toUpperCase()}
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-secondary border-2 border-theme rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="absolute right-0 mt-2 w-48 bg-secondary border-2 border-theme rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                   <div className="py-2">
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-sm text-primary hover:bg-tertiary"
+                      className="flex items-center gap-3 px-4 py-3 mx-2 text-sm text-primary rounded-lg transition-colors hover:bg-tertiary"
                     >
-                      Profile
+                      <i className="fas fa-user text-secondary w-5"></i>
+                      <span>Profile</span>
                     </Link>
                     <Link
                       to="/dashboard"
-                      className="block px-4 py-2 text-sm text-primary hover:bg-tertiary"
+                      className="flex items-center gap-3 px-4 py-3 mx-2 text-sm text-primary rounded-lg transition-colors hover:bg-tertiary"
                     >
-                      Dashboard
+                      <i className="fas fa-home text-secondary w-5"></i>
+                      <span>Dashboard</span>
                     </Link>
                     <hr className="my-2 border-theme" />
                     <Form method="post" action="/auth/logout">
                       <button
                         type="submit"
-                        className="block w-full text-left px-4 py-2 text-sm text-primary hover:bg-tertiary"
+                        className="flex items-center gap-3 w-full text-left px-4 py-3 mx-2 text-sm text-primary rounded-lg transition-colors hover:bg-tertiary"
                       >
-                        Sign Out
+                        <i className="fas fa-sign-out-alt text-secondary w-5"></i>
+                        <span>Sign Out</span>
                       </button>
                     </Form>
                   </div>
@@ -141,7 +146,7 @@ export function Navigation({ user }: NavigationProps) {
           ) : (
             <Link
               to="/auth/login"
-              className="accent-orange text-on-accent px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors font-semibold"
+              className="bg-accent-orange text-on-accent px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_4px_20px_rgba(255,69,0,0.3)]"
             >
               Join Guild
             </Link>

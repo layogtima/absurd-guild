@@ -10,6 +10,7 @@ export default [
 
   // Profile routes
   route("profile", "routes/profile.tsx"),
+  route("dashboard", "routes/dashboard.tsx"),
 
   // Maker public profiles
   route("m/:id", "routes/m.$id.tsx"),

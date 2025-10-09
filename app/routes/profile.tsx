@@ -451,7 +451,7 @@ export default function Profile() {
   const actionData = useActionData<typeof action>();
 
   const [searchParams] = useSearchParams();
-  const editingProfile = searchParams.get("edit-profile") === "true";
+  const editingProfile = searchParams.get("edit") === "true";
   const addingLink = searchParams.get("add-link") === "true";
   const successMessage = searchParams.get("success");
   const errorMessage = searchParams.get("error");
@@ -650,7 +650,7 @@ export default function Profile() {
                     </Link>
                   ) : (
                     <Link
-                      to="?edit-profile=true"
+                      to="?edit=true"
                       className="accent-orange text-on-accent px-4 py-2 rounded-md hover:bg-orange-600 flex-shrink-0"
                     >
                       Edit Profile
