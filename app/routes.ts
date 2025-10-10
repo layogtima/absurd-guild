@@ -15,6 +15,16 @@ export default [
   // Maker public profiles
   route("m/:id", "routes/m.$id.tsx"),
 
+  // Items (Workbench Phase 1A)
+  route("items", "routes/items.tsx"),
+  route("items/new", "routes/items.new.tsx"),
+  route("items/:itemId", "routes/items.$itemId.tsx"),
+
+  // Workbench (Workbench Phase 1B)
+  route("workbench", "routes/workbench.tsx"),
+  route("workbench/new", "routes/workbench.new.tsx"),
+  route("workbench/:projectId", "routes/workbench.$projectId.tsx"),
+
   // Future routes (placeholder comments)
   // route("campaigns", "routes/campaigns/_index.tsx"),
   // route("campaigns/:slug", "routes/campaigns/$slug.tsx"),
