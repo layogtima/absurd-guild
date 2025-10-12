@@ -101,12 +101,12 @@ export function Navigation({ user }: NavigationProps) {
         <div className="flex items-center space-x-4">
           {user ? (
             <div className="flex items-center space-x-3">
-              {/* Dashboard Button - Design System Secondary Button */}
+              {/* Workbench Button - Design System Secondary Button */}
               <Link
-                to="/dashboard"
+                to="/workbench"
                 className="hidden sm:block bg-secondary text-primary border-2 border-theme px-2 py-1 rounded-lg font-semibold transition-all duration-300 hover:border-orange-500 hover:-translate-y-1"
               >
-                Dashboard
+                Workbench
               </Link>
               {/* Profile Avatar Dropdown */}
               <div className="relative group">
@@ -123,11 +123,18 @@ export function Navigation({ user }: NavigationProps) {
                       <span>Profile</span>
                     </Link>
                     <Link
-                      to="/dashboard"
+                      to="/workbench"
                       className="flex items-center gap-3 px-4 py-3 mx-2 text-sm text-primary rounded-lg transition-colors hover:bg-tertiary"
                     >
-                      <i className="fas fa-home text-secondary w-5"></i>
-                      <span>Dashboard</span>
+                      <i className="fas fa-toolbox text-secondary w-5"></i>
+                      <span>Workbench</span>
+                    </Link>
+                    <Link
+                      to="/items"
+                      className="flex items-center gap-3 px-4 py-3 mx-2 text-sm text-primary rounded-lg transition-colors hover:bg-tertiary"
+                    >
+                      <i className="fas fa-cubes text-secondary w-5"></i>
+                      <span>Items Library</span>
                     </Link>
                     <hr className="my-2 border-theme" />
                     <Form method="post" action="/auth/logout">
@@ -156,7 +163,7 @@ export function Navigation({ user }: NavigationProps) {
 
       {/* Mobile Navigation */}
       <nav className="md:hidden border-t border-theme">
-        <div className="grid grid-cols-4 h-16">
+        <div className="grid grid-cols-5 h-16">
           <Link
             to="/campaigns"
             className="flex flex-col items-center justify-center text-secondary hover:accent-orange-text transition-colors"
@@ -178,8 +185,17 @@ export function Navigation({ user }: NavigationProps) {
             <i className="fas fa-users text-xl"></i>
             <span className="text-xs mt-1">Guild</span>
           </Link>
+          {user && (
+            <Link
+              to="/workbench"
+              className="flex flex-col items-center justify-center text-secondary hover:accent-orange-text transition-colors"
+            >
+              <i className="fas fa-toolbox text-xl"></i>
+              <span className="text-xs mt-1">Workbench</span>
+            </Link>
+          )}
           <Link
-            to={user ? "/dashboard" : "/auth/login"}
+            to={user ? "/profile" : "/auth/login"}
             className="flex flex-col items-center justify-center text-secondary hover:accent-orange-text transition-colors"
           >
             <i className="fas fa-user-circle text-xl"></i>
