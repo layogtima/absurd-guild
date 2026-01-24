@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steve Wozniak - Hardware Pioneer | Absurd Industries</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/e0c6d65845.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jura: ["Jura", "sans-serif"],
+                    },
+                    animation: {
+                        "spin-slow": "spin 33s linear infinite",
+                        "fade-in": "fade-in 0.4s ease-out",
+                        "slide-up": "slide-up 0.3s ease-out",
+                    },
+                    keyframes: {
+                        "fade-in": {
+                            "0%": { opacity: "0", transform: "translateY(10px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" },
+                        },
+                        "slide-up": {
+                            "0%": { transform: "translateY(20px)", opacity: "0" },
+                            "100%": { transform: "translateY(0)", opacity: "1" },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #ece0cf;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0d4c3;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5c5c5c;
+            --border-color: #d1c4b3;
+            --accent-orange: #ff4500;
+            --text-on-accent: #ffffff;
+        }
+
+        html.dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #111111;
+            --text-primary: #ece0cf;
+            --text-secondary: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+
+        body {
+            font-family: "Jura", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .bg-primary {
+            background-color: var(--bg-primary);
+        }
+
+        .bg-secondary {
+            background-color: var(--bg-secondary);
+        }
+
+        .bg-tertiary {
+            background-color: var(--bg-tertiary);
+        }
+
+        .text-primary {
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .border-theme {
+            border-color: var(--border-color);
+        }
+
+        .accent-orange {
+            background-color: var(--accent-orange);
+        }
+
+        .accent-orange-text {
+            color: var(--accent-orange);
+        }
+
+        .text-on-accent {
+            color: var(--text-on-accent);
+        }
+
+        .hover-lift {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .tag {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg,
+                    var(--bg-tertiary),
+                    var(--bg-secondary));
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-orange);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-orange);
+            color: var(--text-on-accent);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-idea {
+            background: rgba(59, 130, 246, 0.1);
+            color: rgb(59, 130, 246);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-planning {
+            background: rgba(234, 179, 8, 0.1);
+            color: rgb(234, 179, 8);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .status-in-progress {
+            background: rgba(34, 197, 94, 0.1);
+            color: rgb(34, 197, 94);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen font-jura" id="app">
+    <!-- Navigation Header -->
+    <header class="bg-secondary/90 backdrop-blur-sm border-b border-theme sticky top-0" style="z-index: 40">
+        <div class="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-20 h-20 rounded-full flex items-center justify-center hover-lift">
+                    <img src="absurd-industries-logo.svg" class="w-full h-full animate-spin-slow" />
+                </div>
+                <nav class="hidden sm:flex items-center space-x-2 text-sm lg:text-base">
+                    <a href="/" class="text-primary font-bold hover:accent-orange-text transition-colors">Absurd</a>
+                    <span class="text-secondary">/</span>
+                    <a href="/makers" class="text-secondary hover:text-primary transition-colors">Makers</a>
+                    <span class="text-secondary">/</span>
+                    <span class="font-bold accent-orange-text">Hardware Pioneer</span>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button @click="toggleTheme"
+                    class="hover-lift w-10 h-10 rounded-full bg-tertiary flex items-center justify-center">
+                    <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'" class="text-base text-primary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[70vh] flex items-center justify-center">
+        <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
+            <!-- Avatar -->
+            <div class="flex flex-col items-center mb-12 animate-fade-in">
+                <div
+                    class="w-32 h-32 lg:w-40 lg:h-40 accent-orange rounded-3xl flex items-center justify-center text-4xl lg:text-5xl font-bold overflow-hidden text-on-accent mb-6 hover-lift">
+                    <img :src="profile.avatar" :alt="profile.name" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Name and tagline -->
+                <h1 class="font-jura text-6xl lg:text-8xl font-bold text-primary mb-4">
+                    {{ profile.name }}
+                </h1>
+                <p class="text-xl lg:text-2xl text-secondary mb-6">
+                    {{ profile.tagline }}
+                </p>
+
+                <!-- Skills Tags -->
+                <div class="flex flex-wrap gap-2 justify-center mb-8">
+                    <span v-for="skill in profile.topSkills" :key="skill" class="skill-tag hover-lift">
+                        <i class="fas fa-microchip accent-orange-text"></i>
+                        {{ skill }}
+                    </span>
+                </div>
+
+                <!-- Bio -->
+                <div class="max-w-4xl mx-auto mb-12">
+                    <p class="text-xl lg:text-2xl text-secondary leading-relaxed">
+                        {{ profile.bio }}
+                    </p>
+                </div>
+
+                <!-- Social Links -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <a v-for="(link, index) in profile.socialLinks" :key="index" :href="link.url" target="_blank"
+                        rel="noopener"
+                        class="bg-secondary border-2 border-theme rounded-xl p-4 hover-lift transition-all flex items-center gap-3 group">
+                        <div class="w-12 h-12 rounded-lg bg-tertiary flex items-center justify-center flex-shrink-0">
+                            <i :class="link.icon" class="text-xl accent-orange-text"></i>
+                        </div>
+                        <div class="flex-grow text-left">
+                            <div class="font-bold text-primary text-sm">
+                                {{ link.name }}
+                            </div>
+                        </div>
+                        <i
+                            class="fas fa-external-link-alt text-secondary group-hover:accent-orange-text transition-colors"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Past Projects Section -->
+    <main class="max-w-7xl mx-auto p-6">
+        <section id="past-projects" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                    What I've Built
+                </h2>
+                <p class="text-xl text-secondary max-w-3xl mx-auto">
+                    Projects that solve real problems and push the boundaries of what's
+                    possible
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div v-for="(project, index) in projects" :key="index" @click="openProjectModal(project)"
+                    class="bg-secondary border-2 border-theme rounded-3xl overflow-hidden hover-lift cursor-pointer transition-all">
+                    <div class="aspect-video relative overflow-hidden">
+                        <img :src="project.image" :alt="project.name" class="w-full h-full object-cover" />
+                        <div v-if="project.year"
+                            class="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
+                            <span class="text-white text-sm font-bold">{{ project.year }}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <h3 class="font-jura text-2xl font-bold text-primary mb-4">
+                            {{ project.name }}
+                        </h3>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="tag in project.tags" :key="tag" class="tag">
+                                {{ tag }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools & Equipment Section -->
+        <section id="tools" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                    My Workshop
+                </h2>
+                <p class="text-xl text-secondary max-w-3xl mx-auto">
+                    Tools, equipment, and software that make the magic happen
+                </p>
+            </div>
+
+            <!-- Category Tabs/Filter -->
+            <div class="flex flex-wrap gap-2 justify-center mb-8">
+                <button v-for="category in toolCategories" :key="category" @click="selectedCategory = category"
+                    class="px-4 py-2 rounded-lg transition-all font-semibold"
+                    :class="selectedCategory === category ? 'accent-orange text-on-accent' : 'bg-secondary text-primary border-2 border-theme hover-lift'">
+                    {{ category }}
+                </button>
+            </div>
+
+            <!-- Tools Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="tool in filteredTools" :key="tool.name"
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover-lift transition-all">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-14 h-14 accent-orange rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i :class="tool.icon" class="text-2xl text-on-accent"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-xl text-primary mb-1">
+                                {{ tool.name }}
+                            </h3>
+                            <span class="category-badge">{{ tool.category }}</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3">{{ tool.description }}</p>
+                    <div class="border-t border-theme pt-3 mt-3">
+                        <div class="text-sm font-semibold text-primary mb-1">
+                            Used for:
+                        </div>
+                        <div class="text-sm text-secondary">{{ tool.usedFor }}</div>
+                    </div>
+                    <div v-if="tool.since" class="text-xs text-secondary mt-3">
+                        <i class="fas fa-calendar-alt mr-1"></i>
+                        Using since {{ tool.since }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future Projects Section -->
+        <section id="future-projects" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                    What's Next
+                </h2>
+                <p class="text-xl text-secondary max-w-3xl mx-auto">
+                    Ideas brewing and projects in the pipeline
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="(futureProject, index) in futureProjects" :key="index"
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6 hover-lift transition-all">
+                    <div class="flex items-start justify-between mb-4">
+                        <div
+                            class="w-14 h-14 accent-orange rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                            {{ futureProject.emoji }}
+                        </div>
+                        <span :class="'status-badge status-' + futureProject.status.toLowerCase().replace(' ', '-')">
+                            {{ futureProject.status }}
+                        </span>
+                    </div>
+
+                    <h3 class="font-jura text-2xl font-bold text-primary mb-3">
+                        {{ futureProject.name }}
+                    </h3>
+
+                    <p class="text-secondary mb-4 leading-relaxed">
+                        {{ futureProject.description }}
+                    </p>
+
+                    <!-- Tools/Skills Needed -->
+                    <div v-if="futureProject.toolsNeeded && futureProject.toolsNeeded.length > 0" class="mb-4">
+                        <div class="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
+                            <i class="fas fa-tools accent-orange-text"></i>
+                            Tools Needed:
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="tool in futureProject.toolsNeeded" :key="tool"
+                                class="text-xs bg-tertiary px-2 py-1 rounded-lg text-secondary">
+                                {{ tool }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Skills Needed -->
+                    <div v-if="futureProject.skillsNeeded && futureProject.skillsNeeded.length > 0">
+                        <div class="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
+                            <i class="fas fa-graduation-cap accent-orange-text"></i>
+                            Skills to Learn:
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="skill in futureProject.skillsNeeded" :key="skill"
+                                class="text-xs bg-tertiary px-2 py-1 rounded-lg text-secondary">
+                                {{ skill }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-jura text-4xl lg:text-5xl font-bold text-primary mb-4">
+                    Skills & Expertise
+                </h2>
+                <p class="text-xl text-secondary max-w-3xl mx-auto">
+                    What I've learned through building and creating
+                </p>
+            </div>
+
+            <div class="space-y-8">
+                <div v-for="skillGroup in skillsWithContext" :key="skillGroup.skill"
+                    class="bg-secondary border-2 border-theme rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 accent-orange rounded-lg flex items-center justify-center">
+                            <i :class="skillGroup.icon" class="text-xl text-on-accent"></i>
+                        </div>
+                        <h3 class="font-bold text-2xl text-primary">
+                            {{ skillGroup.skill }}
+                        </h3>
+                    </div>
+
+                    <p class="text-secondary mb-4">{{ skillGroup.description }}</p>
+
+                    <div class="border-t border-theme pt-4 mt-4">
+                        <div class="font-semibold text-sm text-primary mb-3">
+                            <i class="fas fa-project-diagram accent-orange-text mr-2"></i>
+                            Applied in projects:
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="project in skillGroup.projects" :key="project"
+                                @click="openProjectByName(project)"
+                                class="bg-tertiary px-3 py-1 rounded-lg text-sm text-primary hover-lift cursor-pointer border border-theme hover:border-orange-300">
+                                {{ project }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Project Detail Modal -->
+    <div v-if="selectedProject" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4"
+        @click="closeProjectModal">
+        <div class="modal-content rounded-3xl max-w-4xl w-full p-8 animate-slide-up" @click.stop>
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="font-jura text-3xl font-bold text-primary">
+                    {{ selectedProject.name }}
+                </h3>
+                <button @click="closeProjectModal" class="hover-lift text-secondary hover:text-primary">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Project Image -->
+                <div class="aspect-video rounded-2xl overflow-hidden">
+                    <img :src="selectedProject.image" :alt="selectedProject.name" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <h4 class="font-bold text-xl text-primary mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle accent-orange-text"></i>
+                        What It Is
+                    </h4>
+                    <p class="text-lg text-secondary leading-relaxed">
+                        {{ selectedProject.fullDescription }}
+                    </p>
+                </div>
+
+                <!-- Problem Solved -->
+                <div>
+                    <h4 class="font-bold text-xl text-primary mb-3 flex items-center gap-2">
+                        <i class="fas fa-lightbulb accent-orange-text"></i>
+                        Problem Solved
+                    </h4>
+                    <p class="text-lg text-secondary leading-relaxed">
+                        {{ selectedProject.problemSolved }}
+                    </p>
+                </div>
+
+                <!-- Tools Used -->
+                <div>
+                    <h4 class="font-bold text-xl text-primary mb-3 flex items-center gap-2">
+                        <i class="fas fa-tools accent-orange-text"></i>
+                        Tools & Technologies
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div v-for="tool in selectedProject.toolsUsed" :key="tool.tool"
+                            class="bg-tertiary rounded-xl p-4">
+                            <div class="font-bold text-primary mb-1">{{ tool.tool }}</div>
+                            <div class="text-sm text-secondary">{{ tool.category }}</div>
+                            <div class="text-sm text-secondary mt-2">
+                                {{ tool.purpose }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Learned -->
+                <div>
+                    <h4 class="font-bold text-xl text-primary mb-3 flex items-center gap-2">
+                        <i class="fas fa-graduation-cap accent-orange-text"></i>
+                        Skills Learned
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="skill in selectedProject.skillsLearned" :key="skill" class="skill-tag">
+                            <i class="fas fa-check accent-orange-text text-xs"></i>
+                            {{ skill }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div v-if="selectedProject.links && Object.keys(selectedProject.links).length > 0">
+                    <h4 class="font-bold text-xl text-primary mb-3 flex items-center gap-2">
+                        <i class="fas fa-link accent-orange-text"></i>
+                        Resources
+                    </h4>
+                    <div class="flex flex-wrap gap-3">
+                        <a v-if="selectedProject.links.github" :href="selectedProject.links.github" target="_blank"
+                            class="bg-tertiary px-4 py-2 rounded-lg hover-lift flex items-center gap-2">
+                            <i class="fab fa-github"></i>
+                            GitHub
+                        </a>
+                        <a v-if="selectedProject.links.docs" :href="selectedProject.links.docs" target="_blank"
+                            class="bg-tertiary px-4 py-2 rounded-lg hover-lift flex items-center gap-2">
+                            <i class="fas fa-book"></i>
+                            Docs
+                        </a>
+                        <a v-if="selectedProject.links.video" :href="selectedProject.links.video" target="_blank"
+                            class="bg-tertiary px-4 py-2 rounded-lg hover-lift flex items-center gap-2">
+                            <i class="fas fa-video"></i>
+                            Video
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="tag in selectedProject.tags" :key="tag" class="tag">
+                            {{ tag }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue.js Application -->
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+        createApp({
+            setup() {
+                const isDark = ref(
+                    localStorage.theme === "dark" ||
+                    (!("theme" in localStorage) &&
+                        window.matchMedia("(prefers-color-scheme: dark)").matches)
+                );
+                const selectedProject = ref(null);
+                const selectedCategory = ref("All");
+
+                // Profile data
+                const profile = {
+                    name: "Steve Wozniak",
+                    tagline: "Hardware Pioneer",
+                    avatar: "https://via.placeholder.com/400/ff4500/ffffff?text=SW",
+                    bio: "Building computers from scratch to make technology accessible to everyone. Passionate about elegant hardware design and solving impossible problems with simple solutions.",
+                    topSkills: [
+                        "Circuit Design",
+                        "Assembly Programming",
+                        "Hardware Architecture",
+                        "System Integration",
+                    ],
+                    socialLinks: [
+                        {
+                            name: "GitHub",
+                            url: "https://github.com/woz",
+                            icon: "fab fa-github",
+                        },
+                        {
+                            name: "YouTube",
+                            url: "https://youtube.com",
+                            icon: "fab fa-youtube",
+                        },
+                        {
+                            name: "Blog",
+                            url: "https://blog.example.com",
+                            icon: "fas fa-blog",
+                        },
+                        {
+                            name: "Email",
+                            url: "mailto:woz@example.com",
+                            icon: "fas fa-envelope",
+                        },
+                    ],
+                };
+
+                // Projects data
+                const projects = ref([
+                    {
+                        id: "apple-1",
+                        name: "Apple I Computer",
+                        image:
+                            "https://via.placeholder.com/800x450/2a2a2a/ff4500?text=Apple+I",
+                        year: "1976",
+                        tags: ["Computer", "PCB Design", "Assembly", "Open Source"],
+                        fullDescription:
+                            "A fully functional personal computer built from scratch using minimal components. Featured a beautiful circuit board design that eliminated unnecessary chips through clever engineering. Sold as a bare PCB for hobbyists to assemble themselves.",
+                        problemSolved:
+                            "Computers were expensive, complicated machines only accessible to universities and corporations. Created an affordable computer that anyone could build and program at home, making personal computing a reality.",
+                        toolsUsed: [
+                            {
+                                category: "Electronics",
+                                tool: "MOS 6502 CPU",
+                                purpose:
+                                    "Main processor, chosen for its low cost and efficiency",
+                            },
+                            {
+                                category: "Design",
+                                tool: "Breadboard Prototyping",
+                                purpose: "Testing and refining circuit designs",
+                            },
+                            {
+                                category: "Programming",
+                                tool: "Assembly Language",
+                                purpose: "Writing the BIOS and monitor program",
+                            },
+                            {
+                                category: "PCB",
+                                tool: "Manual PCB Layout",
+                                purpose: "Designing the circuit board layout",
+                            },
+                        ],
+                        skillsLearned: [
+                            "Minimal chip design",
+                            "Video signal generation",
+                            "Memory management",
+                            "Cost optimization",
+                            "PCB layout",
+                        ],
+                        links: {
+                            docs: "https://example.com/apple1-docs",
+                            video: "https://youtube.com",
+                        },
+                    },
+                    {
+                        id: "apple-2",
+                        name: "Apple II Computer",
+                        image:
+                            "https://via.placeholder.com/800x450/2a2a2a/ff4500?text=Apple+II",
+                        year: "1977",
+                        tags: [
+                            "Computer",
+                            "Color Graphics",
+                            "Expansion",
+                            "Revolutionary",
+                        ],
+                        fullDescription:
+                            "Revolutionary personal computer with color graphics, sound, and eight expansion slots. First computer with a plastic case and integrated keyboard. Featured advanced video circuitry that could generate color on a standard TV.",
+                        problemSolved:
+                            "Personal computers were hard to use and couldn't display graphics or sound. Created a complete, ready-to-use system with unprecedented graphics capabilities, making computers accessible and fun for families and businesses.",
+                        toolsUsed: [
+                            {
+                                category: "Electronics",
+                                tool: "6502 CPU",
+                                purpose: "Enhanced architecture from Apple I",
+                            },
+                            {
+                                category: "Video Design",
+                                tool: "Custom Circuit Design",
+                                purpose: "Color graphics generation from minimal chips",
+                            },
+                            {
+                                category: "Programming",
+                                tool: "Integer BASIC",
+                                purpose: "Built-in programming language",
+                            },
+                            {
+                                category: "Enclosure",
+                                tool: "Injection Molding",
+                                purpose: "Professional plastic case design",
+                            },
+                        ],
+                        skillsLearned: [
+                            "Color video generation",
+                            "Expansion bus design",
+                            "Sound synthesis",
+                            "BASIC interpreter",
+                            "Mass production",
+                        ],
+                        links: {
+                            github: "https://github.com/example/apple2",
+                            docs: "https://example.com/apple2-docs",
+                        },
+                    },
+                    {
+                        id: "cream-soda-computer",
+                        name: "Cream Soda Computer",
+                        image:
+                            "https://via.placeholder.com/800x450/2a2a2a/ff4500?text=Cream+Soda",
+                        year: "1975",
+                        tags: ["Early Project", "Terminal", "Learning", "Prototype"],
+                        fullDescription:
+                            "Early terminal computer project built while working at HP. Used a TV for display and featured a full keyboard interface. Named after our favorite drink during late-night building sessions. Demonstrated video generation and terminal capabilities.",
+                        problemSolved:
+                            "Terminals were expensive and video displays required complex circuitry. Built a working terminal using readily available TV sets as displays, proving that accessible video displays were possible with clever engineering.",
+                        toolsUsed: [
+                            {
+                                category: "Electronics",
+                                tool: "TTL Logic Chips",
+                                purpose: "Building the core logic circuits",
+                            },
+                            {
+                                category: "Display",
+                                tool: "Modified TV Set",
+                                purpose: "Character display output",
+                            },
+                            {
+                                category: "Input",
+                                tool: "Keyboard Matrix",
+                                purpose: "User input interface",
+                            },
+                            {
+                                category: "Programming",
+                                tool: "Machine Code",
+                                purpose: "Direct hardware programming",
+                            },
+                        ],
+                        skillsLearned: [
+                            "Video signal generation",
+                            "Keyboard scanning",
+                            "Character generation",
+                            "TV modification",
+                            "Timing circuits",
+                        ],
+                        links: {
+                            video: "https://youtube.com/cream-soda-demo",
+                        },
+                    },
+                    {
+                        id: "blue-box",
+                        name: "Blue Box Phone Phreaker",
+                        image:
+                            "https://via.placeholder.com/800x450/2a2a2a/4169e1?text=Blue+Box",
+                        year: "1972",
+                        tags: ["Analog", "Audio", "Precision", "Learning"],
+                        fullDescription:
+                            "Precision tone generator for exploring the telephone network. Built with analog circuits to generate exact frequency tones. Featured a small, portable design that could fit in a pocket. Demonstrated mastery of analog circuit design and precision engineering.",
+                        problemSolved:
+                            "Understanding how phone systems worked required expensive equipment. Built a portable device that could generate precise tones, teaching valuable lessons about analog design, frequency generation, and system architecture.",
+                        toolsUsed: [
+                            {
+                                category: "Electronics",
+                                tool: "Analog Oscillators",
+                                purpose: "Generating precise audio tones",
+                            },
+                            {
+                                category: "Design",
+                                tool: "Frequency Counter",
+                                purpose: "Calibrating exact frequencies",
+                            },
+                            {
+                                category: "Enclosure",
+                                tool: "Handmade Case",
+                                purpose: "Compact portable design",
+                            },
+                            {
+                                category: "Testing",
+                                tool: "Telephone Test Sets",
+                                purpose: "Verifying tone accuracy",
+                            },
+                        ],
+                        skillsLearned: [
+                            "Precision oscillator design",
+                            "Audio circuit design",
+                            "Frequency stability",
+                            "Analog engineering",
+                            "Miniaturization",
+                        ],
+                        links: {},
+                    },
+                ]);
+
+                // Tools database
+                const tools = ref([
+                    {
+                        name: "MOS 6502 CPU",
+                        category: "Electronics",
+                        icon: "fas fa-microchip",
+                        description:
+                            "8-bit microprocessor known for elegant design and affordability",
+                        usedFor: "Building personal computers with minimal cost",
+                        since: "1975",
+                    },
+                    {
+                        name: "TTL Logic Chips",
+                        category: "Electronics",
+                        icon: "fas fa-memory",
+                        description:
+                            "Digital logic integrated circuits for building computers",
+                        usedFor: "Creating custom logic circuits and interfaces",
+                        since: "1970",
+                    },
+                    {
+                        name: "Oscilloscope",
+                        category: "Measuring",
+                        icon: "fas fa-wave-square",
+                        description: "For analyzing electronic signals and timing",
+                        usedFor: "Debugging circuits and verifying signal timing",
+                        since: "1971",
+                    },
+                    {
+                        name: "Soldering Iron",
+                        category: "Hand Tools",
+                        icon: "fas fa-temperature-high",
+                        description: "Weller temperature-controlled soldering station",
+                        usedFor: "Assembling and repairing circuit boards",
+                        since: "1970",
+                    },
+                    {
+                        name: "Breadboard",
+                        category: "Design",
+                        icon: "fas fa-th",
+                        description: "Solderless prototyping board",
+                        usedFor: "Testing circuit designs before building final version",
+                        since: "1970",
+                    },
+                    {
+                        name: "Assembly Language",
+                        category: "Programming",
+                        icon: "fas fa-code",
+                        description: "Low-level programming for direct hardware control",
+                        usedFor: "Writing efficient code for limited memory systems",
+                        since: "1971",
+                    },
+                    {
+                        name: "Integer BASIC",
+                        category: "Programming",
+                        icon: "fas fa-terminal",
+                        description: "Custom BASIC interpreter for Apple computers",
+                        usedFor: "Providing accessible programming to users",
+                        since: "1976",
+                    },
+                    {
+                        name: "Wire Cutters",
+                        category: "Hand Tools",
+                        icon: "fas fa-cut",
+                        description: "Precision wire cutting and stripping",
+                        usedFor: "Preparing wires and components for circuits",
+                        since: "1970",
+                    },
+                    {
+                        name: "Multimeter",
+                        category: "Measuring",
+                        icon: "fas fa-ruler-combined",
+                        description: "Digital multimeter for electrical measurements",
+                        usedFor: "Testing voltage, current, and resistance",
+                        since: "1970",
+                    },
+                    {
+                        name: "PCB Layout Tools",
+                        category: "CAD",
+                        icon: "fas fa-draw-polygon",
+                        description: "Manual PCB design and layout",
+                        usedFor: "Creating professional circuit board designs",
+                        since: "1975",
+                    },
+                    {
+                        name: "Frequency Counter",
+                        category: "Measuring",
+                        icon: "fas fa-tachometer-alt",
+                        description: "Precision frequency measurement device",
+                        usedFor: "Calibrating oscillators and timing circuits",
+                        since: "1972",
+                    },
+                    {
+                        name: "Logic Probe",
+                        category: "Measuring",
+                        icon: "fas fa-stethoscope",
+                        description: "Digital logic level testing tool",
+                        usedFor: "Debugging digital circuits and logic states",
+                        since: "1973",
+                    },
+                ]);
+
+                // Future Projects
+                const futureProjects = ref([
+                    {
+                        name: "Universal Remote Control",
+                        emoji: "📱",
+                        status: "Planning",
+                        description:
+                            "A programmable remote control that can learn any infrared signal and create custom button layouts. Open hardware design with community-contributed device codes.",
+                        toolsNeeded: ["IR Transceivers", "Microcontroller", "PCB Design"],
+                        skillsNeeded: ["IR Protocol Decoding", "Firmware Development"],
+                    },
+                    {
+                        name: "Digital Clock Kit",
+                        emoji: "⏰",
+                        status: "Idea",
+                        description:
+                            "Educational clock kit that teaches digital logic fundamentals. Built from basic logic gates and LED displays, showing how computers tell time at the hardware level.",
+                        toolsNeeded: ["Logic ICs", "LED Displays", "Crystal Oscillator"],
+                        skillsNeeded: ["Counter Design", "Clock Dividers", "PCB Layout"],
+                    },
+                    {
+                        name: "BASIC Computer Language Book",
+                        emoji: "📚",
+                        status: "In Progress",
+                        description:
+                            "Comprehensive guide to programming in BASIC for beginners. Includes example programs and exercises that teach fundamental programming concepts through fun projects.",
+                        toolsNeeded: ["Word Processor", "BASIC Interpreter"],
+                        skillsNeeded: ["Technical Writing", "Teaching Methods"],
+                    },
+                    {
+                        name: "Disk II Controller",
+                        emoji: "💾",
+                        status: "Planning",
+                        description:
+                            "Affordable floppy disk controller that enables data storage for personal computers. Designed to work with standard 5.25-inch drives at a fraction of the cost of existing solutions.",
+                        toolsNeeded: [
+                            "Floppy Drive Mechanics",
+                            "State Machine Design",
+                            "Analog Circuits",
+                        ],
+                        skillsNeeded: [
+                            "Disk Format Design",
+                            "Data Encoding",
+                            "Precision Timing",
+                        ],
+                    },
+                    {
+                        name: "Video Terminal Card",
+                        emoji: "📺",
+                        status: "Idea",
+                        description:
+                            "Expansion card that adds 80-column text display capability to computers. Features smooth scrolling and multiple character sets for enhanced productivity.",
+                        toolsNeeded: [
+                            "Video RAM",
+                            "Character Generator ROM",
+                            "Video Output Circuit",
+                        ],
+                        skillsNeeded: ["Video Timing", "Memory Management", "PCB Design"],
+                    },
+                    {
+                        name: "Calculator Wristwatch",
+                        emoji: "⌚",
+                        status: "Idea",
+                        description:
+                            "Miniature calculator built into a wristwatch. Demonstrates extreme miniaturization and power efficiency, featuring a custom LCD display and button interface.",
+                        toolsNeeded: [
+                            "Low-Power Microcontroller",
+                            "LCD Display",
+                            "Button Matrix",
+                        ],
+                        skillsNeeded: [
+                            "Miniaturization",
+                            "Power Management",
+                            "UI Design",
+                        ],
+                    },
+                ]);
+
+                // Tool categories
+                const toolCategories = computed(() => {
+                    const categories = ["All"];
+                    tools.value.forEach((tool) => {
+                        if (!categories.includes(tool.category)) {
+                            categories.push(tool.category);
+                        }
+                    });
+                    return categories;
+                });
+
+                // Filtered tools
+                const filteredTools = computed(() => {
+                    if (selectedCategory.value === "All") {
+                        return tools.value;
+                    }
+                    return tools.value.filter(
+                        (tool) => tool.category === selectedCategory.value
+                    );
+                });
+
+                // Skills with context
+                const skillsWithContext = ref([
+                    {
+                        skill: "Circuit Design",
+                        icon: "fas fa-project-diagram",
+                        description:
+                            "Designing efficient electronic circuits with minimal components, focusing on elegant solutions that reduce cost and complexity.",
+                        projects: [
+                            "Apple I Computer",
+                            "Apple II Computer",
+                            "Blue Box Phone Phreaker",
+                        ],
+                    },
+                    {
+                        skill: "Video Signal Generation",
+                        icon: "fas fa-tv",
+                        description:
+                            "Creating video signals from scratch using digital logic, enabling computers to display text and graphics on standard TVs and monitors.",
+                        projects: [
+                            "Apple I Computer",
+                            "Apple II Computer",
+                            "Cream Soda Computer",
+                        ],
+                    },
+                    {
+                        skill: "Assembly Programming",
+                        icon: "fas fa-code",
+                        description:
+                            "Writing efficient low-level code that directly controls hardware, maximizing performance in systems with limited memory and processing power.",
+                        projects: ["Apple I Computer", "Apple II Computer"],
+                    },
+                    {
+                        skill: "Cost Optimization",
+                        icon: "fas fa-hand-holding-usd",
+                        description:
+                            "Engineering products to be affordable through clever design that eliminates unnecessary components while maintaining functionality.",
+                        projects: ["Apple I Computer", "Apple II Computer"],
+                    },
+                    {
+                        skill: "PCB Layout",
+                        icon: "fas fa-sitemap",
+                        description:
+                            "Designing beautiful and functional printed circuit boards with optimal component placement and minimal trace routing.",
+                        projects: ["Apple I Computer", "Apple II Computer"],
+                    },
+                    {
+                        skill: "System Architecture",
+                        icon: "fas fa-building",
+                        description:
+                            "Designing complete computer systems from the ground up, including processor, memory, I/O, and expansion capabilities.",
+                        projects: ["Apple I Computer", "Apple II Computer"],
+                    },
+                ]);
+
+                const applyTheme = () => {
+                    if (isDark.value) {
+                        document.documentElement.classList.add("dark");
+                        localStorage.theme = "dark";
+                    } else {
+                        document.documentElement.classList.remove("dark");
+                        localStorage.theme = "light";
+                    }
+                };
+
+                const toggleTheme = () => {
+                    isDark.value = !isDark.value;
+                    applyTheme();
+                };
+
+                const openProjectModal = (project) => {
+                    selectedProject.value = project;
+                };
+
+                const closeProjectModal = () => {
+                    selectedProject.value = null;
+                };
+
+                const openProjectByName = (projectName) => {
+                    const project = projects.value.find((p) => p.name === projectName);
+                    if (project) {
+                        openProjectModal(project);
+                    }
+                };
+
+                onMounted(() => {
+                    applyTheme();
+                });
+
+                return {
+                    isDark,
+                    profile,
+                    projects,
+                    tools,
+                    toolCategories,
+                    selectedCategory,
+                    filteredTools,
+                    futureProjects,
+                    skillsWithContext,
+                    selectedProject,
+                    toggleTheme,
+                    openProjectModal,
+                    closeProjectModal,
+                    openProjectByName,
+                };
+            },
+        }).mount("#app");
+    </script>
+</body>
+
+</html>

@@ -1,3 +1,3 @@
-export function formatPrice(priceInPaise: number): string {
-  return `₹${(priceInPaise / 100).toFixed(2)}`;
+export function formatPrice(priceInRupees: number): string {
+  return `₹${priceInRupees}`;
 }
